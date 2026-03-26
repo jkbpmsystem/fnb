@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>PPM</title>
+<link rel="stylesheet" href="loading.css">
+<link rel="icon" type="image/png" href="img/cube.png">
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<script src="loading.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+  font-family:'Segoe UI',sans-serif;
+  background:linear-gradient(135deg,#0a0f1c,#08101a 60%,#06101d);
+  color:#d9f3ff;
+  overflow-x:hidden;
+}
+
+/* ===== Layout ===== */
+.wrapper{
+  display:flex;
+  height:100vh;
+}
+
+/* ===== Sidebar ===== */
+.sidebar{
+  width:90px;
+  background:linear-gradient(180deg,#0c1624,#070e17);
+  border-right:1px solid #00e5ff22;
+  transition:0.3s;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding-top:20px;
+}
+
+.sidebar.collapsed{
+  width:65px;
+}
+
+.logo{
+  font-size:22px;
+  color:#00e5ff;
+  margin-bottom:30px;
+}
+
+.side-item{
+  width:100%;
+  padding:12px 0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  border-radius:15px;
+  cursor:pointer;
+  transition:0.3s;
+  color:#7aa9c4;
+  font-size:11px;
+  gap:6px;
+}
+
+.side-item:hover{
+  background:#00e5ff22;
+  color:#00e5ff;
+  transform:scale(1.1);
+}
+
+.side-item span{
+  font-size:11px;
+  opacity:0.7;
+  transition:all 0.3s ease;
+}
+
+.sidebar.collapsed .side-item span{
+  opacity:0;
+  transform:translateY(-5px);
+  pointer-events:none;
+}
+
+.sidebar.collapsed .side-item{
+  gap:0;
+}
+
+.side-item{
+  text-decoration:none;
+  color:inherit;
+}
+
+/* ===== Main ===== */
+.main{
+  flex:1;
+  padding:30px 40px;
+}
+
+/* ===== Topbar ===== */
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:30px;
+}
+
+.title{
+  font-size:22px;
+  font-weight:600;
+  color:#00e5ff;
+  letter-spacing:1px;
+}
+  
+.profile{
+  display:flex;
+  align-items:center;
+  gap:15px;
+}
+
+.logout-btn{
+  padding:6px 14px;
+  border-radius:20px;
+  border:1px solid #00e5ff55;
+  background:transparent;
+  color:#00e5ff;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.logout-btn:hover{
+  background:#00e5ff;
+  color:#000;
+}
+/* ===== Header Section ===== */
+.header-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px;
+}
+
+.header-row h2{
+  font-size:20px;
+  font-weight:500;
+}
+
+.actions{
+  display:flex;
+  gap:10px;
+}
+
+.btn{
+  padding:8px 14px;
+  border-radius:8px;
+  font-size:13px;
+  border:1px solid #00e5ff33;
+  background:#0c1624;
+  color:#d8f3ff;
+  cursor:pointer;
+}
+
+.btn-primary{
+  background:#00e5ff;
+  color:#000;
+  border:none;
+}
+
+/* ===== Table Container ===== */
+.table-box{
+  background:#0b1421;
+  border:1px solid #00e5ff22;
+  border-radius:18px;
+  padding:20px;
+  margin-top:20px;
+}
+
+/* ===== Title ===== */
+.table-title{
+  font-size:16px;
+  color:#00e5ff;
+  margin-bottom:15px;
+}
+
+/* ===== Table ===== */
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+
+th{
+  text-align:left;
+  font-size:13px;
+  padding:12px 10px;
+  border-bottom:1px solid #00e5ff33;
+  color:#7dd3fc;
+}
+
+td{
+  padding:12px 10px;
+  font-size:13px;
+  border-bottom:1px solid #00e5ff11;
+}
+
+/* Hover row */
+tbody tr:hover{
+  background:#00e5ff0f;
+}
+
+.badge{
+  padding:4px 10px;
+  border-radius:12px;
+  font-size:11px;
+  font-weight:500;
+}
+
+/* Active */
+.badge-active{
+  background:#22c55e;
+  color:#fff;
+}
+
+/* Expiring Soon */
+.badge-warning{
+  background:#f59e0b;
+  color:#fff;
+}
+
+/* Overdue */
+.badge-expired{
+  background:#ef4444;
+  color:#fff;
+}
+
+.pagination{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:10px;
+  margin-top:10px;
+}
+
+.pagination button{
+  background:#0f172a;
+  border:1px solid #00e5ff33;
+  color:#00e5ff;
+  padding:4px 10px;
+  border-radius:6px;
+  cursor:pointer;
+}
+
+.pagination button:hover{
+  background:#00e5ff22;
+}
+
+.btn{
+  padding:8px 14px;
+  border-radius:8px;
+  font-size:13px;
+  border:1px solid #00e5ff33;
+  background:#0c1624;
+  color:#d8f3ff;
+  cursor:pointer;
+}
+
+.btn:hover{
+  background:#00e5ff;
+  color:#000;
+}
+
+.overdue-row{
+  background:#ef444422;
+}
+
+</style>
+</head>
+
+<body>
+  
+<div id="loadingScreen">
+
+  <div class="loader-box">
+
+    <div class="cube">
+      <i class="fa-solid fa-cube"></i>
+    </div>
+
+    <div class="loading-text">
+      Loading System...
+    </div>
+
+    <div class="loading-bar">
+      <div class="bar"></div>
+    </div>
+
+  </div>
+
+</div>
+
+<div class="wrapper">
+
+ <!-- Sidebar -->
+<div class="sidebar">
+  <div class="logo"><i class="fa-solid fa-cube"></i></div>
+
+<a href="dashboard.html" class="side-item">
+  <i class="fa-solid fa-house"></i>
+  <span>Dashboard</span>
+</a>
+
+  <a href="asset-master.html" class="side-item">
+    <i class="fa-solid fa-box"></i>
+    <span>Assets</span>
+  </a>
+
+  <a href="warranty.html" class="side-item">
+    <i class="fa-solid fa-shield-halved"></i>
+    <span>Warranty</span>
+  </a>
+
+  <a href="preventive-maintenance.html" class="side-item">
+    <i class="fa-solid fa-calendar-days"></i>
+    <span>PPM</span>
+  </a>
+
+  <a href="statutory.html" class="side-item">
+    <i class="fa-solid fa-clipboard-list"></i>
+    <span>Statutory</span>
+  </a>
+</div>
+
+  <!-- Main -->
+  <div class="main">
+
+    <div class="topbar">
+      <div class="title">Statutory</div>
+          </div>
+
+    <div class="header-row">
+      <h2>Statutory Inspection</h2>
+      <div class="actions">
+  <button class="btn" onclick="exportStatutory()">Export</button>
+</div>
+    </div>
+
+ 
+<table>
+
+<thead>
+<tr>
+<th>ID</th>
+<th>Equipment</th>
+<th>Department</th>
+<th>Certificate</th>
+<th>Last Inspection</th>
+<th>Next Due</th>
+<th>Days Left</th>
+<th>Status</th>
+</tr>
+</thead>
+
+<tbody id="statutoryTable"></tbody>
+
+</table>
+
+</div>
+<script>
+let statutoryData = [];
+let statutoryPage = 1;
+const perPage = 5;
+
+
+async function loadStatutory(){
+
+const res = await fetch("YOUR_SCRIPT_URL?action=getStatutory");
+
+const data = await res.json();
+
+processStatutory(data);
+
+}
+
+function processStatutory(data){
+
+const today = new Date();
+
+statutoryData = [];
+
+data.forEach(item=>{
+
+const nextDue = new Date(item.nextDue);
+
+const diffTime = nextDue - today;
+
+const daysLeft = Math.ceil(diffTime/(1000*60*60*24));
+
+let statusClass="";
+let statusText="";
+
+if(daysLeft < 0){
+
+statusClass="badge-expired";
+statusText="Overdue";
+
+}else if(daysLeft <= 90){
+
+statusClass="badge-warning";
+statusText="Expiring Soon";
+
+}else{
+
+statusClass="badge-active";
+statusText="Active";
+
+}
+
+statutoryData.push({...item,daysLeft,statusClass,statusText});
+
+});
+
+renderStatutory();
+
+}
+
+function renderStatutory(){
+
+const table = document.getElementById("statutoryTable");
+
+table.innerHTML="";
+
+const start = (statutoryPage-1)*perPage;
+
+const end = start + perPage;
+
+const pageData = statutoryData.slice(start,end);
+
+pageData.forEach(item=>{
+
+table.innerHTML += `
+<tr class="${item.daysLeft < 0 ? 'overdue-row' : ''}">
+<td>${item.id}</td>
+<td>${item.equipmentName || "-"}</td>
+<td>${item.department || "-"}</td>
+<td>${item.certificateType || "-"}</td>
+<td>${formatDate(item.lastInspection)}</td>
+<td>${formatDate(item.nextDue)}</td>
+<td>${item.daysLeft < 0 ? "Overdue" : item.daysLeft + " days"}</td>
+<td><span class="badge ${item.statusClass}">${item.statusText}</span></td>
+</tr>
+`;
+
+});
+
+renderStatutoryPagination();
+
+}
+
+function renderStatutoryPagination(){
+
+const container = document.getElementById("statutoryTable");
+
+const totalPages = Math.ceil(statutoryData.length/perPage);
+
+let html=`<tr><td colspan="8">
+<div class="pagination">`;
+
+if(statutoryPage>1){
+html+=`<button onclick="changeStatutoryPage(${statutoryPage-1})">Prev</button>`;
+}
+
+html+=` Page ${statutoryPage} / ${totalPages} `;
+
+if(statutoryPage<totalPages){
+html+=`<button onclick="changeStatutoryPage(${statutoryPage+1})">Next</button>`;
+}
+
+html+=`</div></td></tr>`;
+
+container.innerHTML+=html;
+
+}
+
+function changeStatutoryPage(p){
+
+statutoryPage = p;
+
+renderStatutory();
+
+}
+
+function exportStatutory(){
+
+let csv="ID,Equipment,Department,Certificate,Last Inspection,Next Due,Status\n";
+
+statutoryData.forEach(r=>{
+
+csv+=`${r.id},"${r.equipmentName}",${r.department},${r.certificateType},${r.lastInspection},${r.nextDue},${r.statusText}\n`;
+
+});
+
+const blob=new Blob([csv],{type:"text/csv"});
+
+const url=URL.createObjectURL(blob);
+
+const a=document.createElement("a");
+
+a.href=url;
+
+a.download="Statutory_Report.csv";
+
+a.click();
+
+}
+
+function formatDate(dateStr){
+
+if(!dateStr) return "-";
+
+const d=new Date(dateStr);
+
+const day=String(d.getDate()).padStart(2,"0");
+
+const month=String(d.getMonth()+1).padStart(2,"0");
+
+const year=d.getFullYear();
+
+return `${day}/${month}/${year}`;
+
+}
+
+document.addEventListener("DOMContentLoaded",function(){
+
+loadStatutory();
+
+});
+
+
+</script>
+
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
