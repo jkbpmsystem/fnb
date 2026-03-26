@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>WARRANTY</title>
+<link rel="stylesheet" href="loading.css">
+<link rel="icon" type="image/png" href="img/cube.png">
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+<script src="loading.js"></script>
+<style>
+/* ===== RESET ===== */
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+font-family:'Segoe UI',sans-serif;
+background:linear-gradient(135deg,#0a0f1c,#08101a 60%,#06101d);
+color:#d9f3ff;
+overflow-x:hidden;
+}
+
+/* ===== Layout ===== */
+.wrapper{
+display:flex;
+height:100vh;
+}
+
+/* ===== Sidebar ===== */
+.sidebar{
+width:90px;
+background:linear-gradient(180deg,#0c1624,#070e17);
+border-right:1px solid #00e5ff22;
+display:flex;
+flex-direction:column;
+align-items:center;
+padding-top:20px;
+transition:0.3s;
+}
+
+.sidebar.collapsed{
+width:65px;
+}
+
+.logo{
+font-size:22px;
+color:#00e5ff;
+margin-bottom:30px;
+}
+
+/* ===== Sidebar Item ===== */
+.side-item{
+width:100%;
+padding:12px 0;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+border-radius:15px;
+cursor:pointer;
+color:#7aa9c4;
+font-size:11px;
+gap:6px;
+text-decoration:none;
+transition:0.25s;
+}
+
+.side-item:hover{
+background:#00e5ff22;
+color:#00e5ff;
+transform:scale(1.08);
+}
+
+.side-item span{
+font-size:11px;
+opacity:0.7;
+transition:0.3s;
+}
+
+.sidebar.collapsed .side-item span{
+opacity:0;
+transform:translateY(-5px);
+pointer-events:none;
+}
+
+/* ===== Main ===== */
+.main{
+flex:1;
+padding:30px 40px;
+}
+
+/* ===== Topbar ===== */
+.topbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:30px;
+}
+
+.title{
+font-size:22px;
+font-weight:600;
+color:#00e5ff;
+letter-spacing:1px;
+}
+
+/* ===== Button ===== */
+.btn{
+padding:8px 14px;
+border-radius:8px;
+font-size:13px;
+border:1px solid #00e5ff33;
+background:#0c1624;
+color:#d8f3ff;
+cursor:pointer;
+transition:0.2s;
+}
+
+.btn:hover{
+background:#00e5ff22;
+}
+
+.btn-primary{
+background:#00e5ff;
+color:#000;
+border:none;
+}
+
+/* ===== Table ===== */
+.table-box{
+background:#0b1421;
+border:1px solid #00e5ff22;
+border-radius:18px;
+padding:20px;
+margin-top:20px;
+box-shadow:0 10px 30px rgba(0,0,0,0.4);
+}
+
+.table-title{
+font-size:16px;
+margin-bottom:15px;
+color:#00e5ff;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+}
+
+th{
+text-align:left;
+font-size:13px;
+padding:12px 10px;
+border-bottom:1px solid #00e5ff33;
+color:#7dd3fc;
+}
+
+td{
+padding:12px 10px;
+font-size:13px;
+border-bottom:1px solid #00e5ff11;
+color:#d8f3ff;
+}
+
+tbody tr:hover{
+background:#00e5ff0f;
+}
+
+/* ===== Badge ===== */
+.badge{
+display:inline-block;
+padding:4px 10px;
+border-radius:12px;
+font-size:11px;
+margin-top:4px;
+}
+
+.badge-active{background:#22c55e;color:#fff;}
+.badge-expired{background:#ef4444;color:#fff;}
+.badge-warning{background:#f59e0b;color:#fff;}
+
+/* ===== Pagination ===== */
+.pagination{
+display:flex;
+justify-content:center;
+align-items:center;
+gap:10px;
+margin-top:10px;
+}
+
+.pagination button{
+background:#0f172a;
+border:1px solid #00e5ff33;
+color:#00e5ff;
+padding:4px 10px;
+border-radius:6px;
+cursor:pointer;
+}
+
+.pagination button:hover{
+background:#00e5ff22;
+}
+
+/* ===== MODAL ===== */
+.modal{
+display:none;
+position:fixed;  /* 🔥 FIX penting */
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.6);
+backdrop-filter:blur(4px);
+justify-content:center;
+align-items:center;
+z-index:1000;
+}
+
+/* ===== Modal Content ===== */
+.modal-content{
+position:relative;
+width:80%;
+max-width:1100px;
+background:linear-gradient(145deg,#111b2a,#0a1320);
+border:1px solid #00e5ff22;
+border-radius:15px;
+padding:25px;
+box-shadow:0 20px 50px rgba(0,0,0,0.7);
+animation:fadeIn 0.2s ease;
+}
+
+/* ===== Close Button ===== */
+.close-btn{
+position:absolute;
+top:15px;
+right:15px;
+width:34px;
+height:34px;
+display:flex;
+align-items:center;
+justify-content:center;
+border-radius:50%;
+background:#0b1421;
+border:1px solid #00e5ff22;
+color:#7aa9c4;
+cursor:pointer;
+transition:0.2s;
+}
+
+.close-btn:hover{
+background:#00e5ff;
+color:#000;
+transform:rotate(90deg) scale(1.1);
+box-shadow:0 0 10px #00e5ff88;
+}
+
+/* ===== Asset Grid ===== */
+.asset-grid{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:16px;
+}
+
+/* ===== Card ===== */
+.asset-card{
+background:#0b1421;
+padding:15px;
+border-radius:10px;
+border:1px solid #00e5ff22;
+transition:0.2s;
+}
+
+.asset-card:hover{
+box-shadow:0 0 15px #00e5ff22;
+transform:translateY(-3px);
+}
+
+.asset-card h4{
+font-size:14px;
+margin-bottom:10px;
+color:#00e5ff;
+}
+
+.asset-card b{
+font-size:12px;
+color:#7aa9c4;
+}
+
+.asset-card div{
+margin-bottom:6px;
+font-size:13px;
+font-weight:500;
+color:#d9f3ff;
+}
+
+/* ===== Animation ===== */
+@keyframes fadeIn{
+from{opacity:0;transform:scale(0.95);}
+to{opacity:1;transform:scale(1);}
+}
+
+/* ===== Responsive ===== */
+@media(max-width:900px){
+.asset-grid{
+grid-template-columns:repeat(2,1fr);
+}
+}
+
+@media(max-width:600px){
+.asset-grid{
+grid-template-columns:1fr;
+}
+
+  
+</style>
+</head>
+
+<body>
+
+<div id="loadingScreen">
+
+  <div class="loader-box">
+
+    <div class="cube">
+      <i class="fa-solid fa-cube"></i>
+    </div>
+
+    <div class="loading-text">
+      Loading System...
+    </div>
+
+    <div class="loading-bar">
+      <div class="bar"></div>
+    </div>
+
+  </div>
+
+</div>
+  
+<div class="wrapper">
+
+ <!-- Sidebar -->
+<div class="sidebar">
+  <div class="logo"><i class="fa-solid fa-cube"></i></div>
+
+<a href="dashboard.html" class="side-item">
+  <i class="fa-solid fa-house"></i>
+  <span>Dashboard</span>
+</a>
+
+  <a href="asset-master.html" class="side-item">
+    <i class="fa-solid fa-box"></i>
+    <span>Assets</span>
+  </a>
+
+  <a href="warranty.html" class="side-item">
+    <i class="fa-solid fa-shield-halved"></i>
+    <span>Warranty</span>
+  </a>
+
+  <a href="preventive-maintenance.html" class="side-item">
+    <i class="fa-solid fa-calendar-days"></i>
+    <span>PPM</span>
+  </a>
+
+  <a href="statutory.html" class="side-item">
+    <i class="fa-solid fa-clipboard-list"></i>
+    <span>Statutory</span>
+  </a>
+</div>
+
+  <!-- Main -->
+  <div class="main">
+
+    <div class="topbar">
+      <div class="title">Warranty</div>
+          </div>
+
+    <div class="header-row">
+      <h2>Status Warranty</h2>
+      <div class="actions">
+  <button class="btn" onclick="exportPostWarranty()">Export Post Warranty</button>
+</div>
+    </div>
+   
+    <!--Table-->
+<div class="table-box">
+
+<div class="table-title">During Warranty</div>
+
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Equipment</th>
+<th>Start Date</th>
+<th>End Date</th>
+<th>Days Left</th>
+<th>Status</th>
+</tr>
+</thead>
+
+<tbody id="duringWarranty"></tbody>
+
+</table>
+
+</div>
+
+
+<div class="table-box" style="margin-top:30px;">
+
+<div class="table-title">Post Warranty</div>
+
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Equipment</th>
+<th>Supplier</th>
+<th>Start Date</th>
+<th>End Date</th>
+<th>Status</th>
+</tr>
+</thead>
+
+<tbody id="postWarranty"></tbody>
+
+</table>
+
+</div>
+
+<script>
+
+let duringData = [];
+let postData = [];
+let assetData = [];
+  
+let duringPage = 1;
+let postPage = 1;
+
+const perPage = 5;
+
+
+/*load data asset*/
+async function loadWarranty(){
+
+showLoading();
+
+const data = await fetchData("https://script.google.com/macros/s/AKfycbwHDAybRqO3zs6SXSaP3wQcdkNH9bU6v2QAGNy2yKT2GqfRRfcOczkCCI94oWxZEVcbPw/exec?action=getAssets");
+
+if(!data){
+
+return;
+}
+
+renderWarranty(data);
+
+hideLoading();
+assetData = data;
+  
+}
+
+/*pisah warranty*/
+function renderWarranty(data){
+
+const today = new Date();
+
+duringData = [];
+postData = [];
+
+data.forEach(asset=>{
+
+const end = new Date(asset.endDate);
+
+const diffTime = end - today;
+const daysLeft = Math.ceil(diffTime / (1000*60*60*24));
+
+let statusClass="";
+let statusText="";
+
+if(daysLeft < 0){
+
+statusClass="badge-expired";
+statusText="Expired";
+
+postData.push({...asset,daysLeft,statusClass,statusText});
+
+}else if(daysLeft <= 90){
+
+statusClass="badge-warning";
+statusText="Expiring Soon";
+
+duringData.push({...asset,daysLeft,statusClass,statusText});
+
+}else{
+
+statusClass="badge-active";
+statusText="Active";
+
+duringData.push({...asset,daysLeft,statusClass,statusText});
+
+}
+
+});
+
+renderDuringTable();
+renderPostTable();
+
+}
+
+/*export*/
+function exportPostWarranty(){
+
+const today = new Date();
+
+let exportData = [];
+
+assetData.forEach(asset=>{
+
+const end = new Date(asset.endDate);
+
+if(end < today){
+
+exportData.push({
+ID: asset.id,
+Equipment: asset.equipmentName || "-",
+StartDate: asset.startDate || "-",
+EndDate: asset.endDate || "-",
+Status: "Expired"
+});
+
+}
+
+});
+
+/* convert to CSV */
+let csv = "ID,Equipment,Start Date,End Date,Status\n";
+
+exportData.forEach(r=>{
+csv += `${r.ID},"${r.Equipment}",${r.StartDate},${r.EndDate},${r.Status}\n`;
+});
+
+/* download */
+const blob = new Blob([csv],{type:"text/csv"});
+const url = URL.createObjectURL(blob);
+
+const a = document.createElement("a");
+a.href = url;
+a.download = "Post_Warranty_Report.csv";
+a.click();
+
+}
+
+
+function formatDate(dateStr){
+
+if(!dateStr) return "-";
+
+const d = new Date(dateStr);
+
+const day = String(d.getDate()).padStart(2,"0");
+const month = String(d.getMonth()+1).padStart(2,"0");
+const year = d.getFullYear();
+
+return `${day}/${month}/${year}`;
+
+}
+
+/*render table*/
+function renderDuringTable(){
+
+const table = document.getElementById("duringWarranty");
+table.innerHTML="";
+
+const start = (duringPage-1)*perPage;
+const end = start+perPage;
+
+const pageData = duringData.slice(start,end);
+
+pageData.forEach((asset,index)=>{
+
+const realIndex = start + index;
+
+table.innerHTML += `
+<tr>
+<td onclick="showDetailById('${asset.id}')" style="cursor:pointer;color:#00e5ff;">
+${asset.id}
+</td>
+<td>${asset.equipmentName || "-"}</td>
+<td>${formatDate(asset.startDate)}</td>
+<td>${formatDate(asset.endDate)}</td>
+<td>${asset.daysLeft} days</td>
+<td><span class="badge ${asset.statusClass}">${asset.statusText}</span></td>
+</tr>
+`;
+});
+renderDuringPagination();
+}
+
+/*rendertablepost*/
+function renderPostTable(){
+
+const table = document.getElementById("postWarranty");
+table.innerHTML="";
+
+const start = (postPage-1)*perPage;
+const end = start+perPage;
+
+const pageData = postData.slice(start,end);
+
+pageData.forEach(asset=>{
+
+table.innerHTML += `
+<tr>
+<td>${asset.id}</td>
+<td>${asset.equipmentName || "-"}</td>
+<td>${asset.supplier || "-"}</td>
+<td>${formatDate(asset.startDate)}</td>
+<td>${formatDate(asset.endDate)}</td>
+<td><span class="badge badge-expired">Expired</span></td>
+</tr>
+`;
+
+});
+
+renderPostPagination();
+
+}
+
+/*paginationdw*/
+function renderDuringPagination(){
+
+const container = document.getElementById("duringWarranty");
+
+const totalPages = Math.ceil(duringData.length/perPage);
+
+let html=`<tr><td colspan="6">
+<div class="pagination">`;
+
+if(duringPage>1){
+html+=`<button onclick="changeDuringPage(${duringPage-1})">Prev</button>`;
+}
+
+html+=` Page ${duringPage} / ${totalPages} `;
+
+if(duringPage<totalPages){
+html+=`<button onclick="changeDuringPage(${duringPage+1})">Next</button>`;
+}
+
+html+=`</div></td></tr>`;
+
+container.innerHTML+=html;
+
+}
+
+function changeDuringPage(p){
+
+duringPage=p;
+renderDuringTable();
+
+}
+
+/*paginationpw*/
+function renderPostPagination(){
+
+const container = document.getElementById("postWarranty");
+
+const totalPages = Math.ceil(postData.length/perPage);
+
+let html=`<tr><td colspan="7">
+<div class="pagination">`;
+
+if(postPage>1){
+html+=`<button onclick="changePostPage(${postPage-1})">Prev</button>`;
+}
+
+html+=` Page ${postPage} / ${totalPages} `;
+
+if(postPage<totalPages){
+html+=`<button onclick="changePostPage(${postPage+1})">Next</button>`;
+}
+
+html+=`</div></td></tr>`;
+
+container.innerHTML+=html;
+
+}
+
+function changePostPage(p){
+
+postPage=p;
+renderPostTable();
+
+}
+
+/**/
+function showDetailById(id){
+
+const asset = assetData.find(a => a.id === id);
+if(!asset) return;
+
+document.getElementById("detailModal").style.display="flex";
+
+const detail=document.getElementById("assetDetail");
+
+/* kira status */
+const today = new Date();
+const end = new Date(asset.endDate);
+const daysLeft = Math.ceil((end - today)/(1000*60*60*24));
+
+let statusClass="";
+let statusText="";
+
+if(daysLeft < 0){
+  statusClass="badge-expired";
+  statusText="Expired";
+}else if(daysLeft <= 90){
+  statusClass="badge-warning";
+  statusText="Expiring Soon";
+}else{
+  statusClass="badge-active";
+  statusText="Active";
+}
+
+detail.innerHTML=`
+
+<div class="asset-grid">
+
+<!-- BASIC -->
+<div class="asset-card">
+<h4>Basic Info</h4>
+
+<b>ID</b><div>${asset.id}</div>
+<b>Asset No</b><div>${asset.assetNo || "-"}</div>
+<b>Asset No Hosza</b><div>${asset.assetNoHosza || "-"}</div>
+<b>Equipment</b><div>${asset.equipmentName || "-"}</div>
+<b>Description</b><div>${asset.equipmentDescriptions || "-"}</div>
+<b>Category</b><div>${asset.category || "-"}</div>
+
+</div>
+
+<!-- LOCATION -->
+<div class="asset-card">
+<h4>Location</h4>
+
+<b>Code Location</b><div>${asset.codeLocation || "-"}</div>
+<b>Area</b><div>${asset.area || "-"}</div>
+<b>Department</b><div>${asset.department || "-"}</div>
+
+</div>
+
+<!-- TECHNICAL -->
+<div class="asset-card">
+<h4>Technical</h4>
+
+<b>Type Code</b><div>${asset.typeCode || "-"}</div>
+<b>Discipline</b><div>${asset.discipline || "-"}</div>
+<b>Manufacturer</b><div>${asset.manufacture || "-"}</div>
+<b>Model</b><div>${asset.model || "-"}</div>
+<b>Serial No</b><div>${asset.serialNumber || "-"}</div>
+
+</div>
+
+<!-- SUPPLIER -->
+<div class="asset-card">
+<h4>Supplier</h4>
+
+<b>Bumi</b><div>${asset.bumi || "-"}</div>
+<b>Bumi Contact</b><div>${asset.bumiContact || "-"}</div>
+<b>Supplier</b><div>${asset.supplier || "-"}</div>
+<b>Supplier Contact</b><div>${asset.supplierContact || "-"}</div>
+
+</div>
+
+<!-- FINANCIAL -->
+<div class="asset-card">
+<h4>Financial</h4>
+
+<b>Price</b><div>${asset.price || "-"}</div>
+<b>LPO No</b><div>${asset.lpoNo || "-"}</div>
+
+</div>
+
+<!-- WARRANTY -->
+<div class="asset-card">
+<h4>Warranty</h4>
+
+<b>Start Date</b><div>${formatDate(asset.startDate)}</div>
+<b>End Date</b><div>${formatDate(asset.endDate)}</div>
+<b>Status</b>
+<div><span class="badge ${statusClass}">${statusText}</span></div>
+<b>Days Left</b><div>${daysLeft} days</div>
+
+</div>
+
+</div>
+
+`;
+
+}
+  
+function closeAssetDetail(){
+document.getElementById("detailModal").style.display="none";
+}
+  
+document.addEventListener("DOMContentLoaded", function(){
+
+document.getElementById("detailModal").style.display="none";
+
+loadWarranty();
+
+});
+
+  
+function closeAssetDetail(){
+document.getElementById("detailModal").style.display="none";
+}
+  
+document.addEventListener("DOMContentLoaded", function(){
+
+document.getElementById("detailModal").style.display="none";
+
+loadWarranty();
+
+});
+
+
+</script>
+
+<div class="modal" id="detailModal">
+
+  <div class="modal-content asset-detail-modal">
+
+    <div class="modal-header">
+      <h3><i class="fa-solid fa-cube"></i> Asset Detail</h3>
+      <span class="close-btn" onclick="closeAssetDetail()">&times;</span>
+    </div>
+
+    <div class="modal-body" id="assetDetail"></div>
+
+  </div>
+
+</div>
+  </body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
