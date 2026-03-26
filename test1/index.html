@@ -2,241 +2,16 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>CMMS Login</title>
+<title>Login</title>
+<link rel="stylesheet" href="components/index.css">
 <link rel="stylesheet" href="components/loading.css">
 <link rel="icon" type="image/png" href="img/cube.png">
 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
-<script src="components/loading.js"></script> 
-<style>
-*{margin:0;padding:0;box-sizing:border-box;}
+<script src="components/loading.js"></script>
+<script src="components/index.js"></script> 
 
-body{
-  font-family:'Segoe UI',sans-serif;
-  height:100vh;
-  overflow:hidden;
-  background:#070c16;
-  display:flex;
-  transition:opacity 0.8s ease, transform 0.8s ease;
-}
-
-body.fade-out{
-  opacity:0;
-  transform:scale(1.05);
-}
-
-/* Modal */
-.modal-overlay{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.75);
-  backdrop-filter:blur(6px);
-  display:none;
-  align-items:center;
-  justify-content:center;
-}
-
-.modal{
-  width:380px;
-  background:linear-gradient(145deg,#0e1a2c,#091321);
-  border-radius:18px;
-  padding:30px;
-  border:1px solid #00e5ff33;
-  animation:fadeIn 0.3s ease;
-}
-
-.modal h3{
-  margin-bottom:15px;
-  color:#00e5ff;
-}
-
-.step{display:none;}
-
-.step.active{display:block;}
-
-.success{
-  color:#00e676;
-  font-size:13px;
-  margin-top:10px;
-}
-
-.error{
-  color:#ff5252;
-  font-size:13px;
-  margin-top:10px;
-}
-
-.close{
-  text-align:right;
-  cursor:pointer;
-  opacity:0.6;
-}
-/* Canvas */
-#particleCanvas{
-  position:fixed;
-  inset:0;
-  z-index:0;
-}
-
-/* Layout */
-.container{
-  display:flex;
-  width:100%;
-  z-index:1;
-}
-
-/* LEFT */
-.left{
-  flex:1;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  padding:80px;
-  color:#e6faff;
-  animation:fadeInLeft 1.2s ease forwards;
-}
-
-.left h1{
-  font-size:42px;
-  color:#00e5ff;
-  margin-bottom:20px;
-}
-
-.left p{
-  max-width:420px;
-  opacity:0.7;
-  line-height:1.6;
-}
-
-/* RIGHT */
-.right{
-  flex:1;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:60px;
-}
-
-/* Login Card */
-.login-card{
-  width:100%;
-  max-width:420px;
-  padding:45px;
-  border-radius:20px;
-  background:rgba(14,26,44,0.85);
-  backdrop-filter:blur(12px);
-  border:1px solid #00e5ff33;
-  box-shadow:0 0 40px #00e5ff22;
-  animation:fadeInCard 1.2s ease forwards;
-}
-
-.logo{
-  text-align:center;
-  margin-bottom:30px;
-  font-size:22px;
-  font-weight:600;
-  color:#00e5ff;
-}
-
-.input-group{margin-bottom:20px;}
-
-label{
-  font-size:13px;
-  opacity:0.7;
-  color:#cfefff;
-}
-
-.input-box{
-  position:relative;
-  margin-top:6px;
-}
-
-.input-box input{
-  width:100%;
-  padding:12px 40px 12px 12px;
-  border-radius:8px;
-  border:1px solid #00e5ff22;
-  background:#0b1421;
-  color:#fff;
-  outline:none;
-  transition:0.3s;
-}
-
-.input-box input:focus{
-  border:1px solid #00e5ff;
-  box-shadow:0 0 10px #00e5ff88;
-}
-
-.input-box i{
-  position:absolute;
-  right:12px;
-  top:50%;
-  transform:translateY(-50%);
-  color:#00e5ff;
-  opacity:0.7;
-}
-
-.options{
-  display:flex;
-  justify-content:space-between;
-  font-size:12px;
-  margin-bottom:25px;
-  opacity:0.7;
-  color:#cfefff;
-}
-
-.options a{
-  color:#00e5ff;
-  text-decoration:none;
-}
-
-/* 🔥 Glow Pulse Button */
-.login-btn{
-  width:100%;
-  padding:14px;
-  border-radius:10px;
-  border:none;
-  background:linear-gradient(90deg,#00e5ff,#00bcd4);
-  color:#000;
-  font-weight:600;
-  cursor:pointer;
-  font-size:15px;
-  animation:pulseGlow 2s infinite;
-  box-shadow:0 0 20px #00e5ff66;
-  transition:0.3s;
-}
-
-.login-btn:hover{
-  transform:scale(1.03);
-}
-
-@keyframes pulseGlow{
-  0%{box-shadow:0 0 10px #00e5ff55;}
-  50%{box-shadow:0 0 25px #00e5ffcc;}
-  100%{box-shadow:0 0 10px #00e5ff55;}
-}
-
-.footer{
-  text-align:center;
-  font-size:12px;
-  margin-top:20px;
-  opacity:0.4;
-  color:#cfefff;
-}
-
-/* Animations */
-@keyframes fadeInLeft{
-  from{opacity:0;transform:translateX(-40px);}
-  to{opacity:1;transform:translateX(0);}
-}
-
-@keyframes fadeInCard{
-  from{opacity:0;transform:translateY(40px);}
-  to{opacity:1;transform:translateY(0);}
-}
-
-</style>
 </head>
 
 <body>
@@ -250,7 +25,7 @@ label{
     </div>
 
     <div class="loading-text">
-      Loading System...
+      Loading ...
     </div>
 
     <div class="loading-bar">
@@ -298,139 +73,14 @@ label{
       <button class="login-btn" onclick="login()">Login</button>
       
 
-      <div class="footer">© 2026 CMMS System</div>
+      <div class="footer">© 2026 F&B System</div>
 
     </div>
   </div>
 
 </div>
 
-<script>
-/* Page Transition */
-function login(){
-  document.body.classList.add("fade-out");
-  setTimeout(()=>{
-    window.location.href="dashboard.html"; // tukar ke page dashboard Ahmad
-  },800);
-}
 
-/* Particle System */
-const canvas=document.getElementById("particleCanvas");
-const ctx=canvas.getContext("2d");
-
-canvas.width=window.innerWidth;
-canvas.height=window.innerHeight;
-
-let mouse={x:null,y:null,radius:120};
-
-window.addEventListener("mousemove",e=>{
-  mouse.x=e.x;
-  mouse.y=e.y;
-});
-
-let particles=[];
-for(let i=0;i<90;i++){
-  particles.push({
-    x:Math.random()*canvas.width,
-    y:Math.random()*canvas.height,
-    vx:(Math.random()-0.5)*1.2,
-    vy:(Math.random()-0.5)*1.2,
-    size:2
-  });
-}
-
-function animate(){
-  ctx.fillStyle="rgba(7,12,22,0.35)";
-  ctx.fillRect(0,0,canvas.width,canvas.height);
-
-  particles.forEach((p,i)=>{
-    p.x+=p.vx;
-    p.y+=p.vy;
-
-    if(p.x<0||p.x>canvas.width) p.vx*=-1;
-    if(p.y<0||p.y>canvas.height) p.vy*=-1;
-
-    let dx=mouse.x-p.x;
-    let dy=mouse.y-p.y;
-    let dist=Math.sqrt(dx*dx+dy*dy);
-
-    if(dist<mouse.radius){
-      p.x-=dx/20;
-      p.y-=dy/20;
-    }
-
-    ctx.beginPath();
-    ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
-    ctx.fillStyle="#00e5ff";
-    ctx.fill();
-
-    for(let j=i+1;j<particles.length;j++){
-      let dx=p.x-particles[j].x;
-      let dy=p.y-particles[j].y;
-      let d=Math.sqrt(dx*dx+dy*dy);
-      if(d<100){
-        ctx.beginPath();
-        ctx.moveTo(p.x,p.y);
-        ctx.lineTo(particles[j].x,particles[j].y);
-        ctx.strokeStyle="rgba(0,229,255,"+(1-d/100)+")";
-        ctx.stroke();
-      }
-    }
-  });
-
-  requestAnimationFrame(animate);
-}
-
-animate();
-
-window.addEventListener("resize",()=>{
-  canvas.width=window.innerWidth;
-  canvas.height=window.innerHeight;
-});
-
-/*===========================
-====log in===========
-===========================*/
-async function login(){
-
-showLoading();
-  
-  const username = document.getElementById("loginUsername").value;
-  const password = document.getElementById("loginPass").value;
-
-  if(!username || !password){
-    alert("Please enter username and password");
-    return;
-  }
-
-  const res = await fetch("https://script.google.com/macros/s/AKfycbwHDAybRqO3zs6SXSaP3wQcdkNH9bU6v2QAGNy2yKT2GqfRRfcOczkCCI94oWxZEVcbPw/exec",{
-    method:"POST",
-    body: JSON.stringify({
-      action:"login",
-      username:username,
-      password:password
-    })
-  });
-
-  const data = await res.json();
-
-  console.log(data);
-
-  if(data.status === "success"){
-
-    sessionStorage.setItem("cmmsUser", username);
-    sessionStorage.setItem("cmmsRole", data.role);
-
-    setTimeout(()=>{
-window.location.href="db/dashboard.html";
-},500);
-
-  }else{
-    hideLoading();
-    alert("Invalid username or password");
-  }
-}
-</script>
 
 </body>
 
