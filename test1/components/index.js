@@ -114,7 +114,7 @@ showLoading();
     sessionStorage.setItem("cmmsRole", data.role);
 
     setTimeout(()=>{
-window.location.href="db/dashboard.html";
+window.location.href="dashboard.html";
 },500);
 
   }else{
