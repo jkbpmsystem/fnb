@@ -46,18 +46,77 @@ function renderTable(){
 }
 
 function renderPagination(){
-  const box = document.getElementById("pagination");
-  if(!box) return;
-  box.innerHTML = "";
-  const total = Math.ceil(filteredData.length/rowsPerPage);
-  for(let i=1;i<=total;i++){
-    const b = document.createElement("button");
-    b.className = "btn";
-    b.innerText = i;
-    if(i===currentPage){ b.style.background="#00e5ff"; b.style.color="#000"; }
-    b.onclick = ()=>{ currentPage=i; renderTable(); renderPagination(); };
-    box.appendChild(b);
+
+  const pageBox = document.getElementById("pagination");
+  pageBox.innerHTML = "";
+
+  const totalPages = Math.ceil(filteredData.length / rowsPerPage);
+
+  const maxVisible = 5; // berapa page nak tunjuk
+  let startPage = Math.max(1, currentPage - 2);
+  let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+
+  if(endPage - startPage < maxVisible - 1){
+    startPage = Math.max(1, endPage - maxVisible + 1);
   }
+
+  // ===== PREV BUTTON =====
+  const prev = document.createElement("button");
+  prev.innerText = "Prev";
+  prev.className = "btn";
+
+  if(currentPage === 1){
+    prev.disabled = true;
+    prev.style.opacity = "0.4";
+  }
+
+  prev.onclick = () => {
+    currentPage--;
+    renderTable();
+    renderPagination();
+  };
+
+  pageBox.appendChild(prev);
+
+  // ===== PAGE NUMBERS =====
+  for(let i = startPage; i <= endPage; i++){
+
+    const btn = document.createElement("button");
+    btn.innerText = i;
+    btn.className = "btn";
+
+    if(i === currentPage){
+      btn.style.background = "#00e5ff";
+      btn.style.color = "#000";
+    }
+
+    btn.onclick = () => {
+      currentPage = i;
+      renderTable();
+      renderPagination();
+    };
+
+    pageBox.appendChild(btn);
+  }
+
+  // ===== NEXT BUTTON =====
+  const next = document.createElement("button");
+  next.innerText = "Next";
+  next.className = "btn";
+
+  if(currentPage === totalPages){
+    next.disabled = true;
+    next.style.opacity = "0.4";
+  }
+
+  next.onclick = () => {
+    currentPage++;
+    renderTable();
+    renderPagination();
+  };
+
+  pageBox.appendChild(next);
+
 }
 
 function searchTable(){
