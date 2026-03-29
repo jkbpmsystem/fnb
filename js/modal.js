@@ -48,49 +48,79 @@ function renderDetailWithTab(asset){
 
 function renderDetail(a){
   return `
-<div class="asset-grid"> <!-- BASIC -->
-    <div class="asset-card">
-        <h4>Basic Info</h4> <b>ID</b>
-        <div>${asset.id}</div> <b>Asset No</b>
-        <div>${asset.assetNo || "-"}</div> <b>Asset No Hosza</b>
-        <div>${asset.assetNoHosza || "-"}</div> <b>Equipment</b>
-        <div>${asset.equipmentName || "-"}</div> <b>Description</b>
-        <div>${asset.equipmentDescriptions || "-"}</div> <b>Category</b>
-        <div>${asset.category || "-"}</div>
-    </div> <!-- LOCATION -->
-    <div class="asset-card">
-        <h4>Location</h4> <b>Code Location</b>
-        <div>${asset.codeLocation || "-"}</div> <b>Area</b>
-        <div>${asset.area || "-"}</div> <b>Department</b>
-        <div>${asset.department || "-"}</div>
-    </div> <!-- TECHNICAL -->
-    <div class="asset-card">
-        <h4>Technical</h4> <b>Type Code</b>
-        <div>${asset.typeCode || "-"}</div> <b>Discipline</b>
-        <div>${asset.discipline || "-"}</div> <b>Manufacturer</b>
-        <div>${asset.manufacture || "-"}</div> <b>Model</b>
-        <div>${asset.model || "-"}</div> <b>Serial No</b>
-        <div>${asset.serialNumber || "-"}</div>
-    </div> <!-- SUPPLIER -->
-    <div class="asset-card">
-        <h4>Supplier</h4> <b>Bumi</b>
-        <div>${asset.bumi || "-"}</div> <b>Bumi Contact</b>
-        <div>${asset.bumiContact || "-"}</div> <b>Supplier</b>
-        <div>${asset.supplier || "-"}</div> <b>Supplier Contact</b>
-        <div>${asset.supplierContact || "-"}</div>
-    </div> <!-- FINANCIAL -->
-    <div class="asset-card">
-        <h4>Financial</h4> <b>Price</b>
-        <div>${asset.price || "-"}</div> <b>LPO No</b>
-        <div>${asset.lpoNo || "-"}</div>
-    </div> <!-- WARRANTY -->
-    <div class="asset-card">
-        <h4>Warranty</h4> <b>Start Date</b>
-        <div>${formatDate(asset.startDate)}</div> <b>End Date</b>
-        <div>${formatDate(asset.endDate)}</div> <b>Status</b>
-        <div><span class="badge ${statusClass}">${statusText}</span></div> <b>Days Left</b>
-        <div>${daysLeft} days</div>
-    </div>
+<div class="asset-grid">
+
+<!-- BASIC -->
+<div class="asset-card">
+<h4>Basic Info</h4>
+
+<b>ID</b><div>${asset.id}</div>
+<b>Asset No</b><div>${asset.assetNo || "-"}</div>
+<b>Asset No Hosza</b><div>${asset.assetNoHosza || "-"}</div>
+<b>Equipment</b><div>${asset.equipmentName || "-"}</div>
+<b>Description</b><div>${asset.equipmentDescriptions || "-"}</div>
+<b>Category</b><div>${asset.category || "-"}</div>
+
+</div>
+
+<!-- LOCATION -->
+<div class="asset-card">
+<h4>Location</h4>
+
+<b>Code Location</b><div>${asset.codeLocation || "-"}</div>
+<b>Area</b><div>${asset.area || "-"}</div>
+<b>Department</b><div>${asset.department || "-"}</div>
+
+</div>
+
+<!-- TECHNICAL -->
+<div class="asset-card">
+<h4>Technical</h4>
+
+<b>Type Code</b><div>${asset.typeCode || "-"}</div>
+<b>Discipline</b><div>${asset.discipline || "-"}</div>
+<b>Manufacturer</b><div>${asset.manufacture || "-"}</div>
+<b>Model</b><div>${asset.model || "-"}</div>
+<b>Serial No</b><div>${asset.serialNumber || "-"}</div>
+
+</div>
+
+<!-- SUPPLIER -->
+<div class="asset-card">
+<h4>Supplier</h4>
+
+<b>Bumi</b><div>${asset.bumi || "-"}</div>
+<b>Bumi Contact</b><div>${asset.bumiContact || "-"}</div>
+<b>Supplier</b><div>${asset.supplier || "-"}</div>
+<b>Supplier Contact</b><div>${asset.supplierContact || "-"}</div>
+
+</div>
+
+<!-- FINANCIAL -->
+<div class="asset-card">
+<h4>Financial</h4>
+
+<b>Price</b><div>${asset.price || "-"}</div>
+<b>LPO No</b><div>${asset.lpoNo || "-"}</div>
+
+</div>
+
+<!-- WARRANTY -->
+<div class="asset-card">
+<h4>Warranty</h4>
+
+<b>Start Date</b><div>${formatDate(asset.startDate)}</div>
+<b>End Date</b><div>${formatDate(asset.endDate)}</div>
+
+<b>Status</b>
+<div>
+<span class="badge ${statusClass}">${statusText}</span>
+</div>
+
+<b>Days Left</b><div>${daysLeft} days</div>
+
+</div>
+
 </div>
   `;
 }
