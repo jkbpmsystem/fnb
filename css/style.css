@@ -20,9 +20,37 @@ td{padding:12px 6px;border-bottom:1px solid #00e5ff11;font-size:13px;}
 .clickable-id{cursor:pointer;color:#00e5ff;}
 /* Modal */
 .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);justify-content:center;align-items:center;z-index:999;}
-.modal-content{width:85%;max-width:1000px;background:linear-gradient(145deg,#111b2a,#0a1320);border:1px solid #00e5ff22;border-radius:12px;padding:18px;}
+.modal-content{
+width:90%;
+max-width:1200px;
+max-height:90vh;        /* 🔥 penting */
+overflow-y:auto;        /* scroll dalam modal */
+background:linear-gradient(145deg,#111b2a,#0a1320);
+border:1px solid #00e5ff22;
+border-radius:15px;
+padding:25px;
+}
 .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
 .close-btn{cursor:pointer;font-size:18px;}
+.save-btn{
+width:100%;
+padding:16px;
+margin-top:20px;
+border:none;
+border-radius:10px;
+background:linear-gradient(135deg,#00e5ff,#00bcd4);
+color:#000;
+font-weight:700;
+font-size:15px;
+cursor:pointer;
+transition:0.3s;
+letter-spacing:0.5px;
+}
+
+.save-btn:hover{
+transform:scale(1.02);
+box-shadow:0 0 20px #00e5ff55;
+}
 /* Tabs */
 .tab-header{display:flex;gap:8px;margin-bottom:10px;}
 .tab-btn{padding:6px 12px;border:none;background:#0b1421;color:#fff;cursor:pointer;border-radius:6px;}
@@ -42,8 +70,25 @@ td{padding:12px 6px;border-bottom:1px solid #00e5ff11;font-size:13px;}
 .ppm-card.red{border-color:#ff3d57;color:#ff3d57;}
 .ppm-card.orange{border-color:#ffc107;color:#ffc107;}
 /* Forms */
-.form-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.form-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+gap:16px;
+}
 .form-grid input, .form-grid select{width:100%;padding:9px;border-radius:8px;border:1px solid #00e5ff22;background:#0b1421;color:#fff;}
+.form-section{
+grid-column:1/-1;
+font-size:13px;
+color:#00e5ff;
+margin-top:10px;
+margin-bottom:4px;
+border-bottom:1px solid #00e5ff22;
+padding-bottom:4px;
+}
+.form-group input:focus{
+border:1px solid #00e5ff;
+box-shadow:0 0 8px #00e5ff33;
+}
 /* Small widgets */
 .kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px;}
 .kpi .card{background:#0b1421;border:1px solid #00e5ff22;border-radius:12px;padding:14px;}
