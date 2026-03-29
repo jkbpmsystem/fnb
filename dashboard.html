@@ -1,0 +1,89 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Dashboard</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body onload="checkAuth()">
+<div class="wrapper">
+  
+<div class="sidebar">
+  <div class="logo">■</div>
+  <a href="dashboard.html" class="side-item active">Dashboard</a>
+  <a href="asset-master.html" class="side-item ">Assets</a>
+  <a href="preventive-maintenance.html" class="side-item ">PPM</a>
+</div>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="title">Dashboard (<span id="moduleName"></span>)</div>
+      <div><button class="btn" onclick="exportCSV(assetCache || [])">Export Excel</button> User: <span id="userDisplay"></span> | <button class="btn" onclick="logout()">Logout</button></div>
+    </div>
+
+    <div class="kpi">
+      <div class="card"><div>Total Assets</div><div class="value" id="totalAssets">0</div></div>
+      <div class="card"><div>Overdue</div><div class="value" id="overdueCount">0</div></div>
+      <div class="card"><div>Upcoming</div><div class="value" id="upcomingCount">0</div></div>
+    </div>
+
+<div class="chart-grid">
+  <div class="chart-box">
+    <div class="chart-title">Asset Status</div>
+    <canvas id="assetChart"></canvas>
+  </div>
+  <div class="chart-box">
+    <div class="chart-title">PPM Status</div>
+    <canvas id="ppmChart"></canvas>
+  </div>
+</div>
+
+<div class="chart-box">
+  <div class="chart-title">Monthly PPM Trend</div>
+  <canvas id="trendChart"></canvas>
+</div>
+
+    <div class="table-box">
+      <div class="title" style="margin-bottom:10px;">Recent PPM</div>
+      <div id="recentList" class="asset-grid"></div>
+    
+<div class="table-box" style="margin-top:20px;">
+  <div class="title" style="margin-bottom:10px;">Contract Duration</div>
+  <table id="durationTable">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Equipment</th>
+        <th>Start Date</th>
+        <th>End Date</th>
+        <th>Days Left</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
+
+
+  </div>
+</div>
+
+
+<div class="modal" id="globalDetailModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 id="detailTitle">Asset Detail</h3>
+      <span class="close-btn">&times;</span>
+    </div>
+    <div id="detailBody"></div>
+  </div>
+</div>
+
+
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/modal.js"></script>
+<script src="js/dashboard.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</body>
+</html>
