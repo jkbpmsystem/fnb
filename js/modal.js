@@ -57,8 +57,8 @@ function renderDetail(a){
       <b>Equipment Name</b><div>${a.equipmentName||""}</div>
       <b>Equipment Description</b><div>${a.equipmentDescriptions||""}</div>
       <b>Category</b><div>${a.category ||""}</div>
- 
     </div>
+    
     <div class="asset-card">
       <h4>Location</h4>
       <b>Code</b><div>${a.codeLocation||""}</div>
@@ -81,12 +81,13 @@ function renderDetail(a){
       <b>Bumi Contact</b><div>${a.bumiContact||""}</div>
       <b>Supplier</b><div>${a.supplier||""}</div>
       <b>Supplier Contact</b><div>${a.supplierContact||""}</div>
-      
+    </div>
       
     <div class="asset-card">
       <h4>Financial</h4>
       <b>Price</b><div>${a.price||""}</div>
       <b>LPO No</b><div>${a.lpoNo||""}</div>
+     </div>
       
     <div class="asset-card">
       <h4>Warranty</h4>
