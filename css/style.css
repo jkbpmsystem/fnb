@@ -30,7 +30,7 @@ td{padding:12px 6px;border-bottom:1px solid #00e5ff11;font-size:13px;}
 .tab-content{display:none;}
 .tab-content.active{display:block;}
 /* Asset detail grid */
-.asset-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;}
+.asset-grid{display:grid;grid-template-columns:repeat(3, 1fr);gap:12px;}
 .asset-card{background:#0b1421;padding:12px;border-radius:10px;border:1px solid #00e5ff22;}
 .asset-card h4{font-size:13px;margin-bottom:8px;color:#9bdfff;}
 .asset-card b{font-size:11px;color:#7aa9c4;}
