@@ -157,7 +157,7 @@ async function openAddAsset(){
 
     <input type="hidden" id="module">
     <div class="form-grid">
-      <div><label>Module</label><input id="moduleDisplay" readonly></div>
+      <div><label>Module</label><input id="moduleDisplay" readonly>
     
 
        <div class="modal-body">
@@ -298,6 +298,7 @@ async function openAddAsset(){
                                     <option value="YES">YES</option>
                             </select>
 
+                        </div>
                         </div>
 
                     </div>
