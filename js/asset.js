@@ -100,8 +100,8 @@ async function openAddAsset(){
       <input id="department" placeholder="Department" readonly>
       <input id="startDate" type="date">
       <input id="endDate" type="date">
-      <input id="ppmFrequency" placeholder="PPM Frequency">
-      <input id="status" placeholder="Status">
+      <input id="ppmFrequency" placeholder="PPM Frequency per year">
+      <input id="status" placeholder="Status Kontrak Edgenta YES / NO">
     </div>
     <button class="btn btn-primary" id="saveAssetBtn">Save</button>
   `;
