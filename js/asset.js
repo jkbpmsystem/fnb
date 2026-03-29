@@ -301,9 +301,8 @@ async function openAddAsset(){
                         </div>
 
                     </div>
-
+                    <div class="modal-footer">
                     <button class="save-btn" onclick="saveAsset()">Save Asset</button>
-
                 </div>
   `;
   }
