@@ -1,26 +1,81 @@
+let searchTimeout;
+
+function debounceSearch(){
+
+  clearTimeout(searchTimeout);
+
+  searchTimeout = setTimeout(()=>{
+    searchTable();
+  },300);
+
+}
+
 
 let assetData = [];
 let filteredData = [];
 let currentPage = 1;
 const rowsPerPage = 12;
 
-document.addEventListener("DOMContentLoaded", initAsset);
+document.addEventListener("DOMContentLoaded", ()=>{
+  loadAssets();
+});
 
 async function initAsset(){
   const input = document.getElementById("searchBox");
   if(input){
-    input.addEventListener("keyup", searchTable);
+    input.addEventListener("keyup", debounceSearch);
   }
   await loadAssets();
 }
 
-async function loadAssets(){
-  assetData = await getAssets();
-  filteredData = assetData;
-  renderTable();
-  renderPagination();
-}
+let assetCache = [];
 
+async function loadAssets(){
+
+  const tbody = document.querySelector("#assetTable tbody");
+
+  // 🔥 loading UI
+  tbody.innerHTML = "<tr><td colspan='10'>Loading data...</td></tr>";
+
+  try{
+
+    // 🔥 1. CHECK LOCAL STORAGE DULU
+    const cached = localStorage.getItem("assets");
+    const cacheTime = localStorage.getItem("assets_time");
+
+    const isValidCache = cacheTime && (Date.now() - cacheTime < 300000); // 5 min
+
+    if(cached){
+      assetCache = JSON.parse(cached);
+      console.log("Loaded from cache ⚡");
+    }else{
+      assetCache = await getAssets();
+      localStorage.setItem("assets", JSON.stringify(assetCache));
+      localStorage.setItem("assets_time", Date.now());  // 🔥 letak sini
+
+      // 🔥 2. SAVE KE CACHE
+      localStorage.setItem("assets", JSON.stringify(assetCache));
+
+      console.log("Loaded from API 🌐");
+    }
+
+    assetData = assetCache;
+    filteredData = assetData;
+
+    // 🔥 3. RENDER SMOOTH
+    requestAnimationFrame(()=>{
+      renderTable();
+      renderPagination();
+    });
+
+  }catch(err){
+
+    tbody.innerHTML = "<tr><td colspan='10'>Error loading data</td></tr>";
+    console.error(err);
+
+  }
+
+}
 function renderTable(){
   const tbody = document.querySelector("#assetTable tbody");
   if(!tbody) return;
@@ -42,6 +97,7 @@ function renderTable(){
       <td>${formatDate(a.endDate)||""}</td>
     `;
     tbody.appendChild(tr);
+    tbody.innerHTML = "";
   });
 }
 
@@ -472,4 +528,8 @@ loadAssets();
 alert("Error saving BEMS");
 }
 
+}
+
+function clearCache(){
+  localStorage.removeItem("assets");
 }
