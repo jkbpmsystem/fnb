@@ -122,3 +122,10 @@ margin-bottom:10px;
 font-size:14px;
 opacity:0.8;
 }
+
+#pagination{
+display:flex;
+gap:6px;
+justify-content:center;
+margin-top:10px;
+}
