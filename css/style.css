@@ -25,7 +25,7 @@ width:90%;
   display: grid;
   grid-template-rows: repeat(3, 1fr);
   grid-template-columns: repeat(3, 1fr);
-  gap: 8px;       /* 🔥 penting */
+  gap: 8%;       /* 🔥 penting */
 overflow-y:auto;        /* scroll dalam modal */
 background:linear-gradient(145deg,#111b2a,#0a1320);
 border:1px solid #00e5ff22;
