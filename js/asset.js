@@ -303,3 +303,219 @@ function clearCache(){
   localStorage.removeItem("assets_time");
 
 }
+
+// location autofill
+function autoFillLocation(code){
+  const area = document.getElementById("area");
+  const dept = document.getElementById("department");
+  if(!area || !dept) return;
+  if(locationMaster[code]){
+    area.value = locationMaster[code];
+    dept.value = code.split("-")[1] || "";
+  }else{
+    area.value = "";
+    dept.value = "";
+  }
+}
+
+// simple add modal (reuse global modal body)
+async function openAddAsset(){
+  const body = document.getElementById("detailBody");
+  document.getElementById("detailTitle").innerText = "Add Asset";
+  document.getElementById("globalDetailModal").style.display = "flex";
+  const idRes = await generateId();
+  const mod = (sessionStorage.getItem("cmmsModule") || "FEMS");
+  
+  const modNow = (sessionStorage.getItem("cmmsModule") || "FEMS");
+  if(modNow === "BEMS"){
+    body.innerHTML = renderBEMSForm();
+  }else{
+    body.innerHTML = `
+
+    <input type="hidden" id="module">
+    <div class="form-grid">
+      <div><label>Module</label><input id="moduleDisplay" readonly></div>
+    
+    <div class="form-grid">
+      <input id="assetId" value="${idRes.id}" readonly>
+      <input id="assetNo" placeholder="Asset No">
+      <input id="equipmentName" placeholder="Equipment Name">
+      <input id="typeCode" placeholder="Type Code">
+      <input id="discipline" placeholder="Discipline">
+      <input id="codeLocation" placeholder="Code Location" oninput="this.value=this.value.toUpperCase(); autoFillLocation(this.value)">
+      <input id="area" placeholder="Area" readonly>
+      <input id="department" placeholder="Department" readonly>
+      <input id="startDate" type="date">
+      <input id="endDate" type="date">
+      <input id="ppmFrequency" placeholder="PPM Frequency">
+      <input id="status" placeholder="Status">
+    </div>
+    <button class="btn btn-primary" id="saveAssetBtn">Save</button>
+  `;
+  }
+  
+  // set module values
+  const modVal = (sessionStorage.getItem("cmmsModule") || "FEMS");
+  document.getElementById("module").value = modVal;
+  const md = document.getElementById("moduleDisplay");
+  if(md) md.value = modVal;
+
+  document.getElementById("saveAssetBtn").onclick = saveAsset;
+}
+
+async function saveAsset(){
+  const data = {
+    action:"saveAsset",
+    id:assetId.value,
+    assetNo:assetNo.value,
+    equipmentName:equipmentName.value,
+    typeCode:typeCode.value,
+    discipline:discipline.value,
+    codeLocation:codeLocation.value,
+    area:area.value,
+    department:department.value,
+    startDate:startDate.value,
+    endDate:endDate.value,
+    ppmFrequency:ppmFrequency.value,
+    status:status.value,
+    module: (document.getElementById("module") ? document.getElementById("module").value : (sessionStorage.getItem("cmmsModule")||"FEMS"))
+  };
+  const res = await saveAssetAPI(data);
+  if(res.status==="success"){
+    alert("Saved");
+    document.getElementById("globalDetailModal").style.display = "none";
+    assetCache = []; // reset cache
+    loadAssets();
+  }else{
+    alert("Save failed");
+  }
+}
+
+
+function renderBEMSForm(){
+return `
+<div class="form-grid">
+
+<input id="id" placeholder="ID" readonly>
+<input id="assetNumber" placeholder="Asset Number">
+<input id="assetNumberKonsesi" placeholder="Asset Number Konsesi">
+
+<input id="typeCode" placeholder="Type Code">
+<input id="typeDescription" placeholder="Type Description">
+
+<input id="assetDescription" placeholder="Asset Description">
+
+<input id="service" placeholder="Service">
+<input id="department" placeholder="Department">
+<input id="area" placeholder="Area">
+
+<input id="locationCode" placeholder="Location Code">
+<input id="location" placeholder="Location">
+
+<input id="ppmFrequency" placeholder="PPM Frequency">
+
+<input type="date" id="purchaseDate">
+<input type="date" id="commissioningDate">
+
+<input type="date" id="warrantyStart">
+<input type="date" id="warrantyEnd">
+<input id="warrantyDuration" placeholder="Warranty Duration">
+
+<input id="manufacturer" placeholder="Manufacturer">
+<input id="brand" placeholder="Brand">
+<input id="model" placeholder="Model">
+<input id="serialNo" placeholder="Serial No">
+
+<input id="loNo" placeholder="LO No">
+<input id="loPrice" placeholder="LO Price">
+<input id="pricePerUnit" placeholder="Price Per Unit">
+
+<input id="bumiAgent" placeholder="Bumi Agent">
+<input id="vendor" placeholder="Vendor">
+
+<input id="remarks" placeholder="Remarks">
+
+<input id="contract" placeholder="Contract Info">
+
+<select id="maintenanceType">
+<option value="">Maintenance Type</option>
+<option>PPM</option>
+<option>RI</option>
+<option>CALIBRATION</option>
+</select>
+
+<input id="month" placeholder="Month">
+<input id="statusWarranty" placeholder="Warranty Status">
+<input id="ppm" placeholder="PPM">
+<input id="remarks2" placeholder="Remarks">
+
+</div>
+
+<button class="btn btn-primary" onclick="saveBEMS()">Save</button>
+`;
+}
+
+async function saveBEMS(){
+
+const data = {
+action:"saveAsset",
+
+id:id.value,
+assetNumber:assetNumber.value,
+assetNumberKonsesi:assetNumberKonsesi.value,
+typeCode:typeCode.value,
+typeDescription:typeDescription.value,
+assetDescription:assetDescription.value,
+
+service:service.value,
+department:department.value,
+area:area.value,
+
+locationCode:locationCode.value,
+location:location.value,
+
+ppmFrequency:ppmFrequency.value,
+
+purchaseDate:purchaseDate.value,
+commissioningDate:commissioningDate.value,
+
+warrantyStart:warrantyStart.value,
+warrantyEnd:warrantyEnd.value,
+warrantyDuration:warrantyDuration.value,
+
+manufacturer:manufacturer.value,
+brand:brand.value,
+model:model.value,
+serialNo:serialNo.value,
+
+loNo:loNo.value,
+loPrice:loPrice.value,
+pricePerUnit:pricePerUnit.value,
+
+bumiAgent:bumiAgent.value,
+vendor:vendor.value,
+
+remarks:remarks.value,
+contract:contract.value,
+
+maintenanceType:maintenanceType.value,
+month:month.value,
+statusWarranty:statusWarranty.value,
+ppm:ppm.value,
+remarks2:remarks2.value,
+
+module:"BEMS"
+};
+
+const res = await saveAssetAPI(data);
+
+if(res.status==="success"){
+alert("BEMS Asset Saved");
+document.getElementById("globalDetailModal").style.display="none";
+assetCache = [];
+loadAssets();
+}else{
+alert("Error saving BEMS");
+}
+
+}
