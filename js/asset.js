@@ -133,6 +133,94 @@ function renderTable(){
 // =====================
 // PAGINATION
 // =====================
+function renderPagination(){
+
+  const box = document.getElementById("pagination");
+  if(!box) return;
+
+  box.innerHTML = "";
+
+  const total = Math.ceil(filteredData.length / rowsPerPage);
+  if(total <= 1) return;
+
+  const maxVisible = 5;
+
+  let start = Math.max(1, currentPage - 2);
+  let end = Math.min(total, start + maxVisible - 1);
+
+  if(end - start < maxVisible - 1){
+    start = Math.max(1, end - maxVisible + 1);
+  }
+
+  // ===== FIRST =====
+  box.appendChild(createNavBtn("First", currentPage > 1, ()=> {
+    currentPage = 1;
+    updatePage();
+  }));
+
+  // ===== PREV =====
+  box.appendChild(createNavBtn("Prev", currentPage > 1, ()=> {
+    currentPage--;
+    updatePage();
+  }));
+
+  // ===== PAGE RANGE =====
+  if(start > 1){
+    box.appendChild(createPageBtn(1));
+
+    if(start > 2){
+      box.appendChild(createDots());
+    }
+  }
+
+  for(let i = start; i <= end; i++){
+    box.appendChild(createPageBtn(i));
+  }
+
+  if(end < total){
+    if(end < total - 1){
+      box.appendChild(createDots());
+    }
+    box.appendChild(createPageBtn(total));
+  }
+
+  // ===== NEXT =====
+  box.appendChild(createNavBtn("Next", currentPage < total, ()=> {
+    currentPage++;
+    updatePage();
+  }));
+
+  // ===== LAST =====
+  box.appendChild(createNavBtn("Last", currentPage < total, ()=> {
+    currentPage = total;
+    updatePage();
+  }));
+
+  // ===== PAGE INFO =====
+  const info = document.createElement("span");
+  info.innerText = ` Page ${currentPage} of ${total} `;
+  info.style.margin = "0 10px";
+  box.appendChild(info);
+
+  // ===== JUMP TO PAGE =====
+  const input = document.createElement("input");
+  input.type = "number";
+  input.placeholder = "Go";
+  input.style.width = "60px";
+  input.style.padding = "4px";
+
+  input.onchange = ()=>{
+    let val = Number(input.value);
+    if(val >= 1 && val <= total){
+      currentPage = val;
+      updatePage();
+    }
+  };
+
+  box.appendChild(input);
+
+}
+
 function createPageBtn(i){
 
   const b = document.createElement("button");
@@ -173,67 +261,6 @@ function createDots(){
   dots.innerText = "...";
   dots.style.padding = "6px";
   return dots;
-}
-
-function createPageBtn(i){
-
-  const b = document.createElement("button");
-  b.innerText = i;
-  b.className = "btn";
-
-  if(i === currentPage){
-    b.style.background = "#00e5ff";
-    b.style.color = "#000";
-  }
-
-  b.onclick = ()=>{
-    currentPage = i;
-    updatePage();
-  };
-
-  return b;
-}
-
-function createNavBtn(text, enabled, action){
-
-  const btn = document.createElement("button");
-  btn.innerText = text;
-  btn.className = "btn";
-
-  if(!enabled){
-    btn.disabled = true;
-    btn.style.opacity = "0.4";
-  }
-
-  btn.onclick = action;
-
-  return btn;
-}
-
-function createDots(){
-  const dots = document.createElement("span");
-  dots.innerText = "...";
-  dots.style.padding = "6px";
-  return dots;
-}
-
-function createPageBtn(i){
-
-  const b = document.createElement("button");
-  b.innerText = i;
-  b.className = "btn";
-
-  if(i === currentPage){
-    b.style.background = "#00e5ff";
-    b.style.color = "#000";
-  }
-
-  b.onclick = ()=>{
-    currentPage = i;
-    updatePage();
-  };
-
-  return b;
 }
 
 // =====================
