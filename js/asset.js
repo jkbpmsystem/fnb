@@ -133,80 +133,46 @@ function renderTable(){
 // =====================
 // PAGINATION
 // =====================
-function renderPagination(){
+function createPageBtn(i){
 
-  const box = document.getElementById("pagination");
-  if(!box) return;
+  const b = document.createElement("button");
+  b.innerText = i;
+  b.className = "btn";
 
-  box.innerHTML = "";
-
-  const total = Math.ceil(filteredData.length / rowsPerPage);
-  if(total <= 1) return;
-
-  const maxVisible = 5;
-
-  let start = Math.max(1, currentPage - 2);
-  let end = Math.min(total, start + maxVisible - 1);
-
-  if(end - start < maxVisible - 1){
-    start = Math.max(1, end - maxVisible + 1);
+  if(i === currentPage){
+    b.style.background = "#00e5ff";
+    b.style.color = "#000";
   }
 
-  // ===== PREV =====
-  const prev = document.createElement("button");
-  prev.innerText = "Prev";
-  prev.className = "btn";
-  prev.disabled = currentPage === 1;
-
-  prev.onclick = ()=>{
-    currentPage--;
+  b.onclick = ()=>{
+    currentPage = i;
     updatePage();
   };
 
-  box.appendChild(prev);
+  return b;
+}
 
-  // ===== FIRST + ... =====
-  if(start > 1){
-    box.appendChild(createPageBtn(1));
+function createNavBtn(text, enabled, action){
 
-    if(start > 2){
-      const dots = document.createElement("span");
-      dots.innerText = "...";
-      dots.style.padding = "6px";
-      box.appendChild(dots);
-    }
+  const btn = document.createElement("button");
+  btn.innerText = text;
+  btn.className = "btn";
+
+  if(!enabled){
+    btn.disabled = true;
+    btn.style.opacity = "0.4";
   }
 
-  // ===== MAIN RANGE =====
-  for(let i = start; i <= end; i++){
-    box.appendChild(createPageBtn(i));
-  }
+  btn.onclick = action;
 
-  // ===== ... + LAST =====
-  if(end < total){
-    if(end < total - 1){
-      const dots = document.createElement("span");
-      dots.innerText = "...";
-      dots.style.padding = "6px";
-      box.appendChild(dots);
-    }
+  return btn;
+}
 
-    box.appendChild(createPageBtn(total));
-  }
-
-  // ===== NEXT =====
-  const next = document.createElement("button");
-  next.innerText = "Next";
-  next.className = "btn";
-  next.disabled = currentPage === total;
-
-  next.onclick = ()=>{
-    currentPage++;
-    updatePage();
-  };
-
-  box.appendChild(next);
-
+function createDots(){
+  const dots = document.createElement("span");
+  dots.innerText = "...";
+  dots.style.padding = "6px";
+  return dots;
 }
 
 function createPageBtn(i){
