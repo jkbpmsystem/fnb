@@ -194,6 +194,48 @@ function createPageBtn(i){
   return b;
 }
 
+function createNavBtn(text, enabled, action){
+
+  const btn = document.createElement("button");
+  btn.innerText = text;
+  btn.className = "btn";
+
+  if(!enabled){
+    btn.disabled = true;
+    btn.style.opacity = "0.4";
+  }
+
+  btn.onclick = action;
+
+  return btn;
+}
+
+function createDots(){
+  const dots = document.createElement("span");
+  dots.innerText = "...";
+  dots.style.padding = "6px";
+  return dots;
+}
+
+function createPageBtn(i){
+
+  const b = document.createElement("button");
+  b.innerText = i;
+  b.className = "btn";
+
+  if(i === currentPage){
+    b.style.background = "#00e5ff";
+    b.style.color = "#000";
+  }
+
+  b.onclick = ()=>{
+    currentPage = i;
+    updatePage();
+  };
+
+  return b;
+}
+
 // =====================
 // UPDATE PAGE
 // =====================
