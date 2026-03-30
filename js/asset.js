@@ -25,7 +25,7 @@ async function initAsset(){
 
   await loadAssets();
 }
-
+ 
 // =====================
 // DEBOUNCE SEARCH
 // =====================
