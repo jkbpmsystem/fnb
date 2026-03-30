@@ -141,62 +141,91 @@ function renderPagination(){
   box.innerHTML = "";
 
   const total = Math.ceil(filteredData.length / rowsPerPage);
+  if(total <= 1) return;
 
-  // 🔥 kalau tiada data
-  if(total === 0) return;
+  const maxVisible = 5;
+
+  let start = Math.max(1, currentPage - 2);
+  let end = Math.min(total, start + maxVisible - 1);
+
+  if(end - start < maxVisible - 1){
+    start = Math.max(1, end - maxVisible + 1);
+  }
 
   // ===== PREV =====
   const prev = document.createElement("button");
   prev.innerText = "Prev";
   prev.className = "btn";
-
   prev.disabled = currentPage === 1;
 
-  prev.onclick = () => {
-    if(currentPage > 1){
-      currentPage--;
-      updatePage();
-    }
+  prev.onclick = ()=>{
+    currentPage--;
+    updatePage();
   };
 
   box.appendChild(prev);
 
-  // ===== PAGE NUMBER =====
-  for(let i = 1; i <= total; i++){
+  // ===== FIRST + ... =====
+  if(start > 1){
+    box.appendChild(createPageBtn(1));
 
-    const b = document.createElement("button");
-    b.innerText = i;
-    b.className = "btn";
+    if(start > 2){
+      const dots = document.createElement("span");
+      dots.innerText = "...";
+      dots.style.padding = "6px";
+      box.appendChild(dots);
+    }
+  }
 
-    if(i === currentPage){
-      b.style.background = "#00e5ff";
-      b.style.color = "#000";
+  // ===== MAIN RANGE =====
+  for(let i = start; i <= end; i++){
+    box.appendChild(createPageBtn(i));
+  }
+
+  // ===== ... + LAST =====
+  if(end < total){
+    if(end < total - 1){
+      const dots = document.createElement("span");
+      dots.innerText = "...";
+      dots.style.padding = "6px";
+      box.appendChild(dots);
     }
 
-    b.onclick = () => {
-      currentPage = i;
-      updatePage();
-    };
-
-    box.appendChild(b);
+    box.appendChild(createPageBtn(total));
   }
 
   // ===== NEXT =====
   const next = document.createElement("button");
   next.innerText = "Next";
   next.className = "btn";
-
   next.disabled = currentPage === total;
 
-  next.onclick = () => {
-    if(currentPage < total){
-      currentPage++;
-      updatePage();
-    }
+  next.onclick = ()=>{
+    currentPage++;
+    updatePage();
   };
 
   box.appendChild(next);
 
+}
+
+function createPageBtn(i){
+
+  const b = document.createElement("button");
+  b.innerText = i;
+  b.className = "btn";
+
+  if(i === currentPage){
+    b.style.background = "#00e5ff";
+    b.style.color = "#000";
+  }
+
+  b.onclick = ()=>{
+    currentPage = i;
+    updatePage();
+  };
+
+  return b;
 }
 
 // =====================
