@@ -136,9 +136,14 @@ function renderTable(){
 function renderPagination(){
 
   const box = document.getElementById("pagination");
+  if(!box) return;
+
   box.innerHTML = "";
 
   const total = Math.ceil(filteredData.length / rowsPerPage);
+
+  // 🔥 kalau tiada data
+  if(total === 0) return;
 
   // ===== PREV =====
   const prev = document.createElement("button");
@@ -146,16 +151,17 @@ function renderPagination(){
   prev.className = "btn";
 
   prev.disabled = currentPage === 1;
-  if(prev.disabled) prev.style.opacity = "0.4";
 
   prev.onclick = () => {
-    currentPage--;
-    updatePage();
+    if(currentPage > 1){
+      currentPage--;
+      updatePage();
+    }
   };
 
   box.appendChild(prev);
 
-  // ===== PAGE NUMBERS =====
+  // ===== PAGE NUMBER =====
   for(let i = 1; i <= total; i++){
 
     const b = document.createElement("button");
@@ -181,11 +187,12 @@ function renderPagination(){
   next.className = "btn";
 
   next.disabled = currentPage === total;
-  if(next.disabled) next.style.opacity = "0.4";
 
   next.onclick = () => {
-    currentPage++;
-    updatePage();
+    if(currentPage < total){
+      currentPage++;
+      updatePage();
+    }
   };
 
   box.appendChild(next);
