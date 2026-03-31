@@ -13,16 +13,7 @@ window.assetCache = window.assetCache || [];
 // =====================
 // INIT
 // =====================
-document.addEventListener("click", e=>{
-
-  const el = e.target.closest(".clickable-id");
-  if(!el) return;
-
-  const id = el.dataset.id;
-
-  openAssetDetailById(id);
-
-});
+document.addEventListener("DOMContentLoaded", initAsset);
 
 async function initAsset(){
 
