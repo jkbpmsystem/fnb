@@ -8,8 +8,7 @@ let filteredData = [];
 let currentPage = 1;
 const rowsPerPage = 12;
 
-window.assetCache = JSON.parse(cached);
-assetData = window.assetCache;
+window.assetCache = window.assetCache || [];
 
 // =====================
 // INIT
