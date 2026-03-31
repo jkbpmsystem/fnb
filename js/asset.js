@@ -321,14 +321,16 @@ function autoFillLocation(code){
 
 // simple add modal (reuse global modal body)
 async function openAddAsset(){
+
   const body = document.getElementById("detailBody");
-  document.getElementById("codeLocation").addEventListener("input", e=>{autoFillLocation(e.target.value);
+
   document.getElementById("detailTitle").innerText = "Add Asset";
   document.getElementById("globalDetailModal").style.display = "flex";
+
   const idRes = await generateId();
-  const mod = (sessionStorage.getItem("cmmsModule") || "FEMS");
-  
+
   const modNow = (sessionStorage.getItem("cmmsModule") || "FEMS");
+
   if(modNow === "BEMS"){
     body.innerHTML = renderBEMSForm();
   }else{
@@ -481,9 +483,17 @@ async function openAddAsset(){
   `;
   }
   
-  // set module values
+const codeInput = document.getElementById("codeLocation");
+  if(codeInput){
+    codeInput.addEventListener("input", e=>{
+      autoFillLocation(e.target.value);
+    });
+  }
+
+  // set module
   const modVal = (sessionStorage.getItem("cmmsModule") || "FEMS");
   document.getElementById("module").value = modVal;
+
   const md = document.getElementById("moduleDisplay");
   if(md) md.value = modVal;
 
