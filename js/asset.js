@@ -8,7 +8,8 @@ let filteredData = [];
 let currentPage = 1;
 const rowsPerPage = 12;
 
-window.assetCache = window.assetCache || [];
+window.assetCache = JSON.parse(cached);
+assetData = window.assetCache;
 
 // =====================
 // INIT
@@ -321,6 +322,7 @@ function autoFillLocation(code){
 // simple add modal (reuse global modal body)
 async function openAddAsset(){
   const body = document.getElementById("detailBody");
+  document.getElementById("codeLocation").addEventListener("input", e=>{autoFillLocation(e.target.value);
   document.getElementById("detailTitle").innerText = "Add Asset";
   document.getElementById("globalDetailModal").style.display = "flex";
   const idRes = await generateId();
@@ -346,7 +348,7 @@ async function openAddAsset(){
                             <input type="text"
                                 id="codeLocation"
                                 placeholder="L1-BEM-001"
-                                oninput="checkLocation(); this.value=this.value.toUpperCase();">
+                                oninput="this.value=this.value.toUpperCase(); autoFillLocation(this.value)"
                         </div>
 
                         <div class="form-group">
