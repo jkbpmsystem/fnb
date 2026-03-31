@@ -42,6 +42,9 @@ function debounceSearch(){
 // =====================
 // LOAD DATA (FAST + CACHE)
 // =====================
+// =====================
+// LOAD DATA (FIX VERSION)
+// =====================
 async function loadAssets(){
 
   const tbody = document.querySelector("#assetTable tbody");
@@ -52,30 +55,63 @@ async function loadAssets(){
 
   try{
 
+    // ===== GET CACHE =====
     const cached = localStorage.getItem("assets");
     const cacheTime = localStorage.getItem("assets_time");
 
-    const isValidCache = cacheTime && (Date.now() - cacheTime < 300000); // 5 min
+    const isValidCache = cacheTime && (Date.now() - cacheTime < 300000);
 
+    // ===== USE CACHE =====
     if(cached && isValidCache){
 
-      assetCache = JSON.parse(cached);
-      console.log("⚡ Loaded from cache");
+      try{
+        assetCache = JSON.parse(cached);
+
+        // 🔥 IMPORTANT: ensure array
+        if(!Array.isArray(assetCache)){
+          console.warn("Cache rosak, reset...");
+          assetCache = [];
+        }
+
+      }catch(e){
+        console.warn("Cache parse error, reset...");
+        assetCache = [];
+      }
+
+      console.log("⚡ Loaded from cache", assetCache);
 
     }else{
 
-      assetCache = await getAssets();
+      // ===== CALL API =====
+      const res = await getAssets();
 
+      console.log("🌐 API RESULT:", res);
+
+      // 🔥 HANDLE SEMUA FORMAT API
+      if(Array.isArray(res)){
+        assetCache = res;
+      }else if(res && Array.isArray(res.data)){
+        assetCache = res.data;
+      }else{
+        console.error("❌ Data bukan array:", res);
+        assetCache = [];
+      }
+
+      // ===== SAVE CACHE =====
       localStorage.setItem("assets", JSON.stringify(assetCache));
       localStorage.setItem("assets_time", Date.now());
 
-      console.log("🌐 Loaded from API");
+      console.log("🌐 Loaded from API", assetCache);
 
     }
 
+    // ===== ASSIGN DATA =====
     assetData = assetCache;
     filteredData = assetData;
 
+    console.log("FINAL DATA:", filteredData);
+
+    // ===== RENDER =====
     requestAnimationFrame(()=>{
       renderTable();
       renderPagination();
@@ -83,11 +119,11 @@ async function loadAssets(){
 
   }catch(err){
 
+    console.error("❌ LOAD ERROR:", err);
+
     if(tbody){
       tbody.innerHTML = "<tr><td colspan='10'>Error loading data</td></tr>";
     }
-
-    console.error(err);
 
   }
 
