@@ -4701,6 +4701,16 @@ document.getElementById("area").value = locationMaster[code];
 
 }
 
+  function autoFillEquipmentDesc(){
+  const code = document.getElementById("typeCode").value.toUpperCase();
+  const desc = document.getElementById("equipmentDescriptions");
+
+  if(typeMaster[code]){
+    desc.value = typeMaster[code];
+  }else{
+    desc.value = "";
+  }
+}
 
 /* GET DEPARTMENT FROM CODE */
 
