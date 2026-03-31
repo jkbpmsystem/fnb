@@ -338,7 +338,7 @@ async function openAddAsset(){
     
  <div class="form-group">
                             <label>ID</label>
-                            <input type="text" id="assetId" readonly>
+                            <input id="assetId" value="${idRes.id}" readonly>
                         </div>
 
                         <div class="form-group">
