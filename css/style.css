@@ -342,6 +342,76 @@ tr:hover{
   outline:none;
 }
 
+.form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-size: 13px;
+            opacity: 0.7;
+        }
+
+        .form-group select {
+            width: 100%;
+            padding: 9px 10px;
+            border-radius: 8px;
+            border: 1px solid #00e5ff22;
+            background: #0b1421;
+            color: #fff;
+            outline: none;
+            font-size: 13px;
+            appearance: none;
+            cursor: pointer;
+        }
+
+        /* focus effect */
+        .form-group select:focus {
+            border: 1px solid #00e5ff;
+            box-shadow: 0 0 8px #00e5ff44;
+        }
+
+        /* optional arrow styling */
+        .form-group {
+            position: relative;
+        }
+
+        .close-btn {
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            font-size: 13px;
+            opacity: 0.7;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            background: #0b1421;
+            border: 1px solid #00e5ff22;
+            border-radius: 8px;
+            color: #fff;
+        }
+
+        .save-btn {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 8px;
+            background: #00e5ff;
+            color: #000;
+            font-weight: 600;
+            cursor: pointer;
+        }
 /* =========================
    KPI
 ========================= */
