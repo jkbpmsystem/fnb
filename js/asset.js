@@ -336,20 +336,145 @@ async function openAddAsset(){
     <div class="form-grid">
       <div><label>Module</label><input id="moduleDisplay" readonly></div>
     
-    <div class="form-grid">
-      <input id="assetId" value="${idRes.id}" readonly>
-      <input id="assetNo" placeholder="Asset No">
-      <input id="equipmentName" placeholder="Equipment Name">
-      <input id="typeCode" placeholder="Type Code">
-      <input id="discipline" placeholder="Discipline">
-      <input id="codeLocation" placeholder="Code Location" oninput="this.value=this.value.toUpperCase(); autoFillLocation(this.value)">
-      <input id="area" placeholder="Area" readonly>
-      <input id="department" placeholder="Department" readonly>
-      <input id="startDate" type="date">
-      <input id="endDate" type="date">
-      <input id="ppmFrequency" placeholder="PPM Frequency">
-      <input id="status" placeholder="Status">
-    </div>
+ <div class="form-group">
+                            <label>ID</label>
+                            <input type="text" id="assetId" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Code Location</label>
+                            <input type="text"
+                                id="codeLocation"
+                                placeholder="L1-BEM-001"
+                                oninput="checkLocation(); this.value=this.value.toUpperCase();">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Area</label>
+                            <input type="text" id="area" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Department</label>
+                            <input type="text" id="department" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Asset No</label>
+                            <input id="assetNo" type="text" placeholder="Enter manufacturer"required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Asset No Hosza</label>
+                            <input id="assetNoHosza" type="text" placeholder="Enter model"required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Equipment Name</label>
+                            <input id="equipmentName" type="text" placeholder="Enter serial number"required>
+                        </div>
+                        <div class="form-group">
+                            <label>Type Code</label>
+                            <input id="typeCode"
+                                   type="text"
+                                    placeholder="Enter Type Code"
+                                   oninput="autoFillEquipmentDesc()"
+                                   required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Equipment Descriptions</label>
+                            <input type="text" id="equipmentDescriptions" readonly>
+                        </div>
+
+                      <div class="form-group">
+                            <label>Discipline</label>
+
+                            <select id="discipline" required>
+                                    <option value="">Select Discipline</option>
+                                    <option value="Mechanical">MECHANICAL</option>
+                                    <option value="Electrical">ELECTRICAL</option>
+                            </select>
+
+                        </div>
+
+                        <div class="form-group">
+                            <label>Bumi</label>
+                            <input id="bumi" type="text" placeholder="Enter Bumi"required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Bumi Contact</label>
+                            <input id="bumiContact" type="text" placeholder="Enter Bumi Contact"required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Supplier</label>
+                            <input id="supplier" type="text" placeholder="Enter Supplier"required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Supplier Contact</label>
+                            <input id="supplierContact" type="text" placeholder="Enter Supplier Contact"required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Manufacture</label>
+                            <input id="manufacture" type="text" placeholder="Enter Manufacture"required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Model</label>
+                            <input id="model" type="text" placeholder="Enter Model"required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Serial Number</label>
+                            <input id="serialNumber" type="text" placeholder="Enter Serial Number"required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Price</label>
+                            <input id="price" type="text" placeholder="Enter Price"required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>LPO No</label>
+                            <input id="lpoNo"type="text" placeholder="Enter LPO No"required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Category</label>
+                            <input id="category" type="text" placeholder="ASSET or INVENTORY"required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Start Date</label>
+                            <input id="startDate" type="date"required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>End Date</label>
+                            <input id="endDate" type="date"required>
+                        </div>
+
+                       <div class="form-group">
+                            <label>Frequency PPM by Vendor *base on T&C*</label>
+                            <input id="ppmFrequency" type="text" placeholder="Enter Frequency"required>
+                        </div>
+
+                       <div class="form-group">
+                            <label>Asset dalam kontrak Edgenta?</label>
+
+                            <select id="status" required>
+                                    <option value="">Select</option>
+                                    <option value="NO">NO</option>
+                                    <option value="YES">YES</option>
+                            </select>
+
+                        </div>
+
+                    </div>
     <button class="btn btn-primary" id="saveAssetBtn">Save</button>
   `;
   }
