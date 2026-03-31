@@ -39,9 +39,7 @@ function debounceSearch(){
 
 }
 
-// =====================
-// LOAD DATA (FAST + CACHE)
-// =====================
+
 // =====================
 // LOAD DATA (FIX VERSION)
 // =====================
@@ -691,3 +689,19 @@ alert("Error saving BEMS");
 }
 
 }
+
+// =====================
+// CLICK ID -> OPEN MODAL
+// =====================
+document.addEventListener("click", e=>{
+
+  const el = e.target.closest(".clickable-id");
+  if(!el) return;
+
+  const id = el.dataset.id;
+
+  console.log("CLICK ID:", id); // debug
+
+  openAssetDetailById(id);
+
+});
