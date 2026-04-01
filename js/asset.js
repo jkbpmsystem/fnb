@@ -693,15 +693,18 @@ alert("Error saving BEMS");
 // =====================
 // CLICK ID -> OPEN MODAL
 // =====================
-document.addEventListener("click", e=>{
+document.addEventListener("click", function(e){
 
-  const el = e.target.closest(".clickable-id");
-  if(!el) return;
+  // ✅ OPEN DETAIL
+  if(e.target.closest(".clickable-id")){
+    openAssetDetail(e.target.closest(".clickable-id").dataset.id);
+    return;
+  }
 
-  const id = el.dataset.id;
-
-  console.log("CLICK ID:", id); // debug
-
-  openAssetDetailById(id);
+  // ✅ ADD ASSET
+  if(e.target.closest("#addAssetBtn")){
+    openAddAssetModal();
+    return;
+  }
 
 });
