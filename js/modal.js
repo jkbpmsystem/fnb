@@ -198,7 +198,7 @@ if(el && !el.classList.contains("ppm-card")){
   }
 
 });
-  }
+  
 
   // close modal
   if(e.target.closest(".close-btn")){
