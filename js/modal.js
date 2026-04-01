@@ -145,13 +145,60 @@ function renderPPM(asset, dwData){
   return html;
 }
 
-// Event delegation
 document.addEventListener("click", async (e)=>{
-  // open detail from any element with data-asset-id
+
+  // ✅ ADD ASSET (letak paling atas supaya priority)
+  if(e.target.closest("#addAssetBtn")){
+    e.stopPropagation();
+    openAddAsset(); // guna function sebenar kau
+    return;
+  }
+
+  // ✅ OPEN DETAIL (table click)
+  const clickId = e.target.closest(".clickable-id");
+  if(clickId){
+    const id = clickId.dataset.id;
+    if(id) openAssetDetailById(id);
+    return;
+  }
+
+  // ✅ OPEN DETAIL (generic)
   const idEl = e.target.closest("[data-asset-id]");
   if(idEl && !idEl.classList.contains("ppm-card")){
     const id = idEl.dataset.assetId;
     if(id) openAssetDetailById(id);
+    return;
+  }
+
+  // ✅ CLOSE MODAL
+  if(e.target.closest(".close-btn")){
+    const modal = e.target.closest(".modal");
+    if(modal) modal.style.display = "none";
+  }
+
+  // ✅ TAB
+  if(e.target.classList.contains("tab-btn")){
+    document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
+    document.querySelectorAll(".tab-content").forEach(c=>c.classList.remove("active"));
+
+    e.target.classList.add("active");
+
+    const tab = e.target.dataset.tab;
+    document.getElementById("tab-"+tab).classList.add("active");
+
+    if(tab === "ppm" && currentAsset){
+      const dw = await getDWCached();
+      document.getElementById("tab-ppm").innerHTML = renderPPM(currentAsset, dw);
+    }
+  }
+
+  // ✅ PPM CLICK
+  if(e.target.closest(".ppm-card")){
+    const card = e.target.closest(".ppm-card");
+    showPPMDetail(card.dataset.assetId, card.dataset.ppmIndex);
+  }
+
+});
   }
 
   // close modal
