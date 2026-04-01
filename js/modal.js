@@ -99,7 +99,7 @@ function renderDetail(a){
   `;
 }
 
-function formatDate(dateStr){
+window.formatDate = function(dateStr){
   if(!dateStr) return "-";
   const d = new Date(dateStr);
   const day = String(d.getDate()).padStart(2,"0");
