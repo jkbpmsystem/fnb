@@ -145,7 +145,7 @@ function renderPPM(asset, dwData){
   return html;
 }
 
-document.addEventListener("click", async (e)=>{
+document.addEventListener("click", async function(e){
 
   // ✅ ADD ASSET (letak paling atas supaya priority)
   if(e.target.closest("#addAssetBtn")){
