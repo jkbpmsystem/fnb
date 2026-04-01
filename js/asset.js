@@ -145,7 +145,7 @@ function renderTable(){
     html += `
       <tr>
         <td>
-          <span class="clickable-id" data-id="${a.id}">
+          <span class="clickable-id" data-asset-id="${a.id}">
             ${a.id || ""}
           </span>
         </td>
