@@ -697,7 +697,7 @@ document.addEventListener("click", function(e){
 
   // ✅ OPEN DETAIL
   if(e.target.closest(".clickable-id")){
-    openAssetDetail(e.target.closest(".clickable-id").dataset.id);
+    openAssetDetailId(e.target.closest(".clickable-id").dataset.id);
     return;
   }
 
