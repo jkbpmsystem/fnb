@@ -155,12 +155,11 @@ document.addEventListener("click", async (e)=>{
   }
 
   // ✅ OPEN DETAIL (table click)
-  const clickId = e.target.closest(".clickable-id");
-  if(clickId){
-    const id = clickId.dataset.id;
-    if(id) openAssetDetailById(id);
-    return;
-  }
+const el = e.target.closest("[data-asset-id]");
+if(el && !el.classList.contains("ppm-card")){
+  openAssetDetailById(el.dataset.assetId);
+  return;
+}
 
   // ✅ OPEN DETAIL (generic)
   const idEl = e.target.closest("[data-asset-id]");
