@@ -1,25 +1,78 @@
+// =====================
+// API CONFIG
+// =====================
 const API = {
   ASSET: "https://script.google.com/macros/s/AKfycbwHDAybRqO3zs6SXSaP3wQcdkNH9bU6v2QAGNy2yKT2GqfRRfcOczkCCI94oWxZEVcbPw/exec",
   DASHBOARD: "https://script.google.com/macros/s/AKfycbyLxPzgzonubQGqgRoLqsuz6EQLj2JAEcTVC2TCFdkPG9CMI6cZ1iHuyTm1ui4QBIlRxg/exec"
 };
 
 // =====================
-// GET ASSETS (FIX CORS)
+// LOADER CONTROL
+// =====================
+let loaderTimeout;
+
+function showLoader(){
+  loaderTimeout = setTimeout(()=>{
+    const el = document.getElementById("globalLoader");
+    if(el) el.style.display = "flex";
+  },200);
+}
+
+function hideLoader(){
+  clearTimeout(loaderTimeout);
+  const el = document.getElementById("globalLoader");
+  if(el) el.style.display = "none";
+}
+
+// =====================
+// CORE API FUNCTION (WITH RETRY)
+// =====================
+async function apiFetch(url, options = {}, retry = 2){
+
+  try{
+
+    showLoader();
+
+    const res = await fetch(url, options);
+    const text = await res.text();
+
+    return JSON.parse(text);
+
+  }catch(err){
+
+    console.warn("⚠️ API retry:", retry);
+
+    if(retry > 0){
+      return apiFetch(url, options, retry - 1);
+    }
+
+    console.error("❌ API FAILED:", err);
+
+    return null;
+
+  }finally{
+    hideLoader();
+  }
+
+}
+
+// =====================
+// GET MODULE
+// =====================
+function getModule(){
+  return (sessionStorage.getItem("cmmsModule") || "fems").toLowerCase();
+}
+
+// =====================
+// GET ASSETS
 // =====================
 async function getAssets(){
 
-  const module = (sessionStorage.getItem("cmmsModule") || "fems").toLowerCase();
+  const module = getModule();
 
   const url = API.ASSET + "?action=getAssets&module=" + module + "&t=" + Date.now();
 
-  try{
-    const res = await fetch(url);
-    const text = await res.text();
-    return JSON.parse(text);
-  }catch(err){
-    console.error("❌ getAssets error:", err);
-    return [];
-  }
+  return await apiFetch(url) || [];
 
 }
 
@@ -28,37 +81,23 @@ async function getAssets(){
 // =====================
 async function saveAssetAPI(data){
 
-  try{
-    const res = await fetch(API.ASSET,{
-      method:"POST",
-      body: JSON.stringify(data)
-    });
-
-    const text = await res.text();
-    return JSON.parse(text);
-
-  }catch(err){
-    console.error("❌ saveAsset error:", err);
-    return {status:"error"};
-  }
+  return await apiFetch(API.ASSET, {
+    method: "POST",
+    body: JSON.stringify(data)
+  }) || {status:"error"};
 
 }
 
 // =====================
-// GENERATE ID (FIX MODULE)
+// GENERATE ID
 // =====================
 async function generateId(){
 
-  const module = (sessionStorage.getItem("cmmsModule") || "fems").toLowerCase();
+  const module = getModule();
 
-  try{
-    const res = await fetch(API.ASSET + "?action=generateId&module=" + module);
-    const text = await res.text();
-    return JSON.parse(text);
-  }catch(err){
-    console.error("❌ generateId error:", err);
-    return {id:"ERROR"};
-  }
+  const url = API.ASSET + "?action=generateId&module=" + module;
+
+  return await apiFetch(url) || {id:"ERROR"};
 
 }
 
@@ -67,14 +106,11 @@ async function generateId(){
 // =====================
 async function getDashboard(){
 
-  try{
-    const res = await fetch(API.DASHBOARD + "?action=getDashboard");
-    const text = await res.text();
-    return JSON.parse(text);
-  }catch(err){
-    console.error("❌ dashboard error:", err);
-    return {};
-  }
+  const module = getModule();
+
+  const url = API.DASHBOARD + "?action=getDashboard&module=" + module;
+
+  return await apiFetch(url) || {};
 
 }
 
@@ -83,13 +119,10 @@ async function getDashboard(){
 // =====================
 async function getDWList(){
 
-  try{
-    const res = await fetch(API.DASHBOARD + "?action=getDWList");
-    const text = await res.text();
-    return JSON.parse(text);
-  }catch(err){
-    console.error("❌ DW error:", err);
-    return [];
-  }
+  const module = getModule();
+
+  const url = API.DASHBOARD + "?action=getDWList&module=" + module;
+
+  return await apiFetch(url) || [];
 
 }
