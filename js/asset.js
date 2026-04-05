@@ -132,6 +132,7 @@ async function loadAssets(){
 // =====================
 function renderTable(){
 
+   console.log("🔥 renderTable jalan");
   const tbody = document.querySelector("#assetTable tbody");
   if(!tbody) return;
 
