@@ -70,10 +70,10 @@ res.forEach(a => {
     <tr>
         <td>${a.id}</td>
         <td>${a.assetNo}</td>
+        <td>${a.codeLocation}</td> <!-- 🔥 BETUL -->
         <td>${a.equipmentName}</td>
         <td>${a.typeCode}</td>
         <td>${a.discipline}</td>
-        <td>${a.codeLocation}</td> <!-- 🔥 BETUL -->
         <td>${formatDate(a.startDate)}</td>
         <td>${formatDate(a.endDate)}</td>
       </tr>
@@ -118,10 +118,10 @@ function renderTable(){
       <tr>
         <td>${a.id}</td>
         <td>${a.assetNo}</td>
+        <td>${a.codeLocation}</td> <!-- 🔥 BETUL -->
         <td>${a.equipmentName}</td>
         <td>${a.typeCode}</td>
         <td>${a.discipline}</td>
-        <td>${a.codeLocation}</td> <!-- 🔥 BETUL -->
         <td>${formatDate(a.startDate)}</td>
         <td>${formatDate(a.endDate)}</td>
       </tr>
