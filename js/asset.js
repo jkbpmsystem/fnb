@@ -114,21 +114,20 @@ function renderTable(){
 
     console.log("SAMPLE OBJECT:", a);
 
-  html += `
-    <tr>
-      <td>${a.id}</td>
-      <td>${a.assetNo}</td>
-      <td>${a.equipmentName}</td>
-      <td>${a.typeCode}</td>
-      <td>${a.discipline}</td>
-      <td>${a.manufacture}</td>
-      <td>${a.model}</td>
-      <td>${formatDate(a.startDate)}</td>
-      <td>${formatDate(a.endDate)}</td>
-    </tr>
-  `;
+    html += `
+      <tr>
+        <td>${a.id}</td>
+        <td>${a.assetNo}</td>
+        <td>${a.equipmentName}</td>
+        <td>${a.typeCode}</td>
+        <td>${a.discipline}</td>
+        <td>${a.codeLocation}</td> <!-- 🔥 BETUL -->
+        <td>${formatDate(a.startDate)}</td>
+        <td>${formatDate(a.endDate)}</td>
+      </tr>
+    `;
 
-});
+  });
 
   tbody.innerHTML = html;
 }
