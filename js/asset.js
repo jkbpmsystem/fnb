@@ -45,9 +45,10 @@ function debounceSearch(){
 // =====================
 async function loadAssets(){
 
+  // 🔥 CLEAR CACHE (sementara debug)
   localStorage.removeItem("assets");
   localStorage.removeItem("assets_time");
-  
+
   const tbody = document.querySelector("#assetTable tbody");
 
   if(tbody){
@@ -56,33 +57,29 @@ async function loadAssets(){
 
   try{
 
-    // ===== GET CACHE =====
     const cached = localStorage.getItem("assets");
     const cacheTime = localStorage.getItem("assets_time");
 
     const isValidCache = cacheTime && (Date.now() - cacheTime < 300000);
 
     // ===== USE CACHE =====
-   if(cached && isValidCache){
+    if(cached && isValidCache){
 
-  try{
+      try{
 
-    const parsed = JSON.parse(cached);
+        const parsed = JSON.parse(cached);
 
-    // 🔥 VALIDATE CACHE BETUL
-    if(Array.isArray(parsed) && parsed.length > 0 && Object.keys(parsed[0]).length > 0){
-      assetCache = parsed;
-    }else{
-      console.warn("Cache rosak, reset...");
-      assetCache = [];
-    }
+        if(Array.isArray(parsed) && parsed.length > 0 && Object.keys(parsed[0]).length > 0){
+          assetCache = parsed;
+        }else{
+          console.warn("Cache rosak, reset...");
+          assetCache = [];
+        }
 
-  }catch(e){
-    console.warn("Cache parse error, reset...");
-    assetCache = [];
-  }
-
-}
+      }catch(e){
+        console.warn("Cache parse error, reset...");
+        assetCache = [];
+      }
 
       console.log("⚡ Loaded from cache", assetCache);
 
@@ -93,7 +90,6 @@ async function loadAssets(){
 
       console.log("🌐 API RESULT:", res);
 
-      // 🔥 HANDLE SEMUA FORMAT API
       if(Array.isArray(res)){
         assetCache = res;
       }else if(res && Array.isArray(res.data)){
@@ -113,11 +109,10 @@ async function loadAssets(){
 
     // ===== ASSIGN DATA =====
     assetData = assetCache;
-    filteredData = assetData;
+    filteredData = [...assetData]; // 🔥 IMPORTANT FIX
 
     console.log("FINAL DATA:", filteredData);
 
-    // ===== RENDER =====
     requestAnimationFrame(()=>{
       renderTable();
       renderPagination();
