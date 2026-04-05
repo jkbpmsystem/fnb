@@ -142,22 +142,29 @@ function renderTable(){
 
   page.forEach(a => {
 
-    html += `
-      <tr>
-        <td>
-          <span class="clickable-id" data-asset-id="${a.id}">
-            ${a.id || ""}
-          </span>
-        </td>
-        <td>${a.assetNo || ""}</td>
-        <td>${a.equipmentName || ""}</td>
-        <td>${a.typeCode || ""}</td>
-        <td>${a.discipline || ""}</td>
-        <td>${a.codeLocation || ""}</td>
-        <td>${formatDate(a.startDate) || ""}</td>
-        <td>${formatDate(a.endDate) || ""}</td>
-      </tr>
-    `;
+html += `
+  <tr>
+    <td>
+      <span class="clickable-id" data-asset-id="${a.id}">
+        ${a.id || ""}
+      </span>
+    </td>
+
+    <td>${a.assetNo || a.assetNumber || ""}</td>
+
+    <td>${a.equipmentName || a.assetDescription || ""}</td>
+
+    <td>${a.typeCode || ""}</td>
+
+    <td>${a.discipline || a.service || ""}</td>
+
+    <td>${a.codeLocation || a.locationCode || ""}</td>
+
+    <td>${formatDate(a.startDate || a.purchaseDate) || ""}</td>
+
+    <td>${formatDate(a.endDate || a.warrantyEndDate) || ""}</td>
+  </tr>
+`;
 
   });
 
