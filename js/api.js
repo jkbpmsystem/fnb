@@ -2,9 +2,8 @@
 // API CONFIG
 // =====================
 const API = {
-  ASSET: "https://script.google.com/macros/s/AKfycbwHDAybRqO3zs6SXSaP3wQcdkNH9bU6v2QAGNy2yKT2GqfRRfcOczkCCI94oWxZEVcbPw/exec",
-  DASHBOARD: "https://script.google.com/macros/s/AKfycbyLxPzgzonubQGqgRoLqsuz6EQLj2JAEcTVC2TCFdkPG9CMI6cZ1iHuyTm1ui4QBIlRxg/exec"
-};
+  BASE: "https://script.google.com/macros/s/AKfycbyLxPzgzonubQGqgRoLqsuz6EQLj2JAEcTVC2TCFdkPG9CMI6cZ1iHuyTm1ui4QBIlRxg/exec",
+ };
 
 // =====================
 // LOADER CONTROL
@@ -70,7 +69,7 @@ async function getAssets(){
 
   const module = getModule();
 
-  return await apiFetch(API.ASSET, {
+  return await apiFetch(API.BASE, {
     method: "POST",
     body: JSON.stringify({
       action: "getAssets",
@@ -97,11 +96,13 @@ async function saveAssetAPI(data){
 // =====================
 async function generateId(){
 
-  const module = getModule();
-
-  const url = API.ASSET + "?action=generateId&module=" + module;
-
-  return await apiFetch(url) || {id:"ERROR"};
+  return await apiFetch(API.BASE, {
+    method: "POST",
+    body: JSON.stringify({
+      action: "generateId",
+      module: getModule()
+    })
+  }) || {id:"ERROR"};
 
 }
 
@@ -110,11 +111,13 @@ async function generateId(){
 // =====================
 async function getDashboard(){
 
-  const module = getModule();
-
-  const url = API.DASHBOARD + "?action=getDashboard&module=" + module;
-
-  return await apiFetch(url) || {};
+  return await apiFetch(API.BASE, {
+    method: "POST",
+    body: JSON.stringify({
+      action: "getDashboard",
+      module: getModule()
+    })
+  }) || {};
 
 }
 
