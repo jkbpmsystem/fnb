@@ -130,6 +130,19 @@ async function loadAssets(){
 // =====================
 // RENDER TABLE (ULTRA FAST)
 // =====================
+function normalize(a){
+  return {
+    id: a.id || "-",
+    assetNo: a.assetNo || a.assetNumber || "-",
+    equipment: a.equipmentName || a.assetDescription || "-",
+    type: a.typeCode || "-",
+    discipline: a.discipline || a.service || "-",
+    location: a.codeLocation || a.locationCode || a.location || "-",
+    start: a.startDate || a.purchaseDate || "",
+    end: a.endDate || a.warrantyEndDate || ""
+  };
+}
+
 function renderTable(){
 
    console.log("🔥 renderTable jalan");
@@ -143,31 +156,27 @@ function renderTable(){
 
   page.forEach(a => {
 
-html += `
+  const x = normalize(a);
+
+  html += `
   <tr>
     <td>
-      <span class="clickable-id" data-asset-id="${a.id}">
-        ${a.id || ""}
+      <span class="clickable-id" data-asset-id="${x.id}">
+        ${x.id}
       </span>
     </td>
 
-    <td>${a.assetNo || a.assetNumber || ""}</td>
-
-    <td>${a.equipmentName || a.assetDescription || ""}</td>
-
-    <td>${a.typeCode || ""}</td>
-
-    <td>${a.discipline || a.service || ""}</td>
-
-    <td>${a.codeLocation || a.locationCode || ""}</td>
-
-    <td>${formatDate(a.startDate || a.purchaseDate) || ""}</td>
-
-    <td>${formatDate(a.endDate || a.warrantyEndDate) || ""}</td>
+    <td>${x.assetNo}</td>
+    <td>${x.equipment}</td>
+    <td>${x.type}</td>
+    <td>${x.discipline}</td>
+    <td>${x.location}</td>
+    <td>${formatDate(x.start)}</td>
+    <td>${formatDate(x.end)}</td>
   </tr>
-`;
+  `;
 
-  });
+});
 
   tbody.innerHTML = html;
 }
