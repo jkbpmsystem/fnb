@@ -98,26 +98,6 @@ res.forEach(a => {
 // =====================
 // RENDER TABLE (ULTRA FAST)
 // =====================
-function normalize(a){
-  return {
-    id: a.id || "-",
-
-    assetNo: a.assetno || a.assetnumber || "-",
-
-    equipment: a.equipment || a.equipmentname || a.assetdescription || "-",
-
-    type: a.type || a.typecode || "-",
-
-    discipline: a.discipline || "-",
-
-    location: a.location || a.codelocation || "-",
-
-    start: a.start || a.startdate || a.purchasedate || "",
-
-    end: a.end || a.enddate || a.warrantyenddate || ""
-  };
-}
-
 function renderTable(){
 
   console.log("🔥 renderTable jalan");
@@ -134,26 +114,21 @@ function renderTable(){
 
     console.log("SAMPLE OBJECT:", a);
 
-    const x = normalize(a);
+  html += `
+    <tr>
+      <td>${a.id}</td>
+      <td>${a.assetNo}</td>
+      <td>${a.equipmentName}</td>
+      <td>${a.typeCode}</td>
+      <td>${a.discipline}</td>
+      <td>${a.manufacture}</td>
+      <td>${a.model}</td>
+      <td>${formatDate(a.startDate)}</td>
+      <td>${formatDate(a.endDate)}</td>
+    </tr>
+  `;
 
-    html += `
-      <tr>
-        <td>
-          <span class="clickable-id" data-asset-id="${x.id}">
-            ${x.id}
-          </span>
-        </td>
-        <td>${x.assetNo}</td>
-        <td>${x.equipment}</td>
-        <td>${x.type}</td>
-        <td>${x.discipline}</td>
-        <td>${x.location}</td>
-        <td>${formatDate(x.start)}</td>
-        <td>${formatDate(x.end)}</td>
-      </tr>
-    `;
-
-  });
+});
 
   tbody.innerHTML = html;
 }
