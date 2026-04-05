@@ -101,13 +101,20 @@ res.forEach(a => {
 function normalize(a){
   return {
     id: a.id || "-",
-    assetNo: a.assetno || "-",
-    equipment: a.equipmentname || "-",
-    type: a.typecode || "-",
+
+    assetNo: a.assetno || a.assetnumber || "-",
+
+    equipment: a.equipment || a.equipmentname || a.assetdescription || "-",
+
+    type: a.type || a.typecode || "-",
+
     discipline: a.discipline || "-",
-    location: a.codelocation || "-",
-    start: a.startdate || "",
-    end: a.enddate || ""
+
+    location: a.location || a.codelocation || "-",
+
+    start: a.start || a.startdate || a.purchasedate || "",
+
+    end: a.end || a.enddate || a.warrantyenddate || ""
   };
 }
 
