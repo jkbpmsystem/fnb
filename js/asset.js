@@ -63,21 +63,26 @@ async function loadAssets(){
     const isValidCache = cacheTime && (Date.now() - cacheTime < 300000);
 
     // ===== USE CACHE =====
-    if(cached && isValidCache){
+   if(cached && isValidCache){
 
-      try{
-        assetCache = JSON.parse(cached);
+  try{
 
-        // 🔥 IMPORTANT: ensure array
-        if(!Array.isArray(assetCache)){
-          console.warn("Cache rosak, reset...");
-          assetCache = [];
-        }
+    const parsed = JSON.parse(cached);
 
-      }catch(e){
-        console.warn("Cache parse error, reset...");
-        assetCache = [];
-      }
+    // 🔥 VALIDATE CACHE BETUL
+    if(Array.isArray(parsed) && parsed.length > 0 && Object.keys(parsed[0]).length > 0){
+      assetCache = parsed;
+    }else{
+      console.warn("Cache rosak, reset...");
+      assetCache = [];
+    }
+
+  }catch(e){
+    console.warn("Cache parse error, reset...");
+    assetCache = [];
+  }
+
+}
 
       console.log("⚡ Loaded from cache", assetCache);
 
