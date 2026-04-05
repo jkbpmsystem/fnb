@@ -70,9 +70,13 @@ async function getAssets(){
 
   const module = getModule();
 
-  const url = API.ASSET + "?action=getAssets&module=" + module + "&t=" + Date.now();
-
-  return await apiFetch(url) || [];
+  return await apiFetch(API.ASSET, {
+    method: "POST",
+    body: JSON.stringify({
+      action: "getAssets",
+      module: module
+    })
+  }) || [];
 
 }
 
