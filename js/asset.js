@@ -98,6 +98,19 @@ res.forEach(a => {
 // =====================
 // RENDER TABLE (ULTRA FAST)
 // =====================
+function normalize(a){
+  return {
+    id: a.id || "-",
+    assetNo: a.assetno || "-",
+    equipment: a.equipmentname || "-",
+    type: a.typecode || "-",
+    discipline: a.discipline || "-",
+    location: a.codelocation || "-",
+    start: a.startdate || "",
+    end: a.enddate || ""
+  };
+}
+
 function renderTable(){
 
   console.log("🔥 renderTable jalan");
