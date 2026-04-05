@@ -45,6 +45,9 @@ function debounceSearch(){
 // =====================
 async function loadAssets(){
 
+  localStorage.removeItem("assets");
+  localStorage.removeItem("assets_time");
+  
   const tbody = document.querySelector("#assetTable tbody");
 
   if(tbody){
