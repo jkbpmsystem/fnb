@@ -145,10 +145,6 @@ console.log("SAMPLE OBJECT:", a);
 });
 
 
-
-  tbody.innerHTML = html;
-}
-
 // =====================
 // PAGINATION
 // =====================
