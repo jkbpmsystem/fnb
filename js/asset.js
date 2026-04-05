@@ -146,7 +146,7 @@ function normalize(a){
 function renderTable(){
 
    console.log("🔥 renderTable jalan");
-  console.log("SAMPLE OBJECT:", a);
+  
   const tbody = document.querySelector("#assetTable tbody");
   if(!tbody) return;
 
@@ -156,7 +156,7 @@ function renderTable(){
   let html = "";
 
   page.forEach(a => {
-
+console.log("SAMPLE OBJECT:", a);
   const x = normalize(a);
 
   html += `
