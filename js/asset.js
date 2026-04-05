@@ -45,10 +45,6 @@ function debounceSearch(){
 // =====================
 async function loadAssets(){
 
-  // 🔥 CLEAR CACHE (sementara debug)
-  localStorage.removeItem("assets");
-  localStorage.removeItem("assets_time");
-
   const tbody = document.querySelector("#assetTable tbody");
 
   if(tbody){
@@ -57,73 +53,42 @@ async function loadAssets(){
 
   try{
 
-    const cached = localStorage.getItem("assets");
-    const cacheTime = localStorage.getItem("assets_time");
+    const res = await getAssets();
 
-    const isValidCache = cacheTime && (Date.now() - cacheTime < 300000);
+    console.log("🔥 RAW DATA:", res);
 
-    // ===== USE CACHE =====
-    if(cached && isValidCache){
-
-      try{
-
-        const parsed = JSON.parse(cached);
-
-        if(Array.isArray(parsed) && parsed.length > 0 && Object.keys(parsed[0]).length > 0){
-          assetCache = parsed;
-        }else{
-          console.warn("Cache rosak, reset...");
-          assetCache = [];
-        }
-
-      }catch(e){
-        console.warn("Cache parse error, reset...");
-        assetCache = [];
-      }
-
-      console.log("⚡ Loaded from cache", assetCache);
-
-    }else{
-
-      // ===== CALL API =====
-      const res = await getAssets();
-
-      console.log("🌐 API RESULT:", res);
-
-      if(Array.isArray(res)){
-        assetCache = res;
-      }else if(res && Array.isArray(res.data)){
-        assetCache = res.data;
-      }else{
-        console.error("❌ Data bukan array:", res);
-        assetCache = [];
-      }
-
-      // ===== SAVE CACHE =====
-      localStorage.setItem("assets", JSON.stringify(assetCache));
-      localStorage.setItem("assets_time", Date.now());
-
-      console.log("🌐 Loaded from API", assetCache);
-
+    if(!Array.isArray(res)){
+      console.error("Data bukan array:", res);
+      return;
     }
 
-    // ===== ASSIGN DATA =====
-    assetData = assetCache;
-    filteredData = [...assetData]; // 🔥 IMPORTANT FIX
+    let html = "";
 
-    console.log("FINAL DATA:", filteredData);
+    res.forEach(a => {
 
-    requestAnimationFrame(()=>{
-      renderTable();
-      renderPagination();
+      html += `
+        <tr>
+          <td>${a.id || "-"}</td>
+          <td>${a.assetNo || "-"}</td>
+          <td>${a.equipmentName || "-"}</td>
+          <td>${a.typeCode || "-"}</td>
+          <td>${a.discipline || "-"}</td>
+          <td>${a.codeLocation || "-"}</td>
+          <td>${formatDate(a.startDate)}</td>
+          <td>${formatDate(a.endDate)}</td>
+        </tr>
+      `;
+
     });
+
+    tbody.innerHTML = html;
 
   }catch(err){
 
-    console.error("❌ LOAD ERROR:", err);
+    console.error("❌ ERROR:", err);
 
     if(tbody){
-      tbody.innerHTML = "<tr><td colspan='10'>Error loading data</td></tr>";
+      tbody.innerHTML = "<tr><td colspan='10'>Error</td></tr>";
     }
 
   }
