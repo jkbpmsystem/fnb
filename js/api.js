@@ -129,7 +129,7 @@ async function getDWList(){
 
   const module = getModule();
 
-  const url = API.DASHBOARD + "?action=getDWList&module=" + module;
+  const url = API.BASE + "?action=getDWList&module=" + module;
 
   return await apiFetch(url) || [];
 
