@@ -67,17 +67,19 @@ async function loadAssets(){
 res.forEach(a => {
 
   html += `
-    <tr>
-        <td>${a.id}</td>
-        <td>${a.assetNo}</td>
-        <td>${a.codeLocation}</td> <!-- 🔥 BETUL -->
-        <td>${a.equipmentName}</td>
-        <td>${a.typeCode}</td>
-        <td>${a.discipline}</td>
-        <td>${formatDate(a.startDate)}</td>
-        <td>${formatDate(a.endDate)}</td>
-      </tr>
-  `;
+<tr>
+  <td class="clickable-id" data-id="${a.id}" style="cursor:pointer; color:#00e5ff;">
+    ${a.id}
+  </td>
+  <td>${a.assetNo}</td>
+  <td>${a.codeLocation}</td>
+  <td>${a.equipmentName}</td>
+  <td>${a.typeCode}</td>
+  <td>${a.discipline}</td>
+  <td>${formatDate(a.startDate)}</td>
+  <td>${formatDate(a.endDate)}</td>
+</tr>
+`;
 
 });
 
@@ -115,17 +117,19 @@ function renderTable(){
     console.log("SAMPLE OBJECT:", a);
 
     html += `
-      <tr>
-        <td>${a.id}</td>
-        <td>${a.assetNo}</td>
-        <td>${a.codeLocation}</td> <!-- 🔥 BETUL -->
-        <td>${a.equipmentName}</td>
-        <td>${a.typeCode}</td>
-        <td>${a.discipline}</td>
-        <td>${formatDate(a.startDate)}</td>
-        <td>${formatDate(a.endDate)}</td>
-      </tr>
-    `;
+<tr>
+  <td class="clickable-id" data-id="${a.id}" style="cursor:pointer; color:#00e5ff;">
+    ${a.id}
+  </td>
+  <td>${a.assetNo}</td>
+  <td>${a.codeLocation}</td>
+  <td>${a.equipmentName}</td>
+  <td>${a.typeCode}</td>
+  <td>${a.discipline}</td>
+  <td>${formatDate(a.startDate)}</td>
+  <td>${formatDate(a.endDate)}</td>
+</tr>
+`;
 
   });
 
