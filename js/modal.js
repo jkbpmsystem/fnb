@@ -5,9 +5,39 @@ let currentAsset = null;
 // CACHE
 // ======================
 async function getAssetCached(){
-  if(assetCache.length===0){
-    assetCache = await getAssets();
+
+  if(assetCache.length === 0){
+
+    const res = await getAssets();
+
+    assetCache = res.map(row => ({
+      id: row.id,
+      codeLocation: row.codeLocation,
+      area: row.area,
+      department: row.department,
+      assetNo: row.assetNo,
+      assetNoHosza: row.assetNoHosza,
+      equipmentName: row.equipmentName,
+      typeCode: row.typeCode,
+      equipmentDescriptions: row.equipmentDescriptions,
+      discipline: row.discipline,
+      bumi: row.bumi,
+      supplier: row.supplier,
+      manufacture: row.manufacture,
+      model: row.model,
+      serialNumber: row.serialNumber,
+      price: row.price,
+      lpoNo: row.lpoNo,
+      category: row.category,
+      startDate: row.startDate,
+      endDate: row.endDate,
+      ppmFrequency: row.ppmFrequency,
+      status: row.status
+      
+    }));
+
   }
+
   return assetCache;
 }
 
