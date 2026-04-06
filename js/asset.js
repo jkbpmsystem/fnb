@@ -68,7 +68,7 @@ res.forEach(a => {
 
   html += `
 <tr>
-  <td class="clickable-id" data-id="${a.id}" style="cursor:pointer; color:#00e5ff;">
+  <td class="clickable-id" data-asset-id="${a.id}" style="cursor:pointer; color:#00e5ff;">
     ${a.id}
   </td>
   <td>${a.assetNo}</td>
@@ -118,7 +118,7 @@ function renderTable(){
 
     html += `
 <tr>
-  <td class="clickable-id" data-id="${a.id}" style="cursor:pointer; color:#00e5ff;">
+  <td class="clickable-id" data-asset-id="${a.id}" style="cursor:pointer; color:#00e5ff;">
     ${a.id}
   </td>
   <td>${a.assetNo}</td>
