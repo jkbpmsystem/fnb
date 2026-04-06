@@ -663,24 +663,7 @@ alert("Error saving BEMS");
 
 }
 
-// =====================
-// CLICK ID -> OPEN MODAL
-// =====================
-document.addEventListener("click", function(e){
 
-  // ✅ OPEN DETAIL
-  if(e.target.closest(".clickable-id")){
-    openAssetDetailById(e.target.closest(".clickable-id").dataset.id);
-    return;
-  }
-
-  // ✅ ADD ASSET
-  if(e.target.closest("#addAssetBtn")){
-    openAddAssetModal();
-    return;
-  }
-
-});
 
 function formatDate(dateStr){
   if(!dateStr) return "-";
