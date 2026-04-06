@@ -64,14 +64,11 @@ async function login(){
 
     console.log("LOGIN RESULT:", data);
 
-    // 🔥 LETAK SINI
     if(data.status === "success"){
 
-  // 🔥 TAMBAH INI
-  sessionStorage.setItem("user", username);
+      sessionStorage.setItem("user", username);
+      window.location.href = "dashboard.html";
 
-  window.location.href = "dashboard.html";
-}
     }else{
       alert("Login gagal");
     }
