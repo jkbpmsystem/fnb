@@ -64,22 +64,7 @@ async function loadAssets(){
 
     let html = "";
 
-res.forEach(row => {
-
-  const a = {
-    id: row[0],
-    codeLocation: row[1],
-    area: row[2],
-    department: row[3],
-    assetNo: row[4],
-    assetNoHosza: row[5],
-    equipmentName: row[6],
-    typeCode: row[7],
-    equipmentDescriptions: row[8],
-    discipline: row[9],
-    startDate: row[20],
-    endDate: row[21]
-  };
+res.forEach(a => {
 
   html += `
 <tr>
@@ -95,6 +80,7 @@ res.forEach(row => {
   <td>${formatDate(a.endDate)}</td>
 </tr>
 `;
+
 });
     tbody.innerHTML = html;
 
