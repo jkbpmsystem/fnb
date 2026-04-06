@@ -64,7 +64,34 @@ async function loadAssets(){
 
     let html = "";
 
-res.forEach(a => {
+res.forEach(row => {
+
+  const a = {
+    id: row[0],
+    codeLocation: row[1],
+    area: row[2],
+    department: row[3],
+    assetNo: row[4],
+    assetNoHosza: row[5],
+    equipmentName: row[6],
+    typeCode: row[7],
+    equipmentDescriptions: row[8],
+    discipline: row[9],
+    bumi: row[10],
+    bumiContact: row[11],
+    supplier: row[12],
+    supplierContact: row[13],
+    manufacture: row[14],
+    model: row[15],
+    serialNumber: row[16],
+    price: row[17],
+    lpoNo: row[18],
+    category: row[19],
+    startDate: row[20],
+    endDate: row[21],
+    ppmFrequency: row[22],
+    status: row[23]
+  };
 
   html += `
 <tr>
