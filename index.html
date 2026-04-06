@@ -48,8 +48,16 @@ async function login(){
 
   try{
 
-    const username = document.getElementById("username").value;
-    const password = document.getElementById("password").value;
+const usernameEl = document.getElementById("username");
+const passwordEl = document.getElementById("password");
+
+if(!usernameEl || !passwordEl){
+  console.error("Input tak jumpa!");
+  return;
+}
+
+const username = usernameEl.value;
+const password = passwordEl.value;
 
     const res = await fetch(API_URL, {
       method: "POST",
