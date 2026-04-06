@@ -66,7 +66,7 @@ async function openAssetDetailById(assetId){
   }else{
     detailHTML = renderFEMSDetail(asset);
   }
-
+console.log("ASSET CLICKED:", asset);
   document.getElementById("detailBody").innerHTML = renderDetailWithTab(detailHTML);
 
   document.getElementById("globalDetailModal").style.display = "flex";
