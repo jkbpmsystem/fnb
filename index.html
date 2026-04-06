@@ -66,8 +66,12 @@ async function login(){
 
     if(data.status === "success"){
 
-      sessionStorage.setItem("user", username);
-      window.location.href = "dashboard.html";
+sessionStorage.setItem("user", username);
+
+// delay sikit
+setTimeout(()=>{
+  window.location.href = "dashboard.html";
+}, 200);
 
     }else{
       alert("Login gagal");
