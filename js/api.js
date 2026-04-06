@@ -3,8 +3,16 @@
 // ===================== 
 const API = {
   BASE: "https://script.google.com/macros/s/AKfycbyLxPzgzonubQGqgRoLqsuz6EQLj2JAEcTVC2TCFdkPG9CMI6cZ1iHuyTm1ui4QBIlRxg/exec",
-  LOGIN: "https://script.google.com/macros/s/AKfycbwHDAybRqO3zs6SXSaP3wQcdkNH9bU6v2QAGNy2yKT2GqfRRfcOczkCCI94oWxZEVcbPw/exec"
- };
+  LOGIN: "https://script.google.com/macros/s/AKfycbwHDAybRqO3zs6SXSaP3wQcdkNH9bU6v2QAGNy2yKT2GqfRRfcOczkCCI94oWxZEVcbPw/exec",
+
+  ACTIONS: {
+    GET_ASSETS: "getAssets",
+    GET_DASHBOARD: "getDashboard",
+    GET_DW: "getDWList",
+    SAVE_ASSET: "saveAsset",
+    GENERATE_ID: "generateId"
+  }
+};
 
 // =====================
 // LOADER CONTROL
@@ -57,50 +65,64 @@ async function apiFetch(url, options = {}, retry = 2){
 }
 
 // =====================
-// GET MODULE
+// HELPER: BUILD URL
 // =====================
-function getModule(){
-  return (sessionStorage.getItem("cmmsModule") || "fems").toLowerCase();
+function buildApiUrl(action, params = {}){
+
+  const query = new URLSearchParams({
+    action,
+    ...params
+  });
+
+  return `${API.BASE}?${query}`;
 }
 
 // =====================
-// GET ASSETS
+// GET MODULE
+// =====================
+function getModule(){
+  return (sessionStorage.getItem("cmmsModule") || "FEMS").toUpperCase();
+}
+
+// =====================
+// GET ASSETS (POST)
 // =====================
 async function getAssets(){
-
-  const module = getModule();
 
   return await apiFetch(API.BASE, {
     method: "POST",
     body: JSON.stringify({
-      action: "getAssets",
-      module: module
+      action: API.ACTIONS.GET_ASSETS,
+      module: getModule()
     })
   }) || [];
 
 }
 
 // =====================
-// SAVE ASSET
+// SAVE ASSET (POST)
 // =====================
 async function saveAssetAPI(data){
 
-  return await apiFetch(API.ASSET, {
+  return await apiFetch(API.BASE, {
     method: "POST",
-    body: JSON.stringify(data)
+    body: JSON.stringify({
+      ...data,
+      action: API.ACTIONS.SAVE_ASSET
+    })
   }) || {status:"error"};
 
 }
 
 // =====================
-// GENERATE ID
+// GENERATE ID (POST)
 // =====================
 async function generateId(){
 
   return await apiFetch(API.BASE, {
     method: "POST",
     body: JSON.stringify({
-      action: "generateId",
+      action: API.ACTIONS.GENERATE_ID,
       module: getModule()
     })
   }) || {id:"ERROR"};
@@ -108,14 +130,14 @@ async function generateId(){
 }
 
 // =====================
-// DASHBOARD
+// DASHBOARD (POST)
 // =====================
 async function getDashboard(){
 
   return await apiFetch(API.BASE, {
     method: "POST",
     body: JSON.stringify({
-      action: "getDashboard",
+      action: API.ACTIONS.GET_DASHBOARD,
       module: getModule()
     })
   }) || {};
@@ -123,13 +145,13 @@ async function getDashboard(){
 }
 
 // =====================
-// DW LIST
+// DW LIST (GET)
 // =====================
 async function getDWList(){
 
-  const module = getModule();
-
-  const url = API.BASE + "?action=getDWList&module=" + module;
+  const url = buildApiUrl(API.ACTIONS.GET_DW, {
+    module: getModule()
+  });
 
   return await apiFetch(url) || [];
 
