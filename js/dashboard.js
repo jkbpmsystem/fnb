@@ -1,10 +1,3 @@
-// 🔥 CHECK LOGIN
-const user = sessionStorage.getItem("user");
-
-if(!user){
-  window.location.href = "index.html";
-}
-
 
 document.addEventListener("DOMContentLoaded", ()=>{
   document.getElementById("moduleName").innerText = sessionStorage.getItem("cmmsModule") || "FEMS";
