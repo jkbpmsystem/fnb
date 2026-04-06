@@ -64,6 +64,7 @@ async function login(){
     const data = JSON.parse(text);
 
     console.log("LOGIN RESULT:", data);
+    console.log(document.getElementById("username"));
 
   }catch(err){
     console.error("LOGIN ERROR:", err);
