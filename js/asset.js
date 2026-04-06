@@ -371,17 +371,17 @@ async function openAddAsset(){
 
                         <div class="form-group">
                             <label>Asset No</label>
-                            <input id="assetNo" type="text" placeholder="Enter manufacturer"required>
+                            <input id="assetNo" type="text" placeholder="Enter Asset No"required>
                         </div>
 
                         <div class="form-group">
                             <label>Asset No Hosza</label>
-                            <input id="assetNoHosza" type="text" placeholder="Enter model"required>
+                            <input id="assetNoHosza" type="text" placeholder="Enter No Hosza"required>
                         </div>
 
                         <div class="form-group">
                             <label>Equipment Name</label>
-                            <input id="equipmentName" type="text" placeholder="Enter serial number"required>
+                            <input id="equipmentName" type="text" placeholder="Enter Name"required>
                         </div>
                         <div class="form-group">
                             <label>Type Code</label>
@@ -539,58 +539,65 @@ function renderBEMSForm(){
 return `
 <div class="form-grid">
 
-<input id="id" placeholder="ID" readonly>
-<input id="assetNumber" placeholder="Asset Number">
-<input id="assetNumberKonsesi" placeholder="Asset Number Konsesi">
+    <input id="assetId" value="${idRes.id}" readonly>
+    <input id="assetNumber" placeholder="Asset Number">
+    <input id="assetNumberKonsesi" placeholder="Asset Number Konsesi">
 
-<input id="typeCode" placeholder="Type Code">
-<input id="typeDescription" placeholder="Type Description">
+                            <input id="typeCode"
+                                   type="text"
+                                    placeholder="Enter Type Code"
+                                   oninput="autoFillEquipmentDesc()"
+                                   required>
+    <input id="typeDescription" placeholder="Type Description">
 
-<input id="assetDescription" placeholder="Asset Description">
+    <input id="assetDescription" placeholder="Asset Description">
 
-<input id="service" placeholder="Service">
-<input id="department" placeholder="Department">
-<input id="area" placeholder="Area">
+    <input id="service" placeholder="Service">
+                            <input type="text" id="department" readonly>
+                            <input type="text" id="area" readonly>
 
-<input id="locationCode" placeholder="Location Code">
-<input id="location" placeholder="Location">
+                            <input type="text"
+                                id="codeLocation"
+                                placeholder="L1-BEM-001"
+                                oninput="this.value=this.value.toUpperCase(); autoFillLocation(this.value)"
+    <input id="location" placeholder="Location">
 
-<input id="ppmFrequency" placeholder="PPM Frequency">
+    <input id="ppmFrequency" placeholder="PPM Frequency">
 
-<input type="date" id="purchaseDate">
-<input type="date" id="commissioningDate">
+    <input type="date" id="purchaseDate">
+    <input type="date" id="commissioningDate">
 
-<input type="date" id="warrantyStart">
-<input type="date" id="warrantyEnd">
-<input id="warrantyDuration" placeholder="Warranty Duration">
+    <input type="date" id="warrantyStart">
+    <input type="date" id="warrantyEnd">
+    <input id="warrantyDuration" placeholder="Warranty Duration">
 
-<input id="manufacturer" placeholder="Manufacturer">
-<input id="brand" placeholder="Brand">
-<input id="model" placeholder="Model">
-<input id="serialNo" placeholder="Serial No">
+    <input id="manufacturer" placeholder="Manufacturer">
+    <input id="brand" placeholder="Brand">
+    <input id="model" placeholder="Model">
+    <input id="serialNo" placeholder="Serial No">
 
-<input id="loNo" placeholder="LO No">
-<input id="loPrice" placeholder="LO Price">
-<input id="pricePerUnit" placeholder="Price Per Unit">
+    <input id="loNo" placeholder="LO No">
+    <input id="loPrice" placeholder="LO Price">
+    <input id="pricePerUnit" placeholder="Price Per Unit">
 
-<input id="bumiAgent" placeholder="Bumi Agent">
-<input id="vendor" placeholder="Vendor">
+    <input id="bumiAgent" placeholder="Bumi Agent">
+    <input id="vendor" placeholder="Vendor">
 
-<input id="remarks" placeholder="Remarks">
+    <input id="remarks" placeholder="Remarks">
 
-<input id="contract" placeholder="Contract Info">
+    <input id="contract" placeholder="Contract Info">
 
-<select id="maintenanceType">
-<option value="">Maintenance Type</option>
-<option>PPM</option>
-<option>RI</option>
-<option>CALIBRATION</option>
-</select>
+    <select id="maintenanceType">
+        <option value="">Maintenance Type</option>
+        <option>PPM</option>
+        <option>RI</option>
+        <option>CALIBRATION</option>
+    </select>
 
-<input id="month" placeholder="Month">
-<input id="statusWarranty" placeholder="Warranty Status">
-<input id="ppm" placeholder="PPM">
-<input id="remarks2" placeholder="Remarks">
+    <input id="month" placeholder="Month">
+    <input id="statusWarranty" placeholder="Warranty Status">
+    <input id="ppm" placeholder="PPM">
+    <input id="remarks2" placeholder="Remarks">
 
 </div>
 
