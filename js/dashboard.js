@@ -46,30 +46,40 @@ function renderDurationTable(assets){
 
   const today = new Date();
 
-  assets.forEach(a=>{
-    if(!a.endDate) return;
+  // 🔥 STEP 1: filter + kira daysLeft
+  const sorted = assets
+    .filter(a => a.endDate)
+    .map(a => {
 
-    const end = new Date(a.endDate);
-    const start = new Date(a.startDate);
+      const end = new Date(a.endDate);
+      const diff = Math.ceil((end - today)/(1000*60*60*24));
 
-    const diff = Math.ceil((end - today)/(1000*60*60*24));
+      return {
+        ...a,
+        daysLeft: diff
+      };
+
+    })
+    .sort((a,b) => a.daysLeft - b.daysLeft); // 🔥 kecil → besar
+
+  // 🔥 STEP 2: render
+  sorted.forEach(a => {
 
     const tr = document.createElement("tr");
 
     tr.innerHTML = `
       <td><span class="clickable-id" data-asset-id="${a.id}">${a.id}</span></td>
-      <td>${a.equipmentName||""}</td>
-      <td>${formatDate(a.startDate)||""}</td>
-      <td>${formatDate(a.endDate)||""}</td>
-      <td style="color:${diff<0?'#ff3d57':diff<30?'#ffc107':'#00e676'}">
-        ${diff}
+      <td>${a.equipmentName || ""}</td>
+      <td>${formatDate(a.startDate) || ""}</td>
+      <td>${formatDate(a.endDate) || ""}</td>
+      <td style="color:${a.daysLeft<0?'#ff3d57':a.daysLeft<30?'#ffc107':'#00e676'}">
+        ${a.daysLeft}
       </td>
     `;
 
     tbody.appendChild(tr);
   });
 }
-
 
 function showAlerts(assets){
   const today = new Date();
