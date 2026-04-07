@@ -39,28 +39,54 @@ function renderRecent(dw){
 }
 
 
+function mapDurationData(a, module){
+
+  if(module === "BEMS"){
+    return {
+      id: a.id,
+      name: a.assetDescription,
+      startDate: a.purchaseDate,
+      endDate: a.warrantyEnd
+    };
+  }
+
+  // FEMS
+  return {
+    id: a.id,
+    name: a.equipmentName,
+    startDate: a.startDate,
+    endDate: a.endDate
+  };
+}
+
 function renderDurationTable(assets){
+
   const tbody = document.querySelector("#durationTable tbody");
   if(!tbody) return;
   tbody.innerHTML = "";
 
+  const module = getModule().toUpperCase();
   const today = new Date();
 
-  // 🔥 STEP 1: filter + kira daysLeft
+  // 🔥 STEP 1: map + filter + kira daysLeft
   const sorted = assets
-    .filter(a => a.endDate)
     .map(a => {
 
-      const end = new Date(a.endDate);
+      const x = mapDurationData(a, module);
+
+      if(!x.endDate) return null;
+
+      const end = new Date(x.endDate);
       const diff = Math.ceil((end - today)/(1000*60*60*24));
 
       return {
-        ...a,
+        ...x,
         daysLeft: diff
       };
 
     })
-    .sort((a,b) => a.daysLeft - b.daysLeft); // 🔥 kecil → besar
+    .filter(Boolean)
+    .sort((a,b) => a.daysLeft - b.daysLeft);
 
   // 🔥 STEP 2: render
   sorted.forEach(a => {
@@ -69,9 +95,9 @@ function renderDurationTable(assets){
 
     tr.innerHTML = `
       <td><span class="clickable-id" data-asset-id="${a.id}">${a.id}</span></td>
-      <td>${a.equipmentName || ""}</td>
-      <td>${formatDate(a.startDate) || ""}</td>
-      <td>${formatDate(a.endDate) || ""}</td>
+      <td>${a.name || "-"}</td>
+      <td>${formatDate(a.startDate)}</td>
+      <td>${formatDate(a.endDate)}</td>
       <td style="color:${a.daysLeft<0?'#ff3d57':a.daysLeft<30?'#ffc107':'#00e676'}">
         ${a.daysLeft}
       </td>
@@ -79,6 +105,7 @@ function renderDurationTable(assets){
 
     tbody.appendChild(tr);
   });
+
 }
 
 function showAlerts(assets){
