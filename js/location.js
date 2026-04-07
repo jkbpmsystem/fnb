@@ -1886,19 +1886,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
 /* GET DEPARTMENT FROM CODE */
 
-const parts = code.split("-");
+function autoFillDepartment(code){
 
-if(parts.length > 1){
+  const parts = code.split("-");
 
-const deptCode = parts[1];
+  if(parts.length > 1){
 
-if(departmentMaster[deptCode]){
+    const deptCode = parts[1];
 
-document.getElementById("department").value =
-departmentMaster[deptCode];
+    if(departmentMaster[deptCode]){
+      document.getElementById("department").value =
+        departmentMaster[deptCode];
+    }
 
-}
-
+  }
 }
 
 
