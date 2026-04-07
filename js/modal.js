@@ -57,7 +57,7 @@ async function openAssetDetailById(assetId){
   currentAsset = asset;
 
   // 🔥 detect module
-  const module = asset.module || "FEMS";
+  const module = getModule().toUpperCase();
 
   let detailHTML = "";
 
