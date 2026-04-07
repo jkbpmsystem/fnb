@@ -401,6 +401,7 @@ async function openAddAsset(){
                         </div>
                         <div class="form-group" style="position:relative;">
                             <label>Type Code</label>
+                            <input id="typeCode">
                         </div>
 
                         <div class="form-group">
