@@ -1767,109 +1767,121 @@ const typeMaster = {
 };
 
 // ==========================
-// ELEMENT
+// WAIT DOM READY (PENTING)
 // ==========================
-const typeInput = document.getElementById("typeCode");
-const popup = document.getElementById("typePopup");
-const list = document.getElementById("typeList");
-const descInput = document.getElementById("equipmentDescriptions");
+document.addEventListener("DOMContentLoaded", () => {
 
-// ==========================
-// AUTO FILL DESC
-// ==========================
-function autoFillEquipmentDesc(){
-  const code = typeInput.value.trim().toUpperCase();
+  // ==========================
+  // ELEMENT
+  // ==========================
+  const typeInput = document.getElementById("typeCode");
+  const popup = document.getElementById("typePopup");
+  const list = document.getElementById("typeList");
+  const descInput = document.getElementById("equipmentDescriptions");
 
-  if(typeMaster[code]){
-    descInput.value = typeMaster[code];
-  }else{
-    descInput.value = "";
-  }
-}
+  // kalau element tak wujud → stop (elak error)
+  if(!typeInput || !popup || !list) return;
 
-// ==========================
-// OPEN POPUP
-// ==========================
-function openTypePopup(){
-  popup.classList.remove("hidden");
-  renderTypeList("");
-}
+  // ==========================
+  // AUTO FILL DESC
+  // ==========================
+  function autoFillEquipmentDesc(){
+    const code = typeInput.value.trim().toUpperCase();
 
-// ==========================
-// RENDER LIST (OPTIMIZED)
-// ==========================
-function renderTypeList(filter){
-  list.innerHTML = "";
-
-  const fragment = document.createDocumentFragment();
-
-  let count = 0;
-
-  for(const code in typeMaster){
-
-    const desc = typeMaster[code];
-
-    if(
-      code.toLowerCase().includes(filter) ||
-      desc.toLowerCase().includes(filter)
-    ){
-
-      const item = document.createElement("div");
-      item.innerHTML = `<b>${code}</b> - ${desc}`;
-
-      item.onclick = () => {
-        typeInput.value = code;
-        popup.classList.add("hidden");
-        autoFillEquipmentDesc();
-      };
-
-      fragment.appendChild(item);
-
-      count++;
-      if(count >= 50) break; // 🔥 limit result
-    }
-  }
-
-  list.appendChild(fragment);
-}
-
-// ==========================
-// DEBOUNCE (ANTI LAG)
-// ==========================
-let debounceTimer;
-
-function filterTypeCode(val){
-
-  clearTimeout(debounceTimer);
-
-  debounceTimer = setTimeout(()=>{
-
-    const value = val.toLowerCase();
-
-    renderTypeList(value);
-
-    // exact match
-    const code = val.toUpperCase();
     if(typeMaster[code]){
-      autoFillEquipmentDesc();
+      descInput.value = typeMaster[code];
+    }else{
+      descInput.value = "";
+    }
+  }
+
+  // ==========================
+  // OPEN POPUP
+  // ==========================
+  function openTypePopup(){
+    popup.classList.remove("hidden");
+    renderTypeList("");
+  }
+
+  // ==========================
+  // RENDER LIST
+  // ==========================
+  function renderTypeList(filter){
+    list.innerHTML = "";
+
+    const fragment = document.createDocumentFragment();
+    let count = 0;
+
+    for(const code in typeMaster){
+
+      const desc = typeMaster[code];
+
+      if(
+        code.toLowerCase().includes(filter) ||
+        desc.toLowerCase().includes(filter)
+      ){
+
+        const item = document.createElement("div");
+        item.innerHTML = `<b>${code}</b> - ${desc}`;
+
+        item.onclick = () => {
+          typeInput.value = code;
+          popup.classList.add("hidden");
+          autoFillEquipmentDesc();
+        };
+
+        fragment.appendChild(item);
+
+        count++;
+        if(count >= 50) break;
+      }
     }
 
-  }, 200); // delay 200ms
-}
-
-// ==========================
-// EVENT
-// ==========================
-typeInput.addEventListener("focus", openTypePopup);
-
-typeInput.addEventListener("input", (e)=>{
-  filterTypeCode(e.target.value);
-});
-
-document.addEventListener("click", (e)=>{
-  if(!e.target.closest(".form-group")){
-    popup.classList.add("hidden");
+    list.appendChild(fragment);
   }
+
+  // ==========================
+  // DEBOUNCE FILTER
+  // ==========================
+  let debounceTimer;
+
+  function filterTypeCode(val){
+
+    clearTimeout(debounceTimer);
+
+    debounceTimer = setTimeout(()=>{
+
+      const value = val.toLowerCase();
+      renderTypeList(value);
+
+      // exact match
+      const code = val.toUpperCase();
+      if(typeMaster[code]){
+        autoFillEquipmentDesc();
+      }
+
+    }, 200);
+  }
+
+  // ==========================
+  // EVENT LISTENER (FIXED)
+  // ==========================
+
+  // buka popup
+  typeInput.addEventListener("focus", openTypePopup);
+
+  // filter masa typing
+  typeInput.addEventListener("input", (e)=>{
+    filterTypeCode(e.target.value);
+  });
+
+  // close popup bila klik luar
+  document.addEventListener("click", (e)=>{
+    if(!e.target.closest(".form-group")){
+      popup.classList.add("hidden");
+    }
+  });
+
 });
 
 /* GET DEPARTMENT FROM CODE */
