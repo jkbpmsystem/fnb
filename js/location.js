@@ -1889,7 +1889,7 @@ departmentMaster[deptCode];
 
 }
 
-}
+
 
 /* AUTO FILL AREA & DEPARTMENT */
 
