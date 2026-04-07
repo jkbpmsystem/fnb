@@ -1775,7 +1775,7 @@ const list = document.getElementById("typeList");
 const descInput = document.getElementById("equipmentDescriptions");
 
 // ==========================
-// AUTO FILL DESC (EXISTING)
+// AUTO FILL DESC
 // ==========================
 function autoFillEquipmentDesc(){
   const code = typeInput.value.trim().toUpperCase();
@@ -1796,20 +1796,23 @@ function openTypePopup(){
 }
 
 // ==========================
-// RENDER LIST
+// RENDER LIST (OPTIMIZED)
 // ==========================
 function renderTypeList(filter){
   list.innerHTML = "";
 
   const fragment = document.createDocumentFragment();
 
-  Object.entries(typeMaster)
-    .filter(([code,desc]) =>
+  let count = 0;
+
+  for(const code in typeMaster){
+
+    const desc = typeMaster[code];
+
+    if(
       code.toLowerCase().includes(filter) ||
       desc.toLowerCase().includes(filter)
-    )
-    .slice(0,50)
-    .forEach(([code,desc]) => {
+    ){
 
       const item = document.createElement("div");
       item.innerHTML = `<b>${code}</b> - ${desc}`;
@@ -1821,39 +1824,48 @@ function renderTypeList(filter){
       };
 
       fragment.appendChild(item);
-    });
+
+      count++;
+      if(count >= 50) break; // 🔥 limit result
+    }
+  }
 
   list.appendChild(fragment);
 }
 
 // ==========================
-// FILTER INPUT
+// DEBOUNCE (ANTI LAG)
 // ==========================
+let debounceTimer;
+
 function filterTypeCode(val){
-  const value = val.toLowerCase();
 
-  renderTypeList(value);
+  clearTimeout(debounceTimer);
 
-  // auto fill kalau exact match
-  const code = val.toUpperCase();
-  if(typeMaster[code]){
-    autoFillEquipmentDesc();
-  }
+  debounceTimer = setTimeout(()=>{
+
+    const value = val.toLowerCase();
+
+    renderTypeList(value);
+
+    // exact match
+    const code = val.toUpperCase();
+    if(typeMaster[code]){
+      autoFillEquipmentDesc();
+    }
+
+  }, 200); // delay 200ms
 }
 
 // ==========================
 // EVENT
 // ==========================
-
-// buka popup bila klik
 typeInput.addEventListener("focus", openTypePopup);
 
-// filter masa typing
 typeInput.addEventListener("input", (e)=>{
   filterTypeCode(e.target.value);
 });
 
-// close popup bila klik luar
 document.addEventListener("click", (e)=>{
   if(!e.target.closest(".form-group")){
     popup.classList.add("hidden");
