@@ -1902,6 +1902,7 @@ if(locationMaster[code]){
 document.getElementById("area").value = locationMaster[code];
 
 }
+}
 
 const locationMaster = {
 
