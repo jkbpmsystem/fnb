@@ -41,7 +41,39 @@ function debounceSearch(){
 
 
 // =====================
-// LOAD DATA (FIX VERSION)
+// TABLE DATA MAPPER
+// =====================
+function mapTableData(a, module){
+
+  if(module === "BEMS"){
+    return {
+      id: a.id,
+      assetNo: a.assetNumber,
+      location: a.locationCode,
+      name: a.assetDescription,
+      type: a.typeCode,
+      discipline: a.service || "-",
+      startDate: a.purchaseDate,
+      endDate: a.warrantyEnd
+    };
+  }
+
+  // FEMS
+  return {
+    id: a.id,
+    assetNo: a.assetNo,
+    location: a.codeLocation,
+    name: a.equipmentName,
+    type: a.typeCode,
+    discipline: a.discipline,
+    startDate: a.startDate,
+    endDate: a.endDate
+  };
+}
+
+
+// =====================
+// LOAD DATA
 // =====================
 async function loadAssets(){
 
@@ -62,27 +94,12 @@ async function loadAssets(){
       return;
     }
 
-    let html = "";
+    // 🔥 simpan global untuk pagination
+    assetData = res;
+    filteredData = [...res];
+    currentPage = 1;
 
-res.forEach(a => {
-
-  html += `
-<tr>
-  <td class="clickable-id" data-asset-id="${a.id}">
-    ${a.id}
-  </td>
-  <td>${a.assetNo}</td>
-  <td>${a.codeLocation}</td>
-  <td>${a.equipmentName}</td>
-  <td>${a.typeCode}</td>
-  <td>${a.discipline}</td>
-  <td>${formatDate(a.startDate)}</td>
-  <td>${formatDate(a.endDate)}</td>
-</tr>
-`;
-
-});
-    tbody.innerHTML = html;
+    updatePage();
 
   }catch(err){
 
@@ -96,15 +113,16 @@ res.forEach(a => {
 
 }
 
+
 // =====================
-// RENDER TABLE (ULTRA FAST)
+// RENDER TABLE (PAGINATION)
 // =====================
 function renderTable(){
 
-  console.log("🔥 renderTable jalan");
-
   const tbody = document.querySelector("#assetTable tbody");
   if(!tbody) return;
+
+  const module = getModule().toUpperCase();
 
   const start = (currentPage - 1) * rowsPerPage;
   const page = filteredData.slice(start, start + rowsPerPage);
@@ -113,23 +131,22 @@ function renderTable(){
 
   page.forEach(a => {
 
-    console.log("SAMPLE OBJECT:", a);
+    const x = mapTableData(a, module);
 
     html += `
 <tr>
-  <td class="clickable-id" data-asset-id="${a.id}" style="cursor:pointer; color:#00e5ff;">
-    ${a.id}
+  <td class="clickable-id" data-asset-id="${x.id}" style="cursor:pointer; color:#00e5ff;">
+    ${x.id}
   </td>
-  <td>${a.assetNo}</td>
-  <td>${a.codeLocation}</td>
-  <td>${a.equipmentName}</td>
-  <td>${a.typeCode}</td>
-  <td>${a.discipline}</td>
-  <td>${formatDate(a.startDate)}</td>
-  <td>${formatDate(a.endDate)}</td>
+  <td>${x.assetNo || "-"}</td>
+  <td>${x.location || "-"}</td>
+  <td>${x.name || "-"}</td>
+  <td>${x.type || "-"}</td>
+  <td>${x.discipline || "-"}</td>
+  <td>${formatDate(x.startDate)}</td>
+  <td>${formatDate(x.endDate)}</td>
 </tr>
 `;
-
   });
 
   tbody.innerHTML = html;
