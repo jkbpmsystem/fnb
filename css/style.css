@@ -465,3 +465,31 @@ tr:hover{
   justify-content:center;
   margin-top:12px;
 }
+
+/* =========================
+   POPUP TYPE CODE
+========================= */
+.popup{
+  position:absolute;
+  top:100%;
+  left:0;
+  width:100%;
+  max-height:250px;
+  overflow:auto;
+  background:#fff;
+  border:1px solid #ccc;
+  z-index:999;
+}
+
+.hidden{
+  display:none;
+}
+
+.popup div{
+  padding:8px;
+  cursor:pointer;
+}
+
+.popup div:hover{
+  background:#f0f0f0;
+}
