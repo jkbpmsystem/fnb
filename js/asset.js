@@ -401,20 +401,6 @@ async function openAddAsset(){
                         </div>
                         <div class="form-group" style="position:relative;">
                             <label>Type Code</label>
-
-                            <input id="typeCode"
-                                       type="text"
-                                       placeholder="Enter Type Code"
-                                       oninput="autoFillEquipmentDesc(); filterTypeCode(this.value)"
-                                       onclick="openTypePopup()"
-                                       autocomplete="off"
-                                       required>
-
-                            <!-- POPUP -->
-                        <div id="typePopup" class="popup hidden">
-                        <div id="typeList"></div>
-                        </div>
-                        </div>
                         </div>
 
                         <div class="form-group">
@@ -630,12 +616,7 @@ return `
 `;
 }
 
-function openTypePopup(){
-  popup.classList.remove("hidden");
-  renderTypeList("");
-}
 
-window.openTypePopup = openTypePopup;
 
 async function saveBEMS(){
 
