@@ -630,6 +630,13 @@ return `
 `;
 }
 
+function openTypePopup(){
+  popup.classList.remove("hidden");
+  renderTypeList("");
+}
+
+window.openTypePopup = openTypePopup;
+
 async function saveBEMS(){
 
 const data = {
