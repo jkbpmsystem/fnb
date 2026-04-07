@@ -399,13 +399,22 @@ async function openAddAsset(){
                             <label>Equipment Name</label>
                             <input id="equipmentName" type="text" placeholder="Enter Name"required>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" style="position:relative;">
                             <label>Type Code</label>
+
                             <input id="typeCode"
-                                   type="text"
-                                    placeholder="Enter Type Code"
-                                   oninput="autoFillEquipmentDesc()"
-                                   required>
+                                       type="text"
+                                       placeholder="Enter Type Code"
+                                       oninput="autoFillEquipmentDesc(); filterTypeCode(this.value)"
+                                       onclick="openTypePopup()"
+                                       autocomplete="off"
+                                       required>
+
+                            <!-- POPUP -->
+                        <div id="typePopup" class="popup hidden">
+                        <div id="typeList"></div>
+                        </div>
+                        </div>
                         </div>
 
                         <div class="form-group">
