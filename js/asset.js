@@ -499,6 +499,7 @@ async function openAddAsset(){
                     </div>
     <button class="btn btn-primary" id="saveAssetBtn">Save</button>
   `;
+    initTypeCodePopup();
   }
   
 const codeInput = document.getElementById("codeLocation");
@@ -556,10 +557,7 @@ return `
     <input id="assetNumberKonsesi" placeholder="Asset Number Konsesi">
 
                             <input id="typeCode"
-                                   type="text"
-                                    placeholder="Enter Type Code"
-                                   oninput="autoFillEquipmentDesc()"
-                                   required>
+                                   
     <input id="typeDescription" placeholder="Type Description">
 
     <input id="assetDescription" placeholder="Asset Description">
@@ -615,6 +613,7 @@ return `
 
 <button class="btn btn-primary" onclick="saveBEMS()">Save</button>
 `;
+  initTypeCodePopup();
 }
 
 
