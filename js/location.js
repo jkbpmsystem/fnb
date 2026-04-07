@@ -1905,7 +1905,79 @@ function autoFillDepartment(code){
   }
 }
 
+/*INIT POPUP*/
+function initTypeCodePopup(){
 
+  const typeInput = document.getElementById("typeCode");
+  const popup = document.getElementById("typePopup");
+  const list = document.getElementById("typeList");
+  const descInput = document.getElementById("equipmentDescriptions");
+
+  if(!typeInput || !popup || !list) return;
+
+  function autoFillEquipmentDesc(){
+    const code = typeInput.value.trim().toUpperCase();
+    descInput.value = typeMaster[code] || "";
+    autoFillDepartment(code);
+  }
+
+  function renderTypeList(filter){
+    list.innerHTML = "";
+
+    let count = 0;
+    for(const code in typeMaster){
+
+      const desc = typeMaster[code];
+
+      if(
+        code.toLowerCase().includes(filter) ||
+        desc.toLowerCase().includes(filter)
+      ){
+
+        const item = document.createElement("div");
+        item.innerHTML = `<b>${code}</b> - ${desc}`;
+
+        item.onclick = () => {
+          typeInput.value = code;
+          popup.classList.add("hidden");
+          autoFillEquipmentDesc();
+        };
+
+        list.appendChild(item);
+
+        count++;
+        if(count >= 50) break;
+      }
+    }
+  }
+
+  function openTypePopup(){
+    popup.classList.remove("hidden");
+    renderTypeList("");
+  }
+
+  let debounce;
+  function filterTypeCode(val){
+    clearTimeout(debounce);
+    debounce = setTimeout(()=>{
+      renderTypeList(val.toLowerCase());
+      autoFillEquipmentDesc();
+    },200);
+  }
+
+  // 🔥 attach event sini
+  typeInput.addEventListener("focus", openTypePopup);
+  typeInput.addEventListener("input", (e)=>{
+    filterTypeCode(e.target.value);
+  });
+
+  document.addEventListener("click", (e)=>{
+    if(!e.target.closest(".form-group")){
+      popup.classList.add("hidden");
+    }
+  });
+
+}
 
 /* AUTO FILL AREA & DEPARTMENT */
 
