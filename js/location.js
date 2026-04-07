@@ -1785,15 +1785,18 @@ document.addEventListener("DOMContentLoaded", () => {
   // ==========================
   // AUTO FILL DESC
   // ==========================
-  function autoFillEquipmentDesc(){
-    const code = typeInput.value.trim().toUpperCase();
+function autoFillEquipmentDesc(){
+  const code = typeInput.value.trim().toUpperCase();
 
-    if(typeMaster[code]){
-      descInput.value = typeMaster[code];
-    }else{
-      descInput.value = "";
-    }
+  if(typeMaster[code]){
+    descInput.value = typeMaster[code];
+  }else{
+    descInput.value = "";
   }
+
+  // 🔥 tambah ini
+  autoFillDepartment(code);
+}
 
   // ==========================
   // OPEN POPUP
@@ -1908,13 +1911,16 @@ function autoFillDepartment(code){
 
 function checkLocation(){
 
-const code = document.getElementById("codeLocation").value;
+  const code = document.getElementById("codeLocation").value;
 
-if(locationMaster[code]){
+  if(locationMaster[code]){
+    document.getElementById("area").value = locationMaster[code];
+  }else{
+    document.getElementById("area").value = "";
+  }
 
-document.getElementById("area").value = locationMaster[code];
-
-}
+  // 🔥 tambah ini
+  autoFillDepartment(code);
 }
 
 const locationMaster = {
