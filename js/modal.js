@@ -306,7 +306,7 @@ function renderPPM(asset){
 /*event*/
 document.addEventListener("click", function(e){
 
-  const el = e.target.closest("[data-asset-id]");
+  
 
   // ======================
   // CLICK PPM ROW
