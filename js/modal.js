@@ -28,11 +28,10 @@ async function getAssetCached(){
 // OPEN DETAIL
 // ======================
 async function openAssetDetailById(assetId){
-
+  console.trace("🔥 MODAL DIPANGGIL DARI SINI:", assetId);
   console.log("CALL SOURCE:", isUserClick, assetId);
 
-  if(!isUserClick) return;
-  isUserClick = false;
+ 
   
   const assets = await getAssetCached();
   const asset = assets.find(a => a.id == assetId);
