@@ -281,7 +281,7 @@ function renderPPM(asset){
     }
 
     html += `
-      <tr class="${cls}" data-asset-id="${asset.id}" data-cycle="${p.cycle}">
+      <tr class="${cls}" data-cycle="${p.cycle}" data-id="${asset.id}">
         <td>${p.cycle}</td>
         <td>${formatDate(p.planned)}</td>
         <td>${p.actual ? formatDate(p.actual) : "-"}</td>
