@@ -32,8 +32,50 @@ async function getAssetCached(){
       startDate: row.startDate,
       endDate: row.endDate,
       ppmFrequency: row.ppmFrequency,
-      status: row.status
-      
+      status: row.status,
+      1st: row.1st,
+      2nd: row.2nd,
+      3rd: row.3rd,
+      4th: row.4th,
+      5th: row.5th,
+      6th: row.6th,
+      7th: row.7th,
+      8th: row.8th,
+      9th: row.9th,
+      10th: row.10th,
+      11th: row.11th,
+      12th: row.12th,
+      13th: row.13th,
+      14th: row.14th,
+      15th: row.15th,
+      16th: row.16th,
+      17th: row.17th,
+      18th: row.18th,
+      19th: row.19th,
+      20th: row.20th,
+      21st: row.21st,
+      done_1st: row.done_1st,
+      done_2nd: row.done_2nd,
+      done_3rd: row.done_3rd,
+      done_4th: row.done_4th,
+      done_5th: row.done_5th,
+      done_6th: row.done_6th,
+      done_7th: row.done_7th,
+      done_8th: row.done_8th,
+      done_9th: row.done_9th,
+      done_10th: row.done_10th,
+      done_11th: row.done_11th,
+      done_12th: row.done_12th,
+      done_13th: row.done_13th,
+      done_14th: row.done_14th,
+      done_15th: row.done_15th,
+      done_16th: row.done_16th,
+      done_17th: row.done_17th,
+      done_18th: row.done_18th,
+      done_19th: row.done_19th,
+      done_20th: row.done_20th,
+      done_21st: row.done_21st
+
     }));
 
   }
@@ -236,44 +278,52 @@ window.formatDate = function(dateStr){
 // ======================
 function renderPPM(asset){
 
-  const ppmList = [];
+  const list = [];
 
-  Object.keys(asset).forEach(key => {
+  for(let i=1; i<=21; i++){
 
-    if(key.includes("_PPM") && !key.includes("Done")){
+    const suffix = getOrdinal(i); // 1st, 2nd...
 
-      const date = asset[key];
-      if(!date) return;
+    const key = suffix;              // 🔥 updated
+    const statusKey = "done_" + suffix; // 🔥 updated
 
-      const statusKey = "Done_" + key;
-      const status = asset[statusKey] || "";
+    const planned = asset[key];
+    if(!planned) continue;
 
-      ppmList.push({
-        label: key.replace("_PPM",""),
-        date: date,
-        status: status
-      });
+    const actual = asset[statusKey] || "";
 
-    }
+    list.push({
+      cycle: i,
+      planned,
+      actual
+    });
+  }
 
-  });
-
-  ppmList.sort((a,b)=> new Date(a.date) - new Date(b.date));
-
-  if(ppmList.length === 0){
+  if(list.length === 0){
     return "<div>No PPM Data</div>";
   }
 
-  let html = "<div class='ppm-grid'>";
+  let html = `<div class="ppm-wrapper">`;
 
-  ppmList.forEach((p,i) => {
+  html += `
+  <h3>During Warranty</h3>
+  <table class="ppm-table">
+    <tr>
+      <th>Cycle</th>
+      <th>Planned</th>
+      <th>Actual</th>
+      <th>Status</th>
+    </tr>
+  `;
+
+  list.forEach(p => {
 
     let cls = "";
 
-    if(p.status){
+    if(p.actual){
       cls = "green";
-    } else {
-      const d = new Date(p.date);
+    }else{
+      const d = new Date(p.planned);
       const today = new Date();
       today.setHours(0,0,0,0);
 
@@ -282,38 +332,63 @@ function renderPPM(asset){
     }
 
     html += `
-      <div class="ppm-card ${cls}" data-asset-id="${asset.id}" data-ppm-index="${i+1}">
-        <b>${p.label}</b>
-        <div>${formatDate(p.date)}</div>
-        <small>${p.status || "Pending"}</small>
-      </div>
+      <tr class="${cls}" data-asset-id="${asset.id}" data-cycle="${p.cycle}">
+        <td>${p.cycle}</td>
+        <td>${formatDate(p.planned)}</td>
+        <td>${p.actual ? formatDate(p.actual) : "-"}</td>
+        <td>${p.actual ? "Done" : "Pending"}</td>
+      </tr>
     `;
   });
 
-  html += "</div>";
+  html += `</table>`;
+
+  html += `<h3 style="margin-top:20px;">Post Warranty</h3>
+  <div style="padding:10px; background:#f5f5f5; border-radius:8px;">
+    Coming Soon
+  </div>`;
+
+  html += `</div>`;
 
   return html;
 }
 
-// ======================
-// EVENT HANDLER (FIXED)
-// ======================
-document.addEventListener("click", async function(e){
-
-  // OPEN DETAIL
+  // ======================
+  // GET ELEMENT
+  // ======================
   const el = e.target.closest("[data-asset-id]");
-  if(el && !el.classList.contains("ppm-card")){
+
+  // ======================
+  // CLICK PPM ROW (PRIORITY)
+  // ======================
+  const row = e.target.closest("tr[data-cycle]");
+  if(row){
+    const assetId = row.dataset.assetId;
+    const cycle = row.dataset.cycle;
+
+    showPPMDetail(assetId, cycle);
+    return;
+  }
+
+  // ======================
+  // OPEN DETAIL (ASSET)
+  // ======================
+  if(el && !el.closest(".ppm-table")){
     openAssetDetailById(el.dataset.assetId);
     return;
   }
 
+  // ======================
   // CLOSE MODAL
+  // ======================
   if(e.target.closest(".close-btn")){
     const modal = e.target.closest(".modal");
     if(modal) modal.style.display = "none";
   }
 
+  // ======================
   // TAB SWITCH
+  // ======================
   if(e.target.classList.contains("tab-btn")){
     document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
     document.querySelectorAll(".tab-content").forEach(c=>c.classList.remove("active"));
@@ -328,6 +403,8 @@ document.addEventListener("click", async function(e){
     }
   }
 
+});
+
   // CLICK PPM CARD
   if(e.target.closest(".ppm-card")){
     const card = e.target.closest(".ppm-card");
@@ -339,6 +416,27 @@ document.addEventListener("click", async function(e){
 // ======================
 // PPM DETAIL
 // ======================
-function showPPMDetail(assetId, index){
-  alert("PPM Detail\nAsset: " + assetId + "\nPPM #" + index);
+function showPPMDetail(assetId, cycle){
+
+  const asset = assetCache.find(a => a.id == assetId);
+  if(!asset) return;
+
+  const key = "done_" + getOrdinal(cycle);
+
+  const newDate = prompt(`Update Actual Date (PPM ${cycle})\nFormat: YYYY-MM-DD`);
+
+  if(!newDate) return;
+
+  // 🔥 update data
+  asset[key] = newDate;
+
+  // 🔥 re-render table
+  document.getElementById("tab-ppm").innerHTML = renderPPM(asset);
+}
+
+
+function getOrdinal(n){
+  const s = ["th","st","nd","rd"];
+  const v = n % 100;
+  return n + (s[(v-20)%10] || s[v] || s[0]);
 }
