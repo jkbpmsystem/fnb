@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
 async function initDashboard(){
   const assets = await getAssets();
   const dash = await getDashboard();
-  const dw = await getDWList();
+  
 
   const totalEl = document.getElementById("totalAssets");
   const overdueEl = document.getElementById("overdueCount");
@@ -15,20 +15,20 @@ async function initDashboard(){
 
   if(totalEl) totalEl.innerText = assets.length;
   if(overdueEl) overdueEl.innerText = dash?.overdue || 0;
-  if(upcomingEl) upcomingEl.innerText = (dw||[]).length;
+  if(upcomingEl) upcomingEl.innerText = (ppm||[]).length;
 
-  renderRecent(dw||[]);
+  renderRecent(ppm||[]);
   renderAssetChart(assets);
-  renderPPMChart(dw);
-  renderTrendChart(dw);
+  renderPPMChart(ppm);
+  renderTrendChart(ppm);
   renderDurationTable(assets);
   showAlerts(assets);
 }
 
-function renderRecent(dw){
+function renderRecent(ppm){
   const box = document.getElementById("recentList");
   if(!box) return;
-  const list = dw.slice(0,6);
+  const list = ppm.slice(0,6);
   box.innerHTML = list.map(r=>`
     <div class="asset-card">
       <b data-asset-id="${r.id}">${r.id}</b>
