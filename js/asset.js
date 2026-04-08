@@ -1,330 +1,130 @@
-// =====================
-// STATE
-// =====================
-let searchTimeout;
 
 let assetData = [];
 let filteredData = [];
 let currentPage = 1;
 const rowsPerPage = 12;
 
-window.assetCache = window.assetCache || [];
-
-// =====================
-// INIT
-// =====================
 document.addEventListener("DOMContentLoaded", initAsset);
 
 async function initAsset(){
-
   const input = document.getElementById("searchBox");
-
   if(input){
-    input.addEventListener("keyup", debounceSearch);
+    input.addEventListener("keyup", searchTable);
   }
-
   await loadAssets();
 }
- 
-// =====================
-// DEBOUNCE SEARCH
-// =====================
-function debounceSearch(){
 
-  clearTimeout(searchTimeout);
-
-  searchTimeout = setTimeout(()=>{
-    searchTable();
-  },300);
-
-}
-
-
-// =====================
-// TABLE DATA MAPPER
-// =====================
-function mapTableData(a, module){
-
-  if(module === "BEMS"){
-    return {
-      id: a.id,
-      assetNo: a.assetNumber,
-      location: a.locationCode,
-      name: a.assetDescription,
-      type: a.typeCode,
-      discipline: a.service || "-",
-      startDate: a.purchaseDate,
-      endDate: a.warrantyEnd
-    };
-  }
-
-  // FEMS
-  return {
-    id: a.id,
-    assetNo: a.assetNo,
-    location: a.codeLocation,
-    name: a.equipmentName,
-    type: a.typeCode,
-    discipline: a.discipline,
-    startDate: a.startDate,
-    endDate: a.endDate
-  };
-}
-
-
-// =====================
-// LOAD DATA
-// =====================
 async function loadAssets(){
-
-  const tbody = document.querySelector("#assetTable tbody");
-
-  if(tbody){
-    tbody.innerHTML = "<tr><td colspan='10'>Loading...</td></tr>";
-  }
-
-  try{
-
-    const res = await getAssets();
-
-    console.log("🔥 RAW DATA:", res);
-
-    if(!Array.isArray(res)){
-      console.error("Data bukan array:", res);
-      return;
-    }
-
-    // 🔥 simpan global untuk pagination
-    assetData = res;
-    filteredData = [...res];
-    currentPage = 1;
-
-    updatePage();
-
-  }catch(err){
-
-    console.error("❌ ERROR:", err);
-
-    if(tbody){
-      tbody.innerHTML = "<tr><td colspan='10'>Error</td></tr>";
-    }
-
-  }
-
-}
-
-
-// =====================
-// RENDER TABLE (PAGINATION)
-// =====================
-function renderTable(){
-
-  const tbody = document.querySelector("#assetTable tbody");
-  if(!tbody) return;
-
-  const module = getModule().toUpperCase();
-
-  const start = (currentPage - 1) * rowsPerPage;
-  const page = filteredData.slice(start, start + rowsPerPage);
-
-  let html = "";
-
-  page.forEach(a => {
-
-    const x = mapTableData(a, module);
-
-    html += `
-<tr>
-  <td class="clickable-id" data-asset-id="${x.id}" style="cursor:pointer; color:#00e5ff;">
-    ${x.id}
-  </td>
-  <td>${x.assetNo || "-"}</td>
-  <td>${x.location || "-"}</td>
-  <td>${x.name || "-"}</td>
-  <td>${x.type || "-"}</td>
-  <td>${x.discipline || "-"}</td>
-  <td>${formatDate(x.startDate)}</td>
-  <td>${formatDate(x.endDate)}</td>
-</tr>
-`;
-  });
-
-  tbody.innerHTML = html;
-}
-
-
-// =====================
-// PAGINATION
-// =====================
-function renderPagination(){
-
-  const box = document.getElementById("pagination");
-  if(!box) return;
-
-  box.innerHTML = "";
-
-  const total = Math.ceil(filteredData.length / rowsPerPage);
-  if(total <= 1) return;
-
-  const maxVisible = 5;
-
-  let start = Math.max(1, currentPage - 2);
-  let end = Math.min(total, start + maxVisible - 1);
-
-  if(end - start < maxVisible - 1){
-    start = Math.max(1, end - maxVisible + 1);
-  }
-
-  // ===== FIRST =====
-  box.appendChild(createNavBtn("First", currentPage > 1, ()=> {
-    currentPage = 1;
-    updatePage();
-  }));
-
-  // ===== PREV =====
-  box.appendChild(createNavBtn("Prev", currentPage > 1, ()=> {
-    currentPage--;
-    updatePage();
-  }));
-
-  // ===== PAGE RANGE =====
-  if(start > 1){
-    box.appendChild(createPageBtn(1));
-
-    if(start > 2){
-      box.appendChild(createDots());
-    }
-  }
-
-  for(let i = start; i <= end; i++){
-    box.appendChild(createPageBtn(i));
-  }
-
-  if(end < total){
-    if(end < total - 1){
-      box.appendChild(createDots());
-    }
-    box.appendChild(createPageBtn(total));
-  }
-
-  // ===== NEXT =====
-  box.appendChild(createNavBtn("Next", currentPage < total, ()=> {
-    currentPage++;
-    updatePage();
-  }));
-
-  // ===== LAST =====
-  box.appendChild(createNavBtn("Last", currentPage < total, ()=> {
-    currentPage = total;
-    updatePage();
-  }));
-
-  // ===== PAGE INFO =====
-  const info = document.createElement("span");
-  info.innerText = ` Page ${currentPage} of ${total} `;
-  info.style.margin = "0 10px";
-  box.appendChild(info);
-
-  // ===== JUMP TO PAGE =====
-  const input = document.createElement("input");
-  input.type = "number";
-  input.placeholder = "Go";
-  input.style.width = "60px";
-  input.style.padding = "4px";
-
-  input.onchange = ()=>{
-    let val = Number(input.value);
-    if(val >= 1 && val <= total){
-      currentPage = val;
-      updatePage();
-    }
-  };
-
-  box.appendChild(input);
-
-}
-
-function createPageBtn(i){
-
-  const b = document.createElement("button");
-  b.innerText = i;
-  b.className = "btn";
-
-  if(i === currentPage){
-    b.style.background = "#00e5ff";
-    b.style.color = "#000";
-  }
-
-  b.onclick = ()=>{
-    currentPage = i;
-    updatePage();
-  };
-
-  return b;
-}
-
-function createNavBtn(text, enabled, action){
-
-  const btn = document.createElement("button");
-  btn.innerText = text;
-  btn.className = "btn";
-
-  if(!enabled){
-    btn.disabled = true;
-    btn.style.opacity = "0.4";
-  }
-
-  btn.onclick = action;
-
-  return btn;
-}
-
-function createDots(){
-  const dots = document.createElement("span");
-  dots.innerText = "...";
-  dots.style.padding = "6px";
-  return dots;
-}
-
-// =====================
-// UPDATE PAGE
-// =====================
-function updatePage(){
-
+  assetData = await getAssets();
+  filteredData = assetData;
   renderTable();
   renderPagination();
+}
 
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth"
+function renderTable(){
+  const tbody = document.querySelector("#assetTable tbody");
+  if(!tbody) return;
+  tbody.innerHTML = "";
+
+  const start = (currentPage-1)*rowsPerPage;
+  const page = filteredData.slice(start, start+rowsPerPage);
+
+  page.forEach((a,i)=>{
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td><span class="clickable-id" data-asset-id="${a.id}">${a.id||""}</span></td>
+      <td>${a.assetNo||""}</td>
+      <td>${a.equipmentName||""}</td>
+      <td>${a.typeCode||""}</td>
+      <td>${a.discipline||""}</td>
+      <td>${a.codeLocation||""}</td>
+      <td>${formatDate(a.startDate)||""}</td>
+      <td>${formatDate(a.endDate)||""}</td>
+    `;
+    tbody.appendChild(tr);
   });
+}
+
+function renderPagination(){
+
+  const pageBox = document.getElementById("pagination");
+  pageBox.innerHTML = "";
+
+  const totalPages = Math.ceil(filteredData.length / rowsPerPage);
+
+  const maxVisible = 5; // berapa page nak tunjuk
+  let startPage = Math.max(1, currentPage - 2);
+  let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+
+  if(endPage - startPage < maxVisible - 1){
+    startPage = Math.max(1, endPage - maxVisible + 1);
+  }
+
+  // ===== PREV BUTTON =====
+  const prev = document.createElement("button");
+  prev.innerText = "Prev";
+  prev.className = "btn";
+
+  if(currentPage === 1){
+    prev.disabled = true;
+    prev.style.opacity = "0.4";
+  }
+
+  prev.onclick = () => {
+    currentPage--;
+    renderTable();
+    renderPagination();
+  };
+
+  pageBox.appendChild(prev);
+
+  // ===== PAGE NUMBERS =====
+  for(let i = startPage; i <= endPage; i++){
+
+    const btn = document.createElement("button");
+    btn.innerText = i;
+    btn.className = "btn";
+
+    if(i === currentPage){
+      btn.style.background = "#00e5ff";
+      btn.style.color = "#000";
+    }
+
+    btn.onclick = () => {
+      currentPage = i;
+      renderTable();
+      renderPagination();
+    };
+
+    pageBox.appendChild(btn);
+  }
+
+  // ===== NEXT BUTTON =====
+  const next = document.createElement("button");
+  next.innerText = "Next";
+  next.className = "btn";
+
+  if(currentPage === totalPages){
+    next.disabled = true;
+    next.style.opacity = "0.4";
+  }
+
+  next.onclick = () => {
+    currentPage++;
+    renderTable();
+    renderPagination();
+  };
+
+  pageBox.appendChild(next);
 
 }
 
-// =====================
-// SEARCH
-// =====================
 function searchTable(){
-
   const k = document.getElementById("searchBox").value.toLowerCase();
-
-  filteredData = assetData.filter(a =>
-    JSON.stringify(a).toLowerCase().includes(k)
-  );
-
+  filteredData = assetData.filter(a => JSON.stringify(a).toLowerCase().includes(k));
   currentPage = 1;
-
-  updatePage();
-}
-
-// =====================
-// CLEAR CACHE (CALL LEPAS SAVE)
-// =====================
-function clearCache(){
-
-  localStorage.removeItem("assets");
-  localStorage.removeItem("assets_time");
-
+  renderTable();
+  renderPagination();
 }
 
 // location autofill
@@ -343,16 +143,13 @@ function autoFillLocation(code){
 
 // simple add modal (reuse global modal body)
 async function openAddAsset(){
-
   const body = document.getElementById("detailBody");
-
   document.getElementById("detailTitle").innerText = "Add Asset";
   document.getElementById("globalDetailModal").style.display = "flex";
-
   const idRes = await generateId();
-
+  const mod = (sessionStorage.getItem("cmmsModule") || "FEMS");
+  
   const modNow = (sessionStorage.getItem("cmmsModule") || "FEMS");
-
   if(modNow === "BEMS"){
     body.innerHTML = renderBEMSForm();
   }else{
@@ -362,157 +159,27 @@ async function openAddAsset(){
     <div class="form-grid">
       <div><label>Module</label><input id="moduleDisplay" readonly></div>
     
- <div class="form-group">
-                            <label>ID</label>
-                            <input id="assetId" value="${idRes.id}" readonly>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Code Location</label>
-                            <input type="text"
-                                id="codeLocation"
-                                placeholder="L1-BEM-001"
-                                oninput="this.value=this.value.toUpperCase(); autoFillLocation(this.value)"
-                        </div>
-
-                        <div class="form-group">
-                            <label>Area</label>
-                            <input type="text" id="area" readonly>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Department</label>
-                            <input type="text" id="department" readonly>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Asset No</label>
-                            <input id="assetNo" type="text" placeholder="Enter Asset No"required>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Asset No Hosza</label>
-                            <input id="assetNoHosza" type="text" placeholder="Enter No Hosza"required>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Equipment Name</label>
-                            <input id="equipmentName" type="text" placeholder="Enter Name"required>
-                        </div>
-                        <div class="form-group" style="position:relative;">
-                            <label>Type Code</label>
-                            <input id="typeCode">
-                        </div>
-
-                        <div class="form-group">
-                            <label>Equipment Descriptions</label>
-                            <input type="text" id="equipmentDescriptions" readonly>
-                        </div>
-
-                      <div class="form-group">
-                            <label>Discipline</label>
-
-                            <select id="discipline" required>
-                                    <option value="">Select Discipline</option>
-                                    <option value="Mechanical">MECHANICAL</option>
-                                    <option value="Electrical">ELECTRICAL</option>
-                            </select>
-
-                        </div>
-
-                        <div class="form-group">
-                            <label>Bumi</label>
-                            <input id="bumi" type="text" placeholder="Enter Bumi"required>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Bumi Contact</label>
-                            <input id="bumiContact" type="text" placeholder="Enter Bumi Contact"required>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Supplier</label>
-                            <input id="supplier" type="text" placeholder="Enter Supplier"required>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Supplier Contact</label>
-                            <input id="supplierContact" type="text" placeholder="Enter Supplier Contact"required>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Manufacture</label>
-                            <input id="manufacture" type="text" placeholder="Enter Manufacture"required>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Model</label>
-                            <input id="model" type="text" placeholder="Enter Model"required>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Serial Number</label>
-                            <input id="serialNumber" type="text" placeholder="Enter Serial Number"required>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Price</label>
-                            <input id="price" type="text" placeholder="Enter Price"required>
-                        </div>
-
-                        <div class="form-group">
-                            <label>LPO No</label>
-                            <input id="lpoNo"type="text" placeholder="Enter LPO No"required>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Category</label>
-                            <input id="category" type="text" placeholder="ASSET or INVENTORY"required>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Start Date</label>
-                            <input id="startDate" type="date"required>
-                        </div>
-
-                        <div class="form-group">
-                            <label>End Date</label>
-                            <input id="endDate" type="date"required>
-                        </div>
-
-                       <div class="form-group">
-                            <label>Frequency PPM by Vendor *base on T&C*</label>
-                            <input id="ppmFrequency" type="text" placeholder="Enter Frequency"required>
-                        </div>
-
-                       <div class="form-group">
-                            <label>Asset dalam kontrak Edgenta?</label>
-
-                            <select id="status" required>
-                                    <option value="">Select</option>
-                                    <option value="NO">NO</option>
-                                    <option value="YES">YES</option>
-                            </select>
-
-                        </div>
-
-                    </div>
+    <div class="form-grid">
+      <input id="assetId" value="${idRes.id}" readonly>
+      <input id="assetNo" placeholder="Asset No">
+      <input id="equipmentName" placeholder="Equipment Name">
+      <input id="typeCode" placeholder="Type Code">
+      <input id="discipline" placeholder="Discipline">
+      <input id="codeLocation" placeholder="Code Location" oninput="this.value=this.value.toUpperCase(); autoFillLocation(this.value)">
+      <input id="area" placeholder="Area" readonly>
+      <input id="department" placeholder="Department" readonly>
+      <input id="startDate" type="date">
+      <input id="endDate" type="date">
+      <input id="ppmFrequency" placeholder="PPM Frequency">
+      <input id="status" placeholder="Status">
+    </div>
     <button class="btn btn-primary" id="saveAssetBtn">Save</button>
   `;
-    initTypeCodePopup();
   }
   
-const codeInput = document.getElementById("codeLocation");
-  if(codeInput){
-    codeInput.addEventListener("input", e=>{
-      autoFillLocation(e.target.value);
-    });
-  }
-
-  // set module
+  // set module values
   const modVal = (sessionStorage.getItem("cmmsModule") || "FEMS");
   document.getElementById("module").value = modVal;
-
   const md = document.getElementById("moduleDisplay");
   if(md) md.value = modVal;
 
@@ -552,71 +219,64 @@ function renderBEMSForm(){
 return `
 <div class="form-grid">
 
-    <input id="assetId" value="${idRes.id}" readonly>
-    <input id="assetNumber" placeholder="Asset Number">
-    <input id="assetNumberKonsesi" placeholder="Asset Number Konsesi">
+<input id="id" placeholder="ID" readonly>
+<input id="assetNumber" placeholder="Asset Number">
+<input id="assetNumberKonsesi" placeholder="Asset Number Konsesi">
 
-                            <input id="typeCode"
-                                   
-    <input id="typeDescription" placeholder="Type Description">
+<input id="typeCode" placeholder="Type Code">
+<input id="typeDescription" placeholder="Type Description">
 
-    <input id="assetDescription" placeholder="Asset Description">
+<input id="assetDescription" placeholder="Asset Description">
 
-    <input id="service" placeholder="Service">
-                            <input type="text" id="department" readonly>
-                            <input type="text" id="area" readonly>
+<input id="service" placeholder="Service">
+<input id="department" placeholder="Department">
+<input id="area" placeholder="Area">
 
-                            <input type="text"
-                                id="codeLocation"
-                                placeholder="L1-BEM-001"
-                                oninput="this.value=this.value.toUpperCase(); autoFillLocation(this.value)"
-    <input id="location" placeholder="Location">
+<input id="locationCode" placeholder="Location Code">
+<input id="location" placeholder="Location">
 
-    <input id="ppmFrequency" placeholder="PPM Frequency">
+<input id="ppmFrequency" placeholder="PPM Frequency">
 
-    <input type="date" id="purchaseDate">
-    <input type="date" id="commissioningDate">
+<input type="date" id="purchaseDate">
+<input type="date" id="commissioningDate">
 
-    <input type="date" id="warrantyStart">
-    <input type="date" id="warrantyEnd">
-    <input id="warrantyDuration" placeholder="Warranty Duration">
+<input type="date" id="warrantyStart">
+<input type="date" id="warrantyEnd">
+<input id="warrantyDuration" placeholder="Warranty Duration">
 
-    <input id="manufacturer" placeholder="Manufacturer">
-    <input id="brand" placeholder="Brand">
-    <input id="model" placeholder="Model">
-    <input id="serialNo" placeholder="Serial No">
+<input id="manufacturer" placeholder="Manufacturer">
+<input id="brand" placeholder="Brand">
+<input id="model" placeholder="Model">
+<input id="serialNo" placeholder="Serial No">
 
-    <input id="loNo" placeholder="LO No">
-    <input id="loPrice" placeholder="LO Price">
-    <input id="pricePerUnit" placeholder="Price Per Unit">
+<input id="loNo" placeholder="LO No">
+<input id="loPrice" placeholder="LO Price">
+<input id="pricePerUnit" placeholder="Price Per Unit">
 
-    <input id="bumiAgent" placeholder="Bumi Agent">
-    <input id="vendor" placeholder="Vendor">
+<input id="bumiAgent" placeholder="Bumi Agent">
+<input id="vendor" placeholder="Vendor">
 
-    <input id="remarks" placeholder="Remarks">
+<input id="remarks" placeholder="Remarks">
 
-    <input id="contract" placeholder="Contract Info">
+<input id="contract" placeholder="Contract Info">
 
-    <select id="maintenanceType">
-        <option value="">Maintenance Type</option>
-        <option>PPM</option>
-        <option>RI</option>
-        <option>CALIBRATION</option>
-    </select>
+<select id="maintenanceType">
+<option value="">Maintenance Type</option>
+<option>PPM</option>
+<option>RI</option>
+<option>CALIBRATION</option>
+</select>
 
-    <input id="month" placeholder="Month">
-    <input id="statusWarranty" placeholder="Warranty Status">
-    <input id="ppm" placeholder="PPM">
-    <input id="remarks2" placeholder="Remarks">
+<input id="month" placeholder="Month">
+<input id="statusWarranty" placeholder="Warranty Status">
+<input id="ppm" placeholder="PPM">
+<input id="remarks2" placeholder="Remarks">
 
 </div>
 
 <button class="btn btn-primary" onclick="saveBEMS()">Save</button>
 `;
-  initTypeCodePopup();
 }
-
-
 
 async function saveBEMS(){
 
@@ -681,15 +341,4 @@ loadAssets();
 alert("Error saving BEMS");
 }
 
-}
-
-
-
-function formatDate(dateStr){
-  if(!dateStr) return "-";
-  const d = new Date(dateStr);
-  const day = String(d.getDate()).padStart(2,"0");
-  const month = String(d.getMonth()+1).padStart(2,"0");
-  const year = d.getFullYear();
-  return `${day}/${month}/${year}`;
 }
