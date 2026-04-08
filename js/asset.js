@@ -164,14 +164,35 @@ async function openAddAsset(){
       <input id="assetNo" placeholder="Asset No">
       <input id="equipmentName" placeholder="Equipment Name">
       <input id="typeCode" placeholder="Type Code">
-      <input id="discipline" placeholder="Discipline">
+      <input id="typeDescription" placeholder="Type Description" readonly>
+      <input id="taskCode" placeholder="Task Code" readonly>
+      <select id="discipline">
+            <option>Select Discipline</option>
+            <option>Mechanical</option>
+            <option>Electrical</option>
       <input id="codeLocation" placeholder="Code Location" oninput="this.value=this.value.toUpperCase(); autoFillLocation(this.value)">
       <input id="area" placeholder="Area" readonly>
       <input id="department" placeholder="Department" readonly>
+      <input id="bumi" placeholder="Bumi">
+      <input id="bumi contact" placeholder="Bumi Contact">
+      <input id="supplier" placeholder="Supplier">
+      <input id="supplierContact" placeholder="Supplier Contact">
+      <input id="manufacture" placeholder="Manufacturer">
+      <input id="model" placeholder="Model">
+      <input id="serialNumber" placeholder="Serial Number">
+      <input id="price" placeholder="Price">
+      <input id="lpoNo" placeholder="LPO No">
+      <select id="category">
+            <option>Select</option>
+            <option>ASSET</option>
+            <option>INVENTORY</option>      
       <input id="startDate" type="date">
       <input id="endDate" type="date">
       <input id="ppmFrequency" placeholder="PPM Frequency">
-      <input id="status" placeholder="Status">
+      <select id="status">
+            <option>Select</option>
+            <option>YES</option>
+            <option>NO</option>
     </div>
     <button class="btn btn-primary" id="saveAssetBtn">Save</button>
   `;
@@ -193,16 +214,29 @@ async function saveAsset(){
     assetNo:assetNo.value,
     equipmentName:equipmentName.value,
     typeCode:typeCode.value,
+    taskCode:taskCode.value,
+    typeDescription:typeDescription.value,
     discipline:discipline.value,
     codeLocation:codeLocation.value,
     area:area.value,
     department:department.value,
+    bumi:bumi.value,
+    supplier:supplier.value,
+    supplierContact:supplierContact.value,
+    manufacturer:manufacturer.value,
+    model:model.value,
+    serialNumber:serialNumber.value,
+    price:price.value,
+    lpoNo:lpoNo.value,
+    category:category.value,
     startDate:startDate.value,
     endDate:endDate.value,
     ppmFrequency:ppmFrequency.value,
     status:status.value,
     module: (document.getElementById("module") ? document.getElementById("module").value : (sessionStorage.getItem("cmmsModule")||"FEMS"))
   };
+
+
   const res = await saveAssetAPI(data);
   if(res.status==="success"){
     alert("Saved");
@@ -219,7 +253,7 @@ function renderBEMSForm(){
 return `
 <div class="form-grid">
 
-<input id="id" placeholder="ID" readonly>
+<input id="assetId" value="${idRes.id}" readonly>
 <input id="assetNumber" placeholder="Asset Number">
 <input id="assetNumberKonsesi" placeholder="Asset Number Konsesi">
 
@@ -229,10 +263,10 @@ return `
 <input id="assetDescription" placeholder="Asset Description">
 
 <input id="service" placeholder="Service">
-<input id="department" placeholder="Department">
-<input id="area" placeholder="Area">
+<input id="department" placeholder="Department" readonly>
+<input id="area" placeholder="Area" readonly>
 
-<input id="locationCode" placeholder="Location Code">
+<input id="codeLocation" placeholder="Code Location" oninput="this.value=this.value.toUpperCase(); autoFillLocation(this.value)">
 <input id="location" placeholder="Location">
 
 <input id="ppmFrequency" placeholder="PPM Frequency">
@@ -270,7 +304,7 @@ return `
 <input id="month" placeholder="Month">
 <input id="statusWarranty" placeholder="Warranty Status">
 <input id="ppm" placeholder="PPM">
-<input id="remarks2" placeholder="Remarks">
+<input id="remark" placeholder="Remark">
 
 </div>
 
