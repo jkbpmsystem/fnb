@@ -310,11 +310,11 @@ document.addEventListener("click", function(e){
   // ======================
   // CLICK PPM ROW
   // ======================
-  const row = e.target.closest("tr[data-cycle]");
-  if(row){
-    showPPMDetail(row.dataset.assetId, row.dataset.cycle);
-    return;
-  }
+const row = e.target.closest("tr[data-cycle]");
+if(row){
+  showPPMDetail(row.dataset.id, row.dataset.cycle);
+  return;
+}
 
   // ======================
   // OPEN DETAIL
