@@ -15,12 +15,12 @@ async function initDashboard(){
 
   if(totalEl) totalEl.innerText = assets.length;
   if(overdueEl) overdueEl.innerText = dash?.overdue || 0;
-  if(upcomingEl) upcomingEl.innerText = (ppm||[]).length;
+if(upcomingEl) upcomingEl.innerText = (dash?.recent || []).length;
 
-  renderRecent(ppm||[]);
-  renderAssetChart(assets);
-  renderPPMChart(ppm);
-  renderTrendChart(ppm);
+renderRecent(dash?.recent || []);
+renderAssetChart(assets);
+renderPPMChart(dash?.ppm || []);
+renderTrendChart(dash?.ppm || []);
   renderDurationTable(assets);
   showAlerts(assets);
 }
