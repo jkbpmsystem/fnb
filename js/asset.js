@@ -183,14 +183,14 @@ async function openAddAsset(){
       <input id="price" placeholder="Price">
       <input id="lpoNo" placeholder="LPO No">
       <select id="category">
-            <option>Select</option>
+            <option>Category</option>
             <option>ASSET</option>
             <option>INVENTORY</option>      
       <input id="startDate" type="date">
       <input id="endDate" type="date">
       <input id="ppmFrequency" placeholder="PPM Frequency">
       <select id="status">
-            <option>Select</option>
+            <option>Status dalam Kontrak Konsesi</option>
             <option>YES</option>
             <option>NO</option>
     </div>
