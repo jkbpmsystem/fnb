@@ -50,7 +50,7 @@ async function openAssetDetailById(assetId){
   }
 console.log("ASSET CLICKED:", asset);
   document.getElementById("detailBody").innerHTML = renderDetailWithTab(detailHTML);
-
+  document.getElementById("tab-ppm").innerHTML = renderPPM(asset);
   document.getElementById("globalDetailModal").style.display = "flex";
 }
 
@@ -114,7 +114,9 @@ function renderFEMSDetail(a){
   <div class="asset-card">
     <h4>Supplier</h4>
     <b>Bumi</b><div>${a.bumi}</div>
+    <b>Bumi Contact</b><div>${a.bumiContact}</div>
     <b>Supplier</b><div>${a.supplier}</div>
+    <b>Supplier Contact</b><div>${a.supplierContact}</div>
   </div>
     
   <div class="asset-card">
@@ -128,7 +130,7 @@ function renderFEMSDetail(a){
     <b>Start</b><div>${formatDate(a.startDate|| "")}</div>
     <b>End</b><div>${formatDate(a.endDate|| "")}</div>
     <b>Freq/Year</b><div>${a.ppmFrequency}</div>
-    <b>Status</b><div>${a.status}</div>
+    <b>Status Kontrak</b><div>${a.status}</div>
   </div>
 
 </div>
