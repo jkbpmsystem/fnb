@@ -32,7 +32,7 @@ function renderTable(){
   page.forEach((a,i)=>{
     const tr = document.createElement("tr");
     tr.innerHTML = `
-      <td><span class="clickable-id" data-asset-id="${a.id}">${a.id||""}</span></td>
+      <span class="open-asset" data-id="${a.id}">
       <td>${a.assetNo||""}</td>
       <td>${a.equipmentName||""}</td>
       <td>${a.typeCode||""}</td>
