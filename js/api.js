@@ -10,7 +10,8 @@ const API = {
     GET_DASHBOARD: "getDashboard",
     GET_DW: "getDWList",
     SAVE_ASSET: "saveAsset",
-    GENERATE_ID: "generateId"
+    GENERATE_ID: "generateId",
+    UPDATE_PPM: "updatePPM"
   }
 };
 
@@ -154,5 +155,20 @@ async function getDWList(){
   });
 
   return await apiFetch(url) || [];
+
+}
+
+async function updatePPMAPI(assetId, cycle, date){
+
+  return await apiFetch(API.BASE, {
+    method: "POST",
+    body: JSON.stringify({
+      action: API.ACTIONS.UPDATE_PPM,
+      module: getModule(),
+      id: assetId,
+      cycle: cycle,
+      date: date
+    })
+  }) || {status:"error"};
 
 }
