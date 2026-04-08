@@ -307,30 +307,29 @@ document.addEventListener("click", function(e){
 
   const el = e.target.closest("[data-asset-id]"); // 🔥 WAJIB ADA
 
-  // ======================
-  // CLICK PPM ROW
-  // ======================
-const row = e.target.closest("tr[data-cycle]");
-if(row){
-  showPPMDetail(row.dataset.id, row.dataset.cycle);
-  return;
-}
+document.addEventListener("click", function(e){
 
-  // ======================
-  // OPEN DETAIL
-  // ======================
-  if(el && e.target.closest("#assetTable tbody")){
-    openAssetDetailById(el.dataset.assetId);
+  // ✅ 1. OPEN MODAL (PRIORITY)
+  const btn = e.target.closest(".open-asset");
+  if(btn){
+    openAssetDetailById(btn.dataset.id);
     return;
   }
 
-  // ======================
-  // CLOSE MODAL
-  // ======================
+  // ✅ 2. CLICK PPM
+  const row = e.target.closest("tr[data-cycle]");
+  if(row){
+    showPPMDetail(row.dataset.id, row.dataset.cycle);
+    return;
+  }
+
+  // ✅ 3. CLOSE MODAL
   if(e.target.classList.contains("close-btn")){
     const modal = e.target.closest(".modal");
     if(modal) modal.style.display = "none";
   }
+
+});
 
   // ======================
   // TAB SWITCH
