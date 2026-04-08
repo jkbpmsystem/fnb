@@ -1,5 +1,9 @@
 let assetCache = [];
 let currentAsset = null;
+let selectedPPM = {
+  assetId: null,
+  cycle: null
+};
 
 // ======================
 // CACHE
@@ -439,4 +443,45 @@ function getOrdinal(n){
   const s = ["th","st","nd","rd"];
   const v = n % 100;
   return n + (s[(v-20)%10] || s[v] || s[0]);
+}
+
+function closePPMModal(){
+  document.getElementById("ppmModal").style.display = "none";
+}
+
+async function savePPM(){
+
+  const { assetId, cycle } = selectedPPM;
+  const date = document.getElementById("ppmActualDate").value;
+
+  if(!date){
+    alert("Please select date");
+    return;
+  }
+
+  // ❌ block future date
+  if(new Date(date) > new Date()){
+    alert("Tak boleh isi future date");
+    return;
+  }
+
+  const asset = assetCache.find(a => a.id == assetId);
+  if(!asset) return;
+
+  const key = "done_" + getOrdinal(cycle);
+
+  // ======================
+  // 🔥 UPDATE FRONTEND
+  // ======================
+  asset[key] = date;
+
+  document.getElementById("tab-ppm").innerHTML = renderPPM(asset);
+
+  closePPMModal();
+
+  // ======================
+  // 🔥 SAVE TO BACKEND
+  // ======================
+  await updatePPMToServer(assetId, cycle, date);
+
 }
