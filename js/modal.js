@@ -11,75 +11,11 @@ let selectedPPM = {
 async function getAssetCached(){
 
   if(assetCache.length === 0){
- 
+
     const res = await getAssets();
 
     assetCache = res.map(row => ({
-      id: row.id,
-      codeLocation: row.codeLocation,
-      area: row.area,
-      department: row.department,
-      assetNo: row.assetNo,
-      assetNoHosza: row.assetNoHosza,
-      equipmentName: row.equipmentName,
-      typeCode: row.typeCode,
-      equipmentDescriptions: row.equipmentDescriptions,
-      discipline: row.discipline,
-      bumi: row.bumi,
-      supplier: row.supplier,
-      manufacture: row.manufacture,
-      model: row.model,
-      serialNumber: row.serialNumber,
-      price: row.price,
-      lpoNo: row.lpoNo,
-      category: row.category,
-      startDate: row.startDate,
-      endDate: row.endDate,
-      ppmFrequency: row.ppmFrequency,
-      status: row.status,
-      1st: row.1st,
-      2nd: row.2nd,
-      3rd: row.3rd,
-      4th: row.4th,
-      5th: row.5th,
-      6th: row.6th,
-      7th: row.7th,
-      8th: row.8th,
-      9th: row.9th,
-      10th: row.10th,
-      11th: row.11th,
-      12th: row.12th,
-      13th: row.13th,
-      14th: row.14th,
-      15th: row.15th,
-      16th: row.16th,
-      17th: row.17th,
-      18th: row.18th,
-      19th: row.19th,
-      20th: row.20th,
-      21st: row.21st,
-      done_1st: row.done_1st,
-      done_2nd: row.done_2nd,
-      done_3rd: row.done_3rd,
-      done_4th: row.done_4th,
-      done_5th: row.done_5th,
-      done_6th: row.done_6th,
-      done_7th: row.done_7th,
-      done_8th: row.done_8th,
-      done_9th: row.done_9th,
-      done_10th: row.done_10th,
-      done_11th: row.done_11th,
-      done_12th: row.done_12th,
-      done_13th: row.done_13th,
-      done_14th: row.done_14th,
-      done_15th: row.done_15th,
-      done_16th: row.done_16th,
-      done_17th: row.done_17th,
-      done_18th: row.done_18th,
-      done_19th: row.done_19th,
-      done_20th: row.done_20th,
-      done_21st: row.done_21st
-
+      ...row   // 🔥 INI SAHAJA
     }));
 
   }
@@ -357,6 +293,8 @@ function renderPPM(asset){
   return html;
 }
 
+  document.addEventListener("click", async function(e){
+
   // ======================
   // GET ELEMENT
   // ======================
@@ -409,13 +347,7 @@ function renderPPM(asset){
 
 });
 
-  // CLICK PPM CARD
-  if(e.target.closest(".ppm-card")){
-    const card = e.target.closest(".ppm-card");
-    showPPMDetail(card.dataset.assetId, card.dataset.ppmIndex);
-  }
 
-});
 
 // ======================
 // PPM DETAIL
