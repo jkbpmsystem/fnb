@@ -4,6 +4,7 @@ let selectedPPM = {
   assetId: null,
   cycle: null
 };
+let isUserClick = false;
 
 // ======================
 // CACHE
@@ -28,6 +29,9 @@ async function getAssetCached(){
 // ======================
 async function openAssetDetailById(assetId){
 
+    if(!isUserClick) return; // 🔥 BLOCK AUTO CALL
+  isUserClick = false;
+  
   const assets = await getAssetCached();
   const asset = assets.find(a => a.id == assetId);
 
