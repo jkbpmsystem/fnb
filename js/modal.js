@@ -254,7 +254,7 @@ function renderPPM(asset){
     <tr>
       <th>Cycle</th>
       <th>Planned</th>
-      <th>Actual</th>
+      <th>Actual *Update Tarikh jika PPM telah dijalankan*</th>
       <th>Status</th>
     </tr>
   `;
