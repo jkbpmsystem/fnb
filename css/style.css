@@ -201,11 +201,9 @@ tr:hover{
 
 .modal-content{
   width:90%;
+  max-width:1000px; /* 🔥 penting */
   max-height:90vh;
   overflow-y:auto;
-  background:var(--card);
-  border-radius:14px;
-  padding:22px;
 }
 
 .modal-header{
@@ -269,16 +267,15 @@ tr:hover{
 ========================= */
 .asset-grid{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:12px;
+  grid-template-columns:repeat(auto-fit,minmax(200px,300px));
+  justify-content:center;
 }
 
 .asset-card{
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:12px;
-  padding:12px;
-  box-shadow:0 4px 12px rgba(0,0,0,0.04);
+  height:100%; /* 🔥 auto penuh grid */
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
 }
 
 .asset-card:hover{
