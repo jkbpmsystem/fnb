@@ -326,7 +326,7 @@ function renderPPM(asset){
   // ======================
   // CLOSE MODAL
   // ======================
-  if(e.target.closest(".close-btn")){
+  if(el && e.target.closest("#assetTable")){
     const modal = e.target.closest(".modal");
     if(modal) modal.style.display = "none";
   }
