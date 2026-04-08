@@ -91,7 +91,7 @@ function renderFEMSDetail(a){
     <b>Asset No</b><div>${a.assetNo}</div>
     <b>Asset No Hosza</b><div>${a.assetNoHosza}</div>
     <b>Equipment Name</b><div>${a.equipmentName}</div>
-    <b>Description</b><div>${a.typeDescriptions}</div>
+    <b>Description</b><div>${a.typeDescription}</div>
     <b>Task Code</b><div>${a.taskCode}</div>
     <b>Category</b><div>${a.category}</div>
   </div>
