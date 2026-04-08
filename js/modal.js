@@ -300,29 +300,25 @@ function renderPPM(asset){
   return html;
 }
 
-  document.addEventListener("click", async function(e){
+?
+/*event*/
+document.addEventListener("click", function(e){
 
-  // ======================
-  // GET ELEMENT
-  // ======================
   const el = e.target.closest("[data-asset-id]");
 
   // ======================
-  // CLICK PPM ROW (PRIORITY)
+  // CLICK PPM ROW
   // ======================
   const row = e.target.closest("tr[data-cycle]");
   if(row){
-    const assetId = row.dataset.assetId;
-    const cycle = row.dataset.cycle;
-
-    showPPMDetail(assetId, cycle);
+    showPPMDetail(row.dataset.assetId, row.dataset.cycle);
     return;
   }
 
   // ======================
-  // OPEN DETAIL (ASSET)
+  // OPEN DETAIL (STRICT)
   // ======================
-  if(el && !el.closest(".ppm-table")){
+  if(el && e.target.closest("#assetTable tbody")){
     openAssetDetailById(el.dataset.assetId);
     return;
   }
@@ -330,7 +326,7 @@ function renderPPM(asset){
   // ======================
   // CLOSE MODAL
   // ======================
-  if(el && e.target.closest("#assetTable")){
+  if(e.target.classList.contains("close-btn")){
     const modal = e.target.closest(".modal");
     if(modal) modal.style.display = "none";
   }
