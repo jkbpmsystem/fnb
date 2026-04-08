@@ -303,10 +303,9 @@ function renderPPM(asset){
 }
 
 
-/*event*/
 document.addEventListener("click", function(e){
 
-  
+  const el = e.target.closest("[data-asset-id]"); // 🔥 WAJIB ADA
 
   // ======================
   // CLICK PPM ROW
@@ -318,13 +317,12 @@ document.addEventListener("click", function(e){
   }
 
   // ======================
-  // OPEN DETAIL (STRICT)
+  // OPEN DETAIL
   // ======================
-if(el && e.target.closest("#assetTable tbody")){
-  isUserClick = true; // 🔥 TAMBAH NI
-  openAssetDetailById(el.dataset.assetId);
-  return;
-}
+  if(el && e.target.closest("#assetTable tbody")){
+    openAssetDetailById(el.dataset.assetId);
+    return;
+  }
 
   // ======================
   // CLOSE MODAL
@@ -352,7 +350,6 @@ if(el && e.target.closest("#assetTable tbody")){
   }
 
 });
-
 
 
 // ======================
