@@ -11,7 +11,7 @@ let selectedPPM = {
 async function getAssetCached(){
 
   if(assetCache.length === 0){
-
+ 
     const res = await getAssets();
 
     assetCache = res.map(row => ({
