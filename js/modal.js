@@ -29,7 +29,9 @@ async function getAssetCached(){
 // ======================
 async function openAssetDetailById(assetId){
 
-    if(!isUserClick) return; // 🔥 BLOCK AUTO CALL
+  console.log("CALL SOURCE:", isUserClick, assetId);
+
+  if(!isUserClick) return;
   isUserClick = false;
   
   const assets = await getAssetCached();
@@ -318,10 +320,11 @@ document.addEventListener("click", function(e){
   // ======================
   // OPEN DETAIL (STRICT)
   // ======================
-  if(el && e.target.closest("#assetTable tbody")){
-    openAssetDetailById(el.dataset.assetId);
-    return;
-  }
+if(el && e.target.closest("#assetTable tbody")){
+  isUserClick = true; // 🔥 TAMBAH NI
+  openAssetDetailById(el.dataset.assetId);
+  return;
+}
 
   // ======================
   // CLOSE MODAL
