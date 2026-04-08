@@ -471,7 +471,7 @@ async function savePPM(){
   const key = "done_" + getOrdinal(cycle);
 
   // ======================
-  // 🔥 UPDATE FRONTEND
+  // 🔥 UPDATE UI DULU
   // ======================
   asset[key] = date;
 
@@ -480,8 +480,13 @@ async function savePPM(){
   closePPMModal();
 
   // ======================
-  // 🔥 SAVE TO BACKEND
+  // 🔥 BARU CALL API
   // ======================
-  await updatePPMToServer(assetId, cycle, date);
+  try{
+    await updatePPMAPI(assetId, cycle, date);
+  }catch(err){
+    alert("Failed to save to server");
+    console.error(err);
+  }
 
 }
