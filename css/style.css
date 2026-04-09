@@ -597,3 +597,34 @@ tr:hover{
   gap: 16px;
   padding: 10px;
 }
+
+.toggle-group{
+  display: inline-flex;
+  background: #f1f3f5;
+  padding: 4px;
+  border-radius: 12px;
+  gap: 4px;
+}
+
+.toggle-group button{
+  border: none;
+  background: transparent;
+  padding: 8px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: 0.2s;
+  color: #555;
+}
+
+/* hover */
+.toggle-group button:hover{
+  background: #e4e7eb;
+}
+
+/* active button */
+.toggle-group button.active{
+  background: #007bff;
+  color: #fff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
