@@ -18,9 +18,8 @@ const MODULES = {
 };
 
 // 🔥 CURRENT MODULE (AUTO / SESSION)
-let currentModule = sessionStorage.getItem("cmmsModule") || "fems";
-  .toLowerCase()
-  .trim();
+let currentModule = (sessionStorage.getItem("cmmsModule") || "fems").toLowerCase().trim();
+
 document.addEventListener("DOMContentLoaded", initPPM);
 
 // ==========================
