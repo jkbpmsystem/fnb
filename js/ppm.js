@@ -57,15 +57,27 @@ async function loadEvents(){
   duringEvents = {};
   postEvents = {};
 
-  dwData.forEach(row => {
-    if(!row.date) return;
+dwData.forEach(row => {
 
-    const asset = assetMap[row.id] || {};
+  const asset = assetMap[row.id] || {};
+
+  Object.keys(row).forEach(key => {
+
+    const value = row[key];
+
+    // 🔥 detect date column sahaja
+    if(!isValidDate(value)) return;
+
+    const date = formatToISO(value);
+
     const target = isDuringWarranty(asset) ? duringEvents : postEvents;
 
-    if(!target[row.date]) target[row.date] = [];
+    if(!target[date]) target[date] = [];
 
-    target[row.date].push({
+    // 🔥 detect cycle dari header name
+    const freq = detectCycleFromHeader(key);
+
+    target[date].push({
       id: row.id,
       equipment: asset.equipmentName || asset.assetDescription || "-",
       location: asset.codeLocation || "-",
@@ -78,6 +90,29 @@ async function loadEvents(){
   });
 }
 
+// ==========================
+// DETECT CYCLE
+// ==========================
+function detectCycleFromHeader(header){
+
+  if(!header) return "-";
+
+  const h = header.toLowerCase();
+
+  if(h.includes("1")) return "1st Cycle";
+  if(h.includes("2")) return "2nd Cycle";
+  if(h.includes("3")) return "3rd Cycle";
+  if(h.includes("4")) return "4th Cycle";
+
+  return header; // fallback
+}
+
+  function isValidDate(val){
+  if(!val) return false;
+
+  const d = new Date(val);
+  return !isNaN(d);
+}
 // ==========================
 // WARRANTY CHECK
 // ==========================
@@ -107,6 +142,11 @@ function showPost(){
   renderWarrantyView();
 }
 
+  function formatToISO(val){
+  const d = new Date(val);
+  return d.toISOString().split("T")[0];
+}
+  
 // ==========================
 // SWITCH MODULE (🔥 IMPORTANT)
 // ==========================
