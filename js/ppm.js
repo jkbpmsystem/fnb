@@ -88,7 +88,7 @@ dwData.forEach(row => {
       date: row.date
     });
   });
-}
+
 
 // ==========================
 // DETECT CYCLE
