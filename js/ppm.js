@@ -38,7 +38,7 @@ async function getAssetsByModule(){
   console.log("MODULE:", currentModule);
 
   if(currentModule === "bems"){
-    return await getBEMSAssets();
+    return await getBEMSSAssets();
   }else{
     return await getFEMSAssets();
   }
@@ -64,42 +64,38 @@ async function loadEvents(){
   assetMap = {};
   assets.forEach(a => assetMap[a.id] = a);
 
-  dwData = await getDWByModule();
+  const assets = await getAssetsByModule();
 
   duringEvents = {};
   postEvents = {};
 
-dwData.forEach(row => {
+assets.forEach(asset => {
 
-  const asset = assetMap[row.id] || {};
+  for(let i=1; i<=21; i++){
 
-  Object.keys(row).forEach(key => {
+    const key = getOrdinal(i); // 1st, 2nd...
+    const date = asset[key];
 
-    const value = row[key];
+    if(!isValidDate(date)) continue;
 
-    if(!isValidDate(value)) return;
-
-    const date = formatToISO(value);
+    const iso = formatToISO(date);
 
     const target = isDuringWarranty(asset) ? duringEvents : postEvents;
 
-    if(!target[date]) target[date] = [];
+    if(!target[iso]) target[iso] = [];
 
-    const freq = detectCycleFromHeader(key);
-
-    target[date].push({
-      id: row.id,
+    target[iso].push({
+      id: asset.id,
       equipment: asset.equipmentName || asset.assetDescription || "-",
-      location: asset.codeLocation || "-",
+      location: asset.codeLocation || asset.location || "-",
       vendor: asset.vendor || asset.supplier || "-",
-      freq: freq,
-      date: date
+      freq: key,
+      date: iso
     });
 
-  });
+  }
 
 });
-}
 
 // ==========================
 // DETECT CYCLE
