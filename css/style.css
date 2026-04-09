@@ -267,24 +267,34 @@ tr:hover{
 ========================= */
 .asset-grid{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(200px,300px));
-  justify-content:center;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); /* 🔥 bagi flexible */
+  gap:12px; /* 🔥 penting bagi jarak */
 }
 
 .asset-card{
-  height:100%; /* 🔥 auto penuh grid */
+  background: var(--card);              /* 🔥 box background */
+  border: 1px solid var(--border);      /* 🔥 border */
+  border-radius: 12px;                  /* 🔥 rounded */
+  padding: 14px;                        /* 🔥 spacing dalam */
+  height:100%;
+
   display:flex;
   flex-direction:column;
   justify-content:space-between;
+
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05); /* 🔥 bagi hidup sikit */
+  transition: all 0.2s ease;
 }
 
 .asset-card:hover{
-  transform:translateY(-2px);
+  transform:translateY(-3px);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.08); /* 🔥 hover effect */
 }
 
 .asset-card h4{
-  font-size:13px;
-  margin-bottom:8px;
+  font-size:14px;
+  margin-bottom:10px;
+  color: var(--text);
 }
 
 .asset-card b{
@@ -292,6 +302,11 @@ tr:hover{
   color:var(--subtext);
 }
 
+/* 🔥 optional: content spacing dalam card */
+.asset-card p{
+  font-size:13px;
+  margin:4px 0;
+}
 /* =========================
    MODAL ASSET DETAIL BOX
 ========================= */
