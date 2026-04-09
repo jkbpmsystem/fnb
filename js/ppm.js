@@ -61,41 +61,39 @@ async function getDWByModule(){
 async function loadEvents(){
 
   const assets = await getAssetsByModule();
-  assetMap = {};
-  assets.forEach(a => assetMap[a.id] = a);
-
-  const assets = await getAssetsByModule();
 
   duringEvents = {};
   postEvents = {};
 
-assets.forEach(asset => {
+  assets.forEach(asset => {
 
-  for(let i=1; i<=21; i++){
+    for(let i=1; i<=21; i++){
 
-    const key = getOrdinal(i); // 1st, 2nd...
-    const date = asset[key];
+      const key = getOrdinal(i); // 1st, 2nd...
+      const date = asset[key];
 
-    if(!isValidDate(date)) continue;
+      if(!isValidDate(date)) continue;
 
-    const iso = formatToISO(date);
+      const iso = formatToISO(date);
 
-    const target = isDuringWarranty(asset) ? duringEvents : postEvents;
+      const target = isDuringWarranty(asset) ? duringEvents : postEvents;
 
-    if(!target[iso]) target[iso] = [];
+      if(!target[iso]) target[iso] = [];
 
-    target[iso].push({
-      id: asset.id,
-      equipment: asset.equipmentName || asset.assetDescription || "-",
-      location: asset.codeLocation || asset.location || "-",
-      vendor: asset.vendor || asset.supplier || "-",
-      freq: key,
-      date: iso
-    });
+      target[iso].push({
+        id: asset.id,
+        equipment: asset.equipmentName || asset.assetDescription || "-",
+        location: asset.codeLocation || asset.location || "-",
+        vendor: asset.vendor || asset.supplier || "-",
+        freq: key,
+        date: iso
+      });
 
-  }
+    }
 
-});
+  });
+
+}
 
 // ==========================
 // DETECT CYCLE
