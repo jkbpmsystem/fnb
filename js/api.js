@@ -8,7 +8,6 @@ const API = {
   ACTIONS: {
     GET_ASSETS: "getAssets",
     GET_DASHBOARD: "getDashboard",
-    GET_DW: "getDWList",
     SAVE_ASSET: "saveAsset",
     GENERATE_ID: "generateId",
     UPDATE_PPM: "updatePPM"
@@ -145,18 +144,7 @@ async function getDashboard(){
 
 }
 
-// =====================
-// DW LIST (GET)
-// =====================
-async function getDWList(){
 
-  const url = buildApiUrl(API.ACTIONS.GET_DW, {
-    module: getModule()
-  });
-
-  return await apiFetch(url) || [];
-
-}
 
 async function updatePPMAPI(assetId, cycle, date){
 
