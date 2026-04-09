@@ -34,26 +34,10 @@ async function initPPM(){
 // GET DATA (REUSABLE)
 // ==========================
 async function getAssetsByModule(){
-
-  console.log("MODULE:", currentModule);
-
-  if(currentModule === "BEMS"){
-    return await getBEMSAssets();
-  }else{
-    return await getFEMSAssets();
-  }
-
+  return await getAssets(); // 🔥 guna api.js
 }
 
-async function getDWByModule(){
 
-  if(currentModule === "BEMS"){
-    return await getBEMSDW();
-  }else{
-    return await getFEMSDW();
-  }
-
-}
 
 // ==========================
 // LOAD DATA
@@ -122,12 +106,16 @@ function detectCycleFromHeader(header){
 // WARRANTY CHECK
 // ==========================
 function isDuringWarranty(asset){
-  if(!asset.startDate || !asset.warrantyPeriod) return false;
 
-  const start = new Date(asset.startDate);
-  const end = new Date(start);
+  let start = asset.startDate || asset.warrantyStart;
+  let duration = asset.warrantyPeriod || asset.warrantyDuration;
 
-  end.setMonth(end.getMonth() + parseInt(asset.warrantyPeriod));
+  if(!start || !duration) return false;
+
+  const s = new Date(start);
+  const end = new Date(s);
+
+  end.setMonth(end.getMonth() + parseInt(duration));
 
   return new Date() <= end;
 }
