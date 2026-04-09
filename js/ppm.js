@@ -257,7 +257,9 @@ function formatDate(dateStr){
 function openAssetDetail(id){
   console.log("OPEN ASSET:", id);
 
-  if(typeof showAssetModal === "function"){
-    showAssetModal(id);
+  if(typeof openAssetDetailById === "function"){
+    openAssetDetailById(id);
+  }else{
+    console.error("❌ openAssetDetailById not found");
   }
 }
