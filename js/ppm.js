@@ -281,4 +281,16 @@ function showPost(){
   setActiveButton("post");
 }
 
+function setActiveButton(type){
+
+  document.getElementById("btnDuring")?.classList.remove("active");
+  document.getElementById("btnPost")?.classList.remove("active");
+
+  if(type === "during"){
+    document.getElementById("btnDuring")?.classList.add("active");
+  }else{
+    document.getElementById("btnPost")?.classList.add("active");
+  }
+
+}
 
