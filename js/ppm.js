@@ -18,7 +18,7 @@ const MODULES = {
 };
 
 // 🔥 CURRENT MODULE (AUTO / SESSION)
-let currentModule = (sessionStorage.getItem("cmmsModule") || "fems").toLowerCase().trim();
+let currentModule = (sessionStorage.getItem("cmmsModule") || "FEMS").toUpperCase().trim();
 
 document.addEventListener("DOMContentLoaded", initPPM);
 
@@ -37,8 +37,8 @@ async function getAssetsByModule(){
 
   console.log("MODULE:", currentModule);
 
-  if(currentModule === "bems"){
-    return await getBEMSSAssets();
+  if(currentModule === "BEMS"){
+    return await getBEMSAssets();
   }else{
     return await getFEMSAssets();
   }
@@ -47,7 +47,7 @@ async function getAssetsByModule(){
 
 async function getDWByModule(){
 
-  if(currentModule === "bems"){
+  if(currentModule === "BEMS"){
     return await getBEMSDW();
   }else{
     return await getFEMSDW();
