@@ -174,18 +174,20 @@ function renderWarrantyView(){
     return new Date(a) - new Date(b);
   });
 
-  sortedKeys.forEach(key => {
-    const [year,month] = key.split("-");
-    const monthName = new Date(year,month).toLocaleString("default",{month:"long"});
+sortedKeys.forEach(key => {
 
-    container.innerHTML += `
-      <div class="month-card" onclick="openMonthDetail('${key}')">
-        <h3>${monthName}</h3>
-        <p>Total: ${months[key].length}</p>
-      </div>
-    `;
-  });
-}
+  const [year, month] = key.split("-");
+  const monthName = new Date(year, month).toLocaleString("default",{month:"long"});
+
+  const label = `${monthName} ${year}`; // 🔥 tambah year
+
+  container.innerHTML += `
+    <div class="month-card" onclick="openMonthDetail('${key}')">
+      <h3>${label}</h3>
+      <p>Total: ${months[key].length}</p>
+    </div>
+  `;
+});
 
 // ==========================
 // OPEN MODAL TABLE
