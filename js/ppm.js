@@ -28,6 +28,7 @@ document.addEventListener("DOMContentLoaded", initPPM);
 async function initPPM(){
   await loadEvents();
   showDuring();
+setActiveButton("during");
 }
 
 // ==========================
@@ -265,3 +266,19 @@ function openAssetDetail(id){
     console.error("❌ openAssetDetailById not found");
   }
 }
+
+function showDuring(){
+  currentMode = "during";
+  events = duringEvents;
+  renderWarrantyView();
+  setActiveButton("during");
+}
+
+function showPost(){
+  currentMode = "post";
+  events = postEvents;
+  renderWarrantyView();
+  setActiveButton("post");
+}
+
+
