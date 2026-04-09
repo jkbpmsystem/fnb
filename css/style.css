@@ -533,3 +533,21 @@ tr:hover{
   padding:20px;
   border-radius:12px;
 }
+
+.clickable-id{
+  cursor:pointer;
+  color: var(--primary);
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+/* 🔥 hover glow */
+.clickable-id:hover{
+  text-decoration: underline;
+  text-shadow: 0 0 6px rgba(37,99,235,0.5);
+}
+
+/* 🔥 bila click */
+.clickable-id:active{
+  opacity: 0.7;
+}
