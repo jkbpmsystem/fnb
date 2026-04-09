@@ -87,7 +87,7 @@ dwData.forEach(row => {
   });
 
 });
-
+}
 
 // ==========================
 // DETECT CYCLE
