@@ -384,6 +384,49 @@ async function savePPM(){
     return;
   }
 
+  if(isFutureDate(date)){
+    alert("Tak boleh isi future date");
+    return;
+  }
+
+  const asset = assetCache.find(a => a.id == assetId);
+  if(!asset){
+    alert("Asset not found");
+    return;
+  }
+
+  const key = "done_" + getOrdinal(cycle);
+
+  const payload = {
+    action: "SAVE_PPM",
+    assetId,
+    cycle,
+    key,
+    date
+  };
+
+  const res = await apiFetch(API.BASE, {
+    method: "POST",
+    body: JSON.stringify(payload)
+  });
+
+  if(res?.success){
+    alert("PPM saved ✅");
+  }else{
+    alert("Failed save ❌");
+  }
+}
+
+/*async function savePPM(){
+
+  const { assetId, cycle } = selectedPPM;
+  const date = document.getElementById("ppmActualDate").value;
+
+  if(!date){
+    alert("Please select date");
+    return;
+  }
+
   // ❌ block future date
   if(new Date(date) > new Date()){
     alert("Tak boleh isi future date");
@@ -393,7 +436,7 @@ async function savePPM(){
   const asset = assetCache.find(a => a.id == assetId);
   if(!asset) return;
 
-  const key = "done_" + getOrdinal(cycle);
+  const key = "done_" + getOrdinal(cycle);*/
 
   // ======================
   // 🔥 UPDATE UI DULU
