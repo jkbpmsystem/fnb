@@ -19,7 +19,8 @@ const MODULES = {
 
 // 🔥 CURRENT MODULE (AUTO / SESSION)
 let currentModule = sessionStorage.getItem("cmmsModule") || "fems";
-
+  .toLowerCase()
+  .trim();
 document.addEventListener("DOMContentLoaded", initPPM);
 
 // ==========================
@@ -34,11 +35,24 @@ async function initPPM(){
 // GET DATA (REUSABLE)
 // ==========================
 async function getAssetsByModule(){
+console.log("MODULE:", currentModule);
+console.log("MODULE CONFIG:", MODULES[currentModule]);
+  if(!MODULES[currentModule]){
+    console.warn("INVALID MODULE:", currentModule);
+    currentModule = "fems"; // fallback
+  }
+
   const sheet = MODULES[currentModule].asset;
   return await getSheetData(sheet);
 }
 
 async function getDWByModule(){
+
+  if(!MODULES[currentModule]){
+    console.warn("INVALID MODULE:", currentModule);
+    currentModule = "fems";
+  }
+
   const sheet = MODULES[currentModule].dw;
   return await getSheetData(sheet);
 }
