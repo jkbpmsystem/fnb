@@ -425,23 +425,4 @@ async function savePPM(){
 
 }
 
-  // ======================
-  // 🔥 UPDATE UI DULU
-  // ======================
-  asset[key] = date;
 
-  document.getElementById("tab-ppm").innerHTML = renderPPM(asset);
-
-  closePPMModal();
-
-  // ======================
-  // 🔥 BARU CALL API
-  // ======================
-  try{
-    await updatePPMAPI(assetId, cycle, date);
-  }catch(err){
-    alert("Failed to save to server");
-    console.error(err);
-  }
-
-}
