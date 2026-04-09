@@ -397,46 +397,33 @@ async function savePPM(){
 
   const key = "done_" + getOrdinal(cycle);
 
-  const payload = {
-    action: "SAVE_PPM",
-    assetId,
-    cycle,
-    key,
-    date
-  };
+  // 🔥 update UI dulu
+  asset[key] = date;
+  document.getElementById("tab-ppm").innerHTML = renderPPM(asset);
 
-  const res = await apiFetch(API.BASE, {
-    method: "POST",
-    body: JSON.stringify(payload)
-  });
+  // 🔥 call API
+  try{
+    const res = await apiFetch(API.BASE, {
+      method: "POST",
+      body: JSON.stringify({
+        action: "SAVE_PPM",
+        assetId,
+        cycle,
+        key,
+        date
+      })
+    });
 
-  if(res?.success){
-    alert("PPM saved ✅");
-  }else{
-    alert("Failed save ❌");
+    if(!res?.success){
+      alert("Failed save ❌");
+    }
+
+  }catch(err){
+    alert("Server error ❌");
+    console.error(err);
   }
+
 }
-
-/*async function savePPM(){
-
-  const { assetId, cycle } = selectedPPM;
-  const date = document.getElementById("ppmActualDate").value;
-
-  if(!date){
-    alert("Please select date");
-    return;
-  }
-
-  // ❌ block future date
-  if(new Date(date) > new Date()){
-    alert("Tak boleh isi future date");
-    return;
-  }
-
-  const asset = assetCache.find(a => a.id == assetId);
-  if(!asset) return;
-
-  const key = "done_" + getOrdinal(cycle);*/
 
   // ======================
   // 🔥 UPDATE UI DULU
