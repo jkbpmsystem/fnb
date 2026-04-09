@@ -484,25 +484,27 @@ tr:hover{
   margin-top:6px;
 }
 
-/* =========================
-   CALENDAR
-========================= */
-.calendar-grid{
-  display:grid;
-  grid-template-columns:repeat(7,1fr);
-  gap:10px;
+.month-card{
+  background:#fff;
+  padding:16px;
+  border-radius:12px;
+  cursor:pointer;
+  text-align:center;
+  box-shadow:0 2px 6px rgba(0,0,0,0.1);
 }
 
-.day{
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:8px;
-  padding:8px;
-  min-height:90px;
+.month-card:hover{
+  transform:translateY(-3px);
 }
 
-.day:hover{
-  background:var(--hover);
+.danger{
+  color:red;
+  font-weight:bold;
+}
+
+.clickable{
+  color:blue;
+  cursor:pointer;
 }
 
 /* =========================
