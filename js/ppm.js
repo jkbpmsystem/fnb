@@ -65,7 +65,6 @@ dwData.forEach(row => {
 
     const value = row[key];
 
-    // 🔥 detect date column sahaja
     if(!isValidDate(value)) return;
 
     const date = formatToISO(value);
@@ -74,7 +73,6 @@ dwData.forEach(row => {
 
     if(!target[date]) target[date] = [];
 
-    // 🔥 detect cycle dari header name
     const freq = detectCycleFromHeader(key);
 
     target[date].push({
@@ -82,12 +80,13 @@ dwData.forEach(row => {
       equipment: asset.equipmentName || asset.assetDescription || "-",
       location: asset.codeLocation || "-",
       vendor: asset.vendor || asset.supplier || "-",
-
-      // 🔥 ambil dari DW (IMPORTANT)
-      freq: row.cycle || row.frequency || row.ppmCycle || "-",
-      date: row.date
+      freq: freq,
+      date: date
     });
+
   });
+
+});
 
 
 // ==========================
