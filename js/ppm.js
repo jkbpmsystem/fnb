@@ -34,26 +34,25 @@ async function initPPM(){
 // GET DATA (REUSABLE)
 // ==========================
 async function getAssetsByModule(){
-console.log("MODULE:", currentModule);
-console.log("MODULE CONFIG:", MODULES[currentModule]);
-  if(!MODULES[currentModule]){
-    console.warn("INVALID MODULE:", currentModule);
-    currentModule = "fems"; // fallback
+
+  console.log("MODULE:", currentModule);
+
+  if(currentModule === "bems"){
+    return await getBEMSAssets();
+  }else{
+    return await getFEMSAssets();
   }
 
-  const sheet = MODULES[currentModule].asset;
-  return await getSheetData(sheet);
 }
 
 async function getDWByModule(){
 
-  if(!MODULES[currentModule]){
-    console.warn("INVALID MODULE:", currentModule);
-    currentModule = "fems";
+  if(currentModule === "bems"){
+    return await getBEMSDW();
+  }else{
+    return await getFEMSDW();
   }
 
-  const sheet = MODULES[currentModule].dw;
-  return await getSheetData(sheet);
 }
 
 // ==========================
