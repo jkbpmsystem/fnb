@@ -88,15 +88,8 @@ function getModule(){
 // GET ASSETS (POST)
 // =====================
 async function getAssets(){
-
-  return await apiFetch(API.BASE, {
-    method: "POST",
-    body: JSON.stringify({
-      action: API.ACTIONS.GET_ASSETS,
-      module: getModule()
-    })
-  }) || [];
-
+  const url = `${API.BASE}?action=${API.ACTIONS.GET_ASSETS}&module=${getModule()}`;
+  return await apiFetch(url) || [];
 }
 
 // =====================
@@ -118,30 +111,16 @@ async function saveAssetAPI(data){
 // GENERATE ID (POST)
 // =====================
 async function generateId(){
-
-  return await apiFetch(API.BASE, {
-    method: "POST",
-    body: JSON.stringify({
-      action: API.ACTIONS.GENERATE_ID,
-      module: getModule()
-    })
-  }) || {id:"ERROR"};
-
+  const url = `${API.BASE}?action=${API.ACTIONS.GENERATE_ID}&module=${getModule()}`;
+  return await apiFetch(url) || {id:"ERROR"};
 }
 
 // =====================
 // DASHBOARD (POST)
 // =====================
 async function getDashboard(){
-
-  return await apiFetch(API.BASE, {
-    method: "POST",
-    body: JSON.stringify({
-      action: API.ACTIONS.GET_DASHBOARD,
-      module: getModule()
-    })
-  }) || {};
-
+  const url = `${API.BASE}?action=${API.ACTIONS.GET_DASHBOARD}&module=${getModule()}`;
+  return await apiFetch(url) || {};
 }
 
 
