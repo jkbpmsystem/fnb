@@ -36,14 +36,33 @@
       <div class="title">Preventive Maintenance</div>
     </div>
 
-    <div class="calendar-wrapper">
-      <div class="calendar-nav">
-        <button class="btn" onclick="prevMonth()">◀</button>
-        <h3 id="monthYear"></h3>
-        <button class="btn" onclick="nextMonth()">▶</button>
-      </div>
-      <div id="calendarGrid" class="calendar-grid"></div>
-    </div>
+ <div>
+  <button onclick="showDuring()">During Warranty</button>
+  <button onclick="showPost()">Post Warranty</button>
+</div>
+
+<div id="calendarGrid"></div>
+
+<!-- MODAL -->
+<div id="monthModal" class="modal">
+  <div class="modal-content">
+    <span onclick="closeMonthModal()">✖</span>
+
+    <table id="monthTable">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Equipment</th>
+          <th>Location</th>
+          <th>Vendor</th>
+          <th>Cycle</th>
+          <th>Date</th>
+          <th>Left Days</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
   </div>
 </div>
 
