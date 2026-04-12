@@ -99,6 +99,7 @@ function renderFEMSDetail(a){
     <b>Description</b><div>${a.typeDescription}</div>
     <b>Task Code</b><div>${a.taskCode}</div>
     <b>Category</b><div>${a.category}</div>
+    
   </div>
   
   <div class="asset-card">
@@ -114,6 +115,7 @@ function renderFEMSDetail(a){
     <b>Manufacturer</b><div>${a.manufacture}</div>
     <b>Model</b><div>${a.model}</div>
     <b>Serial No</b><div>${a.serialNumber}</div>
+    <b>Discipline</b><div>${a.discipline}</div>
   </div>
    
   <div class="asset-card">
