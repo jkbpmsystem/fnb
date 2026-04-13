@@ -391,3 +391,12 @@ alert("Error saving BEMS");
 }
 
 }
+
+document.addEventListener("click", function(e){
+  if(e.target.classList.contains("open-asset")){
+    const id = e.target.dataset.id;
+    console.log("CLICK ID:", id);
+
+    openAssetDetailById(id);
+  }
+});
