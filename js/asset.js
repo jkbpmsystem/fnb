@@ -37,11 +37,11 @@ function renderTable(){
       ${a.id}
     </span>
   </td>
-      <td>${a.assetNo||""}</td>
+      <td>${a.assetNo|| a.assetNumberKonsesi || ""}</td>
       <td>${a.codeLocation||""}</td>
-      <td>${a.equipmentName||""}</td>
+      <td>${a.equipmentName|| a.assetDescription ||""}</td>
       <td>${a.typeCode||""}</td>
-      <td>${a.discipline||""}</td>
+      <td>${a.discipline|| a.service ||""}</td>
       <td>${formatDate(a.startDate)||""}</td>
       <td>${formatDate(a.endDate)||""}</td>
     `;
