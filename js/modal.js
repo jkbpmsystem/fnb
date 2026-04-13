@@ -159,7 +159,7 @@ function renderBEMSDetail(a){
   
   <div class="asset-card">
     <h4>Location</h4>
-    <b>Code</b><div>${a.codeLocation}</div>
+    <b>Code</b><div>${a.locationCode}</div>
     <b>Area</b><div>${a.area}</div>
     <b>Department</b><div>${a.department}</div>
   </div>
@@ -192,8 +192,8 @@ function renderBEMSDetail(a){
     
   <div class="asset-card">
     <h4>Warranty</h4>
-    <b>Start Warranty</b><div>${formatDate(a.warrantyStartDate|| "")}</div>
-    <b>End Warranty</b><div>${formatDate(a.warrantyEndDate|| "")}</div>
+    <b>Start Warranty</b><div>${formatDate(a.warrantyStart|| "")}</div>
+    <b>End Warranty</b><div>${formatDate(a.warrantyEnd|| "")}</div>
     <b>Freq/Year</b><div>${a.ppmFrequency}</div>
     <b>Warranty Duration</b><div>${a.warrantyDuration}</div>
   </div>
