@@ -38,10 +38,10 @@ function renderTable(){
     </span>
   </td>
       <td>${a.assetNo||""}</td>
+      <td>${a.codeLocation||""}</td>
       <td>${a.equipmentName||""}</td>
       <td>${a.typeCode||""}</td>
       <td>${a.discipline||""}</td>
-      <td>${a.codeLocation||""}</td>
       <td>${formatDate(a.startDate)||""}</td>
       <td>${formatDate(a.endDate)||""}</td>
     `;
