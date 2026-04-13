@@ -38,12 +38,16 @@ function renderTable(){
     </span>
   </td>
       <td>${a.assetNo|| a.assetNumberKonsesi || ""}</td>
-      <td>${a.codeLocation||""}</td>
+      <td>${a.codeLocation|| a.locationCode||""}</td>
       <td>${a.equipmentName|| a.assetDescription ||""}</td>
       <td>${a.typeCode||""}</td>
       <td>${a.discipline|| a.service ||""}</td>
-      <td>${formatDate(a.startDate)|| formatDate(a.warrantyStartDate)||""}</td>
-      <td>${formatDate(a.endDate)|| formatDate(a.warrantyEndDate)||""}</td>
+      <td>
+          ${formatDate(a.startDate) || ""} - ${formatDate(a.warrantyStart) || ""}
+      </td>
+      <td>
+          ${formatDate(a.endDate) || ""} - ${formatDate(a.warrantyEnd) || ""}
+      </td>
     `;
     tbody.appendChild(tr);
   });
