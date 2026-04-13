@@ -42,8 +42,8 @@ function renderTable(){
       <td>${a.equipmentName|| a.assetDescription ||""}</td>
       <td>${a.typeCode||""}</td>
       <td>${a.discipline|| a.service ||""}</td>
-      <td>${formatDate(a.startDate)||""}</td>
-      <td>${formatDate(a.endDate)||""}</td>
+      <td>${formatDate(a.startDate)|| formatDate(a.warrantyStartDate)||""}</td>
+      <td>${formatDate(a.endDate)|| formatDate(a.warrantyEndDate)||""}</td>
     `;
     tbody.appendChild(tr);
   });
