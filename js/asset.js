@@ -43,10 +43,17 @@ function renderTable(){
       <td>${a.typeCode||""}</td>
       <td>${a.discipline|| a.service ||""}</td>
       <td>
-          ${formatDate(a.startDate) || ""} - ${formatDate(a.warrantyStart) || ""}
+           ${a.startDate 
+                ? formatDate(a.startDate) 
+             : (a.warrantyStart ? formatDate(a.warrantyStart) : "")
+            }
       </td>
+
       <td>
-          ${formatDate(a.endDate) || ""} - ${formatDate(a.warrantyEnd) || ""}
+            ${a.endDate 
+              ? formatDate(a.endDate) 
+            : (a.warrantyEnd ? formatDate(a.warrantyEnd) : "")
+            }
       </td>
     `;
     tbody.appendChild(tr);
