@@ -379,6 +379,7 @@ function closePPMModal(){
 
 async function savePPM(){
   if(!selectedPPM || !selectedPPM.assetId){
+    console.log("❌ selectedPPM:", selectedPPM);
     alert("No PPM selected");
     return;
   }
