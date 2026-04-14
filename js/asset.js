@@ -168,13 +168,13 @@ function autoFillEquipmentDesc(){
   const code = typeCodeInput.value.toUpperCase();
   typeCodeInput.value = code;
 
-  if(typeMaster[code]){
-    desc.value = typeMaster[code].desc || "";
-    task.value = typeMaster[code].task || "";
-  }else{
-    desc.value = "";
-    task.value = "";
-  }
+ if(equipmentMap[code]){
+  desc.value = equipmentMap[code].desc;
+  task.value = equipmentMap[code].task;
+}else{
+  desc.value = "";
+  task.value = "";
+}
 }
 
 // simple add modal (reuse global modal body)
