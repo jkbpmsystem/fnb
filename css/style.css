@@ -628,3 +628,37 @@ tr:hover{
   color: #fff;
   box-shadow: 0 2px 6px rgba(0,0,0,0.15);
 }
+
+/* 🔥 highlight overdue blinking */
+.blink{
+  animation: blinkAnim 1s infinite;
+}
+@keyframes blinkAnim{
+  0%{background:#ffebee;}
+  50%{background:#ffcdd2;}
+  100%{background:#ffebee;}
+}
+
+.filter-bar{
+  display:flex;
+  gap:10px;
+  margin-bottom:10px;
+}
+
+.filter-bar input{
+  padding:6px;
+  border-radius:6px;
+  border:1px solid #ccc;
+}
+
+.filter-bar button{
+  padding:6px 10px;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+}
+
+.filter-active{
+  background:#007bff;
+  color:#fff;
+}
