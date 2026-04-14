@@ -411,6 +411,8 @@ async function savePPM(){
       })
     });
 
+    console.log("📥 Response:", res);
+    
     if(res?.success){
       asset[key] = date;
       document.getElementById("tab-ppm").innerHTML = renderPPM(asset);
