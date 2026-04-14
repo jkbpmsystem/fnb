@@ -184,10 +184,11 @@ async function openAddAsset(){
   document.getElementById("globalDetailModal").style.display = "flex";
   const idRes = await generateId();
   const mod = (sessionStorage.getItem("cmmsModule") || "FEMS");
+  console.log(idRes);
   
   const modNow = (sessionStorage.getItem("cmmsModule") || "FEMS");
   if(modNow === "BEMS"){
-    body.innerHTML = renderBEMSForm();
+    body.innerHTML = renderBEMSForm(idRes);
   }else{
     body.innerHTML = `
 
@@ -305,7 +306,7 @@ async function saveAsset(){
 }
 
 
-function renderBEMSForm(){
+function renderBEMSForm(idRes){
 return `
 <div class="form-grid">
 
@@ -374,7 +375,7 @@ async function saveBEMS(){
 const data = {
 action:"saveAsset",
 
-id:id.value,
+id:assetId.value,
 assetNumber:assetNumber.value,
 assetNumberKonsesi:assetNumberKonsesi.value,
 typeCode:typeCode.value,
@@ -385,7 +386,7 @@ service:service.value,
 department:department.value,
 area:area.value,
 
-locationCode:locationCode.value,
+locationCode:codeLocation.value,
 location:location.value,
 
 ppmFrequency:ppmFrequency.value,
@@ -416,7 +417,7 @@ maintenanceType:maintenanceType.value,
 month:month.value,
 statusWarranty:statusWarranty.value,
 ppm:ppm.value,
-remarks2:remarks2.value,
+remark:remark.value,
 
 module:"BEMS"
 };
