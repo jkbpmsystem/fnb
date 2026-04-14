@@ -1,4 +1,11 @@
-let allData = [];
+function renderTable(data){
+  const tbody = document.querySelector("#durationTable tbody");
+  if(!tbody) return;
+
+  tbody.innerHTML = "";
+
+  data.forEach(function(a){
+
     const tr = document.createElement("tr");
 
     if(a.daysLeft < 0) tr.classList.add("blink");
@@ -14,6 +21,7 @@ let allData = [];
     `;
 
     tbody.appendChild(tr);
+
   });
 }
 
