@@ -222,7 +222,8 @@ async function openAddAsset(){
       <select id="category">
             <option>Category</option>
             <option>ASSET</option>
-            <option>INVENTORY</option>      
+            <option>INVENTORY</option> 
+      </select>
       <input id="startDate" type="date">
       <input id="endDate" type="date">
       <input id="ppmFrequency" placeholder="PPM Frequency">
