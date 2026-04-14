@@ -240,7 +240,10 @@ async function openAddAsset(){
   
   // set module values
   const modVal = (sessionStorage.getItem("cmmsModule") || "FEMS");
-  document.getElementById("module").value = modVal;
+  const modInput = document.getElementById("module");
+  if(modInput){
+  modInput.value = modVal;
+  }
   const md = document.getElementById("moduleDisplay");
   if(md) md.value = modVal;
 
