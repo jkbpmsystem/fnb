@@ -178,7 +178,7 @@ async function openAddAsset(){
       <input id="assetId" value="${idRes.id}" readonly>
       <input id="assetNo" placeholder="Asset No">
       <input id="equipmentName" placeholder="Equipment Name">
-      <input id="typeCode" placeholder="Type Code">
+      <input id="typeCode" placeholder="Type Code" oninput="autoFillEquipmentDesc()">
       <input id="typeDescription" placeholder="Type Description" readonly>
       <input id="taskCode" placeholder="Task Code" readonly>
       <select id="discipline">
@@ -272,8 +272,9 @@ return `
 <input id="assetNumber" placeholder="Asset Number">
 <input id="assetNumberKonsesi" placeholder="Asset Number Konsesi">
 
-<input id="typeCode" placeholder="Type Code">
-<input id="typeDescription" placeholder="Type Description">
+<input id="typeCode" placeholder="Type Code" oninput="autoFillEquipmentDesc()">>
+<input id="typeDescription" placeholder="Type Description" readonly>
+<input id="taskCode" placeholder="Task Code" readonly>
 
 <input id="assetDescription" placeholder="Asset Description">
 
