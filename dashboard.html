@@ -19,26 +19,15 @@
 <div class="main">
 
 <div class="topbar">
-  <div class="title">
-    Dashboard (<span id="moduleName"></span>)
-  </div>
-
-  <div style="display:flex; align-items:center; gap:10px;">
-    
-    <!-- Export -->
-    <button class="btn" onclick="exportCSV()" title="Export Excel">
-      📊
-    </button>
-
-    <!-- User -->
-    <span id="userDisplay"></span>
-
-    <!-- 🔥 Logout -->
-    <button class="btn logout-btn" onclick="logout()">
-      Logout
-    </button>
-
-  </div>
+  <div class="title">Dashboard (<span id="moduleName"></span>)</div>
+  <div>
+  <button class="btn" onclick="exportCSV()" title="Export Excel">
+    📊
+  </button>
+  <button class="btn logout-btn" onclick="logout()">
+    Logout
+  </button>
+  User: <span id="userDisplay"></span>
 </div>
 </div>
 
