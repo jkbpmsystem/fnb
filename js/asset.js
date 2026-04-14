@@ -196,14 +196,14 @@ async function openAddAsset(){
       <input id="assetId" value="${idRes.id}" readonly>
       <input id="assetNo" placeholder="Asset No">
       <input id="equipmentName" placeholder="Equipment Name">
-      <input id="typeCode" placeholder="Type Code" oninput="autoFillEquipmentDesc()">
+      <input id="typeCode" placeholder="Type Code">
       <input id="typeDescription" placeholder="Type Description" readonly>
       <input id="taskCode" placeholder="Task Code" readonly>
       <select id="discipline">
             <option>Select Discipline</option>
             <option>Mechanical</option>
             <option>Electrical</option>
-      <input id="codeLocation" placeholder="Code Location" oninput="this.value=this.value.toUpperCase(); autoFillLocation(this.value)">
+      <input id="codeLocation" placeholder="Code Location">
       <input id="area" placeholder="Area" readonly>
       <input id="department" placeholder="Department" readonly>
       <input id="bumi" placeholder="Bumi">
@@ -307,7 +307,7 @@ return `
 <input id="assetNumber" placeholder="Asset Number">
 <input id="assetNumberKonsesi" placeholder="Asset Number Konsesi">
 
-<input id="typeCode" placeholder="Type Code" oninput="autoFillEquipmentDesc()">>
+<input id="typeCode" placeholder="Type Code">
 <input id="typeDescription" placeholder="Type Description" readonly>
 <input id="taskCode" placeholder="Task Code" readonly>
 
@@ -317,7 +317,7 @@ return `
 <input id="department" placeholder="Department" readonly>
 <input id="area" placeholder="Area" readonly>
 
-<input id="codeLocation" placeholder="Code Location" oninput="this.value=this.value.toUpperCase(); autoFillLocation(this.value)">
+<input id="codeLocation" placeholder="Code Location">
 <input id="location" placeholder="Location">
 
 <input id="ppmFrequency" placeholder="PPM Frequency">
