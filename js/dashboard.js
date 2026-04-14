@@ -1,6 +1,16 @@
 let allData = [];
 let currentFilter = 'ALL';
 
+document.addEventListener("DOMContentLoaded", ()=>{
+  initDashboard();
+});
+
+async function initDashboard(){
+  const assets = await getAssets();
+  allData = prepareData(assets);
+  renderTable(allData);
+}
+
 function renderTable(data){
   const tbody = document.querySelector("#durationTable tbody");
   if(!tbody) return;
