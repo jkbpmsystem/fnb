@@ -96,8 +96,6 @@ function renderFEMSDetail(a){
     <b>Asset No</b><div>${a.assetNo}</div>
     <b>Asset No Hosza</b><div>${a.assetNoHosza}</div>
     <b>Equipment Name</b><div>${a.equipmentName}</div>
-    <b>Description</b><div>${a.typeDescription}</div>
-    <b>Task Code</b><div>${a.taskCode}</div>
     <b>Category</b><div>${a.category}</div>
     
   </div>
@@ -112,6 +110,8 @@ function renderFEMSDetail(a){
   <div class="asset-card">
     <h4>Technical</h4>
     <b>Type Code</b><div>${a.typeCode}</div>
+    <b>Description</b><div>${a.typeDescription}</div>
+    <b>Task Code</b><div>${a.taskCode}</div>
     <b>Manufacturer</b><div>${a.manufacture}</div>
     <b>Model</b><div>${a.model}</div>
     <b>Serial No</b><div>${a.serialNumber}</div>
@@ -168,6 +168,7 @@ function renderBEMSDetail(a){
     <h4>Technical</h4>
     <b>Type Code</b><div>${a.typeCode}</div>
     <b>Type Description</b><div>${a.typeDescription}</div>
+    <b>Task Code</b><div>${a.taskCode}</div>
     <b>Asset Description</b><div>${a.assetDescription}</div>
     <b>Manufacturer</b><div>${a.manufacturer}</div>
     <b>Model</b><div>${a.model}</div>
