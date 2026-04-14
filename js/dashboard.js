@@ -1,4 +1,38 @@
 let allData = [];
+    const tr = document.createElement("tr");
+
+    if(a.daysLeft < 0) tr.classList.add("blink");
+
+    tr.innerHTML = `
+      <td>${a.id}</td>
+      <td>${a.name || "-"}</td>
+      <td>${formatDate(a.startDate)}</td>
+      <td>${formatDate(a.endDate)}</td>
+      <td style="color:${a.daysLeft<0?'#ff3d57':a.daysLeft<30?'#ffc107':'#00e676'}">
+        ${a.daysLeft}
+      </td>
+    `;
+
+    tbody.appendChild(tr);
+  });
+}
+
+function applyFilter(){
+  const keyword = document.getElementById("searchInput").value.toLowerCase();
+
+  let filtered = allData.filter(a=>{
+    const matchSearch = a.id.toLowerCase().includes(keyword) || (a.name||"").toLowerCase().includes(keyword);
+
+    if(currentFilter === 'OVERDUE') return matchSearch && a.daysLeft < 0;
+    if(currentFilter === 'NEAR') return matchSearch && a.daysLeft >=0 && a.daysLeft < 30;
+
+    return matchSearch;
+  });
+
+  renderTable(filtered);
+}
+
+function setFilter(type){
   currentFilter = type;
 
   document.querySelectorAll('.filter-bar button').forEach(b=>b.classList.remove('filter-active'));
@@ -11,8 +45,7 @@ let allData = [];
 }
 
 function exportCSV(){
-  let csv = "ID,Equipment,Start Date,End Date,Days Left
-";
+  let csv = "ID,Equipment,Start Date,End Date,Days Left\\n";
 
   const rows = document.querySelectorAll("#durationTable tbody tr");
 
@@ -21,14 +54,15 @@ function exportCSV(){
     let row = [];
 
     cols.forEach(function(td){
-      // elak karakter pelik (comma/newline)
-      let text = td.innerText.replace(/,/g, " ").replace(/
-/g, " ").trim();
+      let text = td.innerText
+        .replace(/,/g, " ")
+        .replace(/\\n/g, " ")
+        .trim();
+
       row.push(text);
     });
 
-    csv += row.join(",") + "
-";
+    csv += row.join(",") + "\\n";
   });
 
   const blob = new Blob([csv], { type: "text/csv" });
@@ -40,23 +74,4 @@ function exportCSV(){
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
-});
-
-  const blob = new Blob([csv], {type:"text/csv"});
-  const url = URL.createObjectURL(blob);
-
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "contract_duration.csv";
-  a.click();
-},${a.equipmentName},${a.startDate},${a.endDate},${diff}\n`;
-  });
-
-  const blob = new Blob([csv], {type:"text/csv"});
-  const url = URL.createObjectURL(blob);
-
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "duration_report.csv";
-  a.click();
 }
