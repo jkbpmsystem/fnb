@@ -378,33 +378,25 @@ function closePPMModal(){
 }
 
 async function savePPM(){
+  if(!selectedPPM || !selectedPPM.assetId){
+    alert("No PPM selected");
+    return;
+  }
 
   const { assetId, cycle } = selectedPPM;
   const date = document.getElementById("ppmActualDate").value;
 
-  if(!date){
-    alert("Please select date");
-    return;
-  }
-
-  if(isFutureDate(date)){
-    alert("Tak boleh isi future date");
-    return;
-  }
+  if(!date){ alert("Please select date"); return; }
+  if(isFutureDate(date)){ alert("Tak boleh isi future date"); return; }
 
   const asset = assetCache.find(a => a.id == assetId);
-  if(!asset){
-    alert("Asset not found");
-    return;
-  }
+  if(!asset){ alert("Asset not found"); return; }
 
   const key = "done_" + getOrdinal(cycle);
 
-  // 🔥 update UI dulu
-  asset[key] = date;
-  document.getElementById("tab-ppm").innerHTML = renderPPM(asset);
+  // 🔥 Ambil module dari sessionStorage
+  const module = sessionStorage.getItem("cmmsModule") || "fems";
 
-  // 🔥 call API
   try{
     const res = await apiFetch(API.BASE, {
       method: "POST",
@@ -413,19 +405,24 @@ async function savePPM(){
         assetId,
         cycle,
         key,
-        date
+        date,
+        module   // ← 🔥 ini yang missing sebelum ni
       })
     });
 
-    if(!res?.success){
-      alert("Failed save ❌");
+    if(res?.success){
+      asset[key] = date;
+      document.getElementById("tab-ppm").innerHTML = renderPPM(asset);
+      closePPMModal();
+      alert("Saved ✅");
+    }else{
+      alert("Failed ❌ : " + (res?.message || res?.error || "Unknown error"));
     }
 
   }catch(err){
     alert("Server error ❌");
     console.error(err);
   }
-
 }
 
 
