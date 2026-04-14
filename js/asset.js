@@ -146,7 +146,10 @@ function searchTable(){
 function autoFillLocation(code){
   const area = document.getElementById("area");
   const dept = document.getElementById("department");
+
   if(!area || !dept) return;
+  if(typeof locationMaster === "undefined") return; // 🔥 tambah ni
+
   if(locationMaster[code]){
     area.value = locationMaster[code];
     dept.value = code.split("-")[1] || "";
