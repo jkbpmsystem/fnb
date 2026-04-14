@@ -1,3 +1,6 @@
+let allData = [];
+let currentFilter = 'ALL';
+
 function renderTable(data){
   const tbody = document.querySelector("#durationTable tbody");
   if(!tbody) return;
