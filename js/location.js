@@ -434,7 +434,7 @@ const locationMaster = {
 "L1-ED-172A":"Hyperbaric Chamber",
 "L1-ED-173":"Cleaner's Room",
 "L1-ED-174":"Disposal Room",
-"L-ED-175":"Clean Utility",
+"L1-ED-175":"Clean Utility",
 "L1-ED-176":"Medication Room",
 "L1-ED-C001":"Corridor 1",
 "L1-ED-C002":"Corridor 2",
