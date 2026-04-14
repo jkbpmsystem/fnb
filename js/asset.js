@@ -206,6 +206,7 @@ async function openAddAsset(){
             <option>Select Discipline</option>
             <option>Mechanical</option>
             <option>Electrical</option>
+      </select>
       <input id="codeLocation" placeholder="Code Location">
       <input id="area" placeholder="Area" readonly>
       <input id="department" placeholder="Department" readonly>
@@ -229,6 +230,7 @@ async function openAddAsset(){
             <option>Status dalam Kontrak Konsesi</option>
             <option>YES</option>
             <option>NO</option>
+      </select>
     </div>
     <button class="btn btn-primary" id="saveAssetBtn">Save</button>
   `;
