@@ -311,8 +311,9 @@ async function saveAsset(){
 
 function renderBEMSForm(idRes){
 return `
-<div class="form-grid">
-
+<input type="hidden" id="module">
+    <div class="form-grid">
+      <div><label>Module</label><input id="moduleDisplay" readonly></div>
 <input id="assetId" value="${idRes?.id || ""}" readonly>
 <input id="assetNumber" placeholder="Asset Number">
 <input id="assetNumberKonsesi" placeholder="Asset Number Konsesi">
