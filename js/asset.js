@@ -309,7 +309,7 @@ function renderBEMSForm(){
 return `
 <div class="form-grid">
 
-<input id="assetId" value="${idRes.id}" readonly>
+<input id="assetId"readonly>
 <input id="assetNumber" placeholder="Asset Number">
 <input id="assetNumberKonsesi" placeholder="Asset Number Konsesi">
 
