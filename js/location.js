@@ -11049,23 +11049,6 @@ document.getElementById("area").value = locationMaster[code];
 
 }
 
-function autoFillEquipmentDesc(){
-
-  const typeCodeInput = document.getElementById("typeCode");
-  const desc = document.getElementById("typeDescription");
-  const task = document.getElementById("taskCode");
-
-  const code = typeCodeInput.value.toUpperCase();
-  typeCodeInput.value = code;
-
-  if(typeMaster[code]){
-    desc.value = typeMaster[code].desc || "";
-    task.value = typeMaster[code].task || "";
-  }else{
-    desc.value = "";
-    task.value = "";
-  }
-}
 
 /* GET DEPARTMENT FROM CODE */
 
