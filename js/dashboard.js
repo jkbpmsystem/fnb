@@ -7,10 +7,24 @@ document.addEventListener("DOMContentLoaded", ()=>{
 
 async function initDashboard(){
   const assets = await getAssets();
+
   allData = prepareData(assets);
+
+  // ✅ KPI kira dari data sendiri
+  let overdue = 0;
+  let upcoming = 0;
+
+  allData.forEach(a=>{
+    if(a.daysLeft < 0) overdue++;
+    else if(a.daysLeft < 30) upcoming++;
+  });
+
+  document.getElementById("totalAssets").innerText = allData.length;
+  document.getElementById("overdueCount").innerText = overdue;
+  document.getElementById("upcomingCount").innerText = upcoming;
+
   renderTable(allData);
 }
-
 function renderTable(data){
   const tbody = document.querySelector("#durationTable tbody");
   if(!tbody) return;
@@ -95,4 +109,38 @@ function exportCSV(){
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
+}
+
+function prepareData(assets){
+  const module = getModule().toUpperCase();
+  const today = new Date();
+
+  return assets.map(function(a){
+
+    const data = (module === "BEMS")
+      ? {
+          id: a.id,
+          name: a.assetDescription,
+          startDate: a.purchaseDate,
+          endDate: a.warrantyEnd
+        }
+      : {
+          id: a.id,
+          name: a.equipmentName,
+          startDate: a.startDate,
+          endDate: a.endDate
+        };
+
+    if(!data.endDate) return null;
+
+    const diff = Math.ceil(
+      (new Date(data.endDate) - today) / (1000*60*60*24)
+    );
+
+    return {
+      ...data,
+      daysLeft: diff
+    };
+
+  }).filter(Boolean);
 }
