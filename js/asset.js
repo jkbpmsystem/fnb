@@ -238,6 +238,23 @@ async function openAddAsset(){
   if(md) md.value = modVal;
 
   document.getElementById("saveAssetBtn").onclick = saveAsset;
+
+  // 🔥 TAMBAH SINI
+  setTimeout(()=>{
+    const typeInput = document.getElementById("typeCode");
+    if(typeInput){
+      typeInput.addEventListener("input", autoFillEquipmentDesc);
+    }
+
+    const locInput = document.getElementById("codeLocation");
+    if(locInput){
+      locInput.addEventListener("input", function(){
+        this.value = this.value.toUpperCase();
+        autoFillLocation(this.value);
+      });
+    }
+  }, 0);
+
 }
 
 async function saveAsset(){
