@@ -392,23 +392,30 @@ function renderTable(rows){
     const btnClass = r.status === "done" ? "btn-edit done-btn" : "btn-edit";
     const btnLabel = r.status === "done" ? "✏️ Edit" : "✏️ Update";
 
-    return `
-      <tr class="${rowClass}">
-        <td>${r.id}</td>
-        <td>${r.equipment}</td>
-        <td>${r.location}</td>
-        <td>${r.vendor}</td>
-        <td>${r.cycleLabel}</td>
-        <td>${formatDateLocal(r.planned)}</td>
-        <td>${r.actual ? formatDateLocal(r.actual) : "-"}</td>
-        <td>${leftDaysDisplay}</td>
-        <td><span class="badge ${badgeClass}">${badgeLabel}</span></td>
-        <td><button class="${btnClass}" onclick="openEditModal('${r.id}', ${r.cycle}, '${r.cycleLabel}', '${r.equipment}', '${r.actual}')">${btnLabel}</button></td>
-      </tr>
-    `;
-  }).join("");
-}
-
+   // 🔥 BUANG equipment dari onclick, guna data-attribute
+return `
+  <tr class="${rowClass}">
+    <td>${r.id}</td>
+    <td>${r.equipment}</td>
+    <td>${r.location}</td>
+    <td>${r.vendor}</td>
+    <td>${r.cycleLabel}</td>
+    <td>${formatDateLocal(r.planned)}</td>
+    <td>${r.actual ? formatDateLocal(r.actual) : "-"}</td>
+    <td>${leftDaysDisplay}</td>
+    <td><span class="badge ${badgeClass}">${badgeLabel}</span></td>
+    <td>
+      <button class="${btnClass}"
+        data-id="${r.id}"
+        data-cycle="${r.cycle}"
+        data-cyclelabel="${r.cycleLabel}"
+        data-actual="${r.actual || ""}"
+        onclick="openEditModal(this)">
+        ${btnLabel}
+      </button>
+    </td>
+  </tr>
+`;
 // ==========================
 // FORMAT DATE
 // ==========================
@@ -422,7 +429,15 @@ function formatDateLocal(dateStr){
 // ==========================
 // OPEN EDIT MODAL
 // ==========================
-function openEditModal(id, cycle, cycleLabel, equipment, actual){
+function openEditModal(btn){
+  const id        = btn.dataset.id;
+  const cycle     = parseInt(btn.dataset.cycle);
+  const cycleLabel = btn.dataset.cyclelabel;
+  const actual    = btn.dataset.actual || "";
+
+  // ambil equipment dari td dalam row yang sama
+  const equipment = btn.closest("tr").querySelector("td:nth-child(2)").textContent;
+
   selectedEdit = { id, cycle, cycleLabel };
 
   document.getElementById("editModalTitle").textContent = `Update PPM — Cycle ${cycleLabel}`;
@@ -433,7 +448,7 @@ function openEditModal(id, cycle, cycleLabel, equipment, actual){
 
   document.getElementById("editModal").style.display = "flex";
 }
-
+    
 function closeEditModal(){
   document.getElementById("editModal").style.display = "none";
   selectedEdit = null;
