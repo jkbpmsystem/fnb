@@ -431,7 +431,17 @@ function formatDateLocal(dateStr){
 // ==========================
 // OPEN ASSET DETAIL
 // ==========================
-function onClickId(id){
+/*function onClickId(id){
+  if(typeof openAssetDetailById === "function"){
+    openAssetDetailById(id);
+  }else{
+    console.error("❌ openAssetDetailById not found");
+  }
+}*/
+
+  function openAssetDetail(id){
+  console.log("OPEN ASSET:", id);
+
   if(typeof openAssetDetailById === "function"){
     openAssetDetailById(id);
   }else{
@@ -505,7 +515,7 @@ async function saveEdit(){
     alert("Failed ❌ : " + (res?.error || res?.status || "Unknown"));
   }
 }
-async function openAssetDetailById(assetId){
+/*async function openAssetDetailById(assetId){
   console.trace("🔥 MODAL DIPANGGIL DARI SINI:", assetId);
   console.log("CALL SOURCE:", isUserClick, assetId);
 
@@ -688,7 +698,7 @@ function renderBEMSDetail(a){
 
 </div>
   `;
-}
+}*/
 </script>
 
 </body>
