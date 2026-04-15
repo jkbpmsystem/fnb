@@ -126,18 +126,27 @@ async function getDashboard(){
 
 
 async function updatePPMAPI(assetId, cycle, date){
-  return await apiFetch(API.BASE, {
+
+  const payload = {
+    action: "updatePPM",
+    module: getModule(),
+    id: assetId,
+    cycle: cycle,
+    date: date
+  };
+
+  // 🔥 check payload dan method
+  console.log("📤 updatePPMAPI payload:", payload);
+
+  const res = await apiFetch(API.BASE, {
     method: "POST",
-    redirect: "follow",        // 🔥 ikut redirect
+    redirect: "follow",
     headers: {
-      "Content-Type": "text/plain;charset=utf-8"  // 🔥 bukan application/json
+      "Content-Type": "text/plain;charset=utf-8"
     },
-    body: JSON.stringify({
-      action: "updatePPM",
-      module: getModule(),
-      id: assetId,
-      cycle: cycle,
-      date: date
-    })
+    body: JSON.stringify(payload)
   }) || {status:"error"};
+
+  console.log("📥 updatePPMAPI response:", res);
+  return res;
 }
