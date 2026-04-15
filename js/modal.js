@@ -425,9 +425,13 @@ async function savePPM(){
 }
 
 function ensurePPMModal(){
-  if(document.getElementById("ppmModal")) return;
+  console.log("🔥 ensurePPMModal called");
+  
+  const existing = document.getElementById("ppmModal");
+  console.log("existing ppmModal:", existing);
+  
+  if(existing) return;
 
-  // 🔥 inject terus ke body tanpa wrapper
   const modal = document.createElement("div");
   modal.id = "ppmModal";
   modal.style.cssText = "display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:99999; justify-content:center; align-items:center;";
@@ -445,20 +449,27 @@ function ensurePPMModal(){
   `;
 
   document.body.appendChild(modal);
+  console.log("✅ ppmModal injected:", document.getElementById("ppmModal"));
 }
 
 function showPPMDetail(assetId, cycle){
+  console.log("🔥 showPPMDetail called:", assetId, cycle);
+  
   selectedPPM = { assetId, cycle };
-
-  // 🔥 pastikan modal wujud
   ensurePPMModal();
+  
+  // 🔥 check betul-betul selepas inject
+  const titleEl = document.getElementById("ppmModalTitle");
+  const modalEl = document.getElementById("ppmModal");
+  console.log("titleEl:", titleEl);
+  console.log("modalEl:", modalEl);
 
-  document.getElementById("ppmModalTitle").textContent = `Update PPM ${cycle}`;
+  if(!titleEl || !modalEl){
+    console.error("❌ STILL NULL after ensurePPMModal");
+    return;
+  }
+
+  titleEl.textContent = `Update PPM ${cycle}`;
   document.getElementById("ppmActualDate").value = "";
-  document.getElementById("ppmModal").style.display = "flex";
-}
-
-function closePPMModal(){
-  const modal = document.getElementById("ppmModal");
-  if(modal) modal.style.display = "none";
+  modalEl.style.display = "flex";
 }
