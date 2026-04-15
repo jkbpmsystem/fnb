@@ -351,10 +351,18 @@ document.addEventListener("click", function(e){
 function showPPMDetail(assetId, cycle){
   selectedPPM = { assetId, cycle };
 
-  // 🔥 populate modal
-  document.getElementById("ppmModalTitle").textContent = `Update PPM ${cycle}`;
+  const titleEl = document.getElementById("ppmModalTitle");
+  const modal = document.getElementById("ppmModal");
+
+  // 🔥 kalau modal tak wujud dalam page ni, skip
+  if(!modal || !titleEl){
+    console.warn("❌ ppmModal not found in this page");
+    return;
+  }
+
+  titleEl.textContent = `Update PPM ${cycle}`;
   document.getElementById("ppmActualDate").value = "";
-  document.getElementById("ppmModal").style.display = "flex";
+  modal.style.display = "flex";
 }
 /*function showPPMDetail(assetId, cycle){
 
