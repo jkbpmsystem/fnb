@@ -392,7 +392,7 @@ function renderTable(rows){
 
     return `
       <tr class="${rowClass}">
-        <td class="clickable" onclick="onClickId('${r.id}')" style="cursor:pointer;color:#2563eb;text-decoration:underline;">${r.id}</td>
+        <td class="clickable" onclick="openAssetDetail('${ev.id}')">${ev.id}</td>
         <td>${r.equipment}</td>
         <td>${r.location}</td>
         <td>${r.vendor}</td>
