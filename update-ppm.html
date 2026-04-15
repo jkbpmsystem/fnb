@@ -478,6 +478,13 @@ async function saveEdit(){
   today.setHours(0,0,0,0);
   if(new Date(date) > today){ alert("Tak boleh isi future date"); return; }
 
+  // 🔥 disable button semasa saving
+  const saveBtn = document.querySelector(".btn-save");
+  saveBtn.disabled = true;
+  saveBtn.textContent = "Saving...";
+  saveBtn.style.opacity = "0.5";
+  saveBtn.style.cursor = "not-allowed";
+
   const res = await updatePPMAPI(selectedEdit.id, selectedEdit.cycle, date);
 
   if(res?.success){
@@ -490,10 +497,14 @@ async function saveEdit(){
     applyFilter();
     alert("Saved ✅");
   }else{
+    // 🔥 enable balik kalau failed
+    saveBtn.disabled = false;
+    saveBtn.textContent = "Save";
+    saveBtn.style.opacity = "1";
+    saveBtn.style.cursor = "pointer";
     alert("Failed ❌ : " + (res?.error || res?.status || "Unknown"));
   }
 }
-
 async function openAssetDetailById(assetId){
   console.trace("🔥 MODAL DIPANGGIL DARI SINI:", assetId);
   console.log("CALL SOURCE:", isUserClick, assetId);
