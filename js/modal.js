@@ -225,163 +225,206 @@ window.formatDate = function(dateStr){
 }
 
 // ======================
-// 🔥 NEW PPM RENDER (AUTO DETECT)
+// PPM RENDER — VIEW ONLY
 // ======================
 function renderPPM(asset){
 
   const list = [];
 
   for(let i=1; i<=21; i++){
-
-    const suffix = getOrdinal(i); // 1st, 2nd...
-
-    const key = suffix;              // 🔥 updated
-    const statusKey = "done_" + suffix; // 🔥 updated
-
-    const planned = asset[key];
+    const suffix = getOrdinal(i);
+    const planned = asset[suffix];
     if(!planned) continue;
 
-    const actual = asset[statusKey] || "";
+    const actual = asset["done_" + suffix] || "";
 
     list.push({
       cycle: i,
+      cycleLabel: suffix,
       planned,
       actual
     });
   }
 
   if(list.length === 0){
-    return "<div>No PPM Data</div>";
+    return `<div style="padding:20px;color:#9ca3af;">No PPM Data</div>`;
   }
 
-  let html = `<div class="ppm-wrapper">`;
-
-  html += `
-  <h3>During Warranty</h3>
-  <table class="ppm-table">
-    <tr>
-      <th>Cycle</th>
-      <th>Planned</th>
-      <th>Actual *Update Tarikh jika PPM telah dijalankan*</th>
-      <th>Status</th>
-    </tr>
-  `;
+  // split during / post warranty
+  let duringHTML = "";
+  let postHTML = "";
 
   list.forEach(p => {
 
     let cls = "";
-
     if(p.actual){
       cls = "green";
     }else{
       const d = new Date(p.planned);
       const today = new Date();
       today.setHours(0,0,0,0);
-
       if(d < today) cls = "red";
       else cls = "orange";
     }
 
-    html += `
-      <tr class="${cls}" data-cycle="${p.cycle}" data-id="${asset.id}">
-        <td>${p.cycle}</td>
+    const badgeClass = p.actual ? "done" : (cls === "red" ? "overdue" : "pending");
+    const badgeLabel = p.actual ? "Done" : (cls === "red" ? "Overdue" : "Pending");
+
+    const row = `
+      <tr class="${cls}">
+        <td>${p.cycleLabel}</td>
         <td>${formatDate(p.planned)}</td>
         <td>${p.actual ? formatDate(p.actual) : "-"}</td>
-        <td>${p.actual ? "Done" : "Pending"}</td>
+        <td><span class="badge ${badgeClass}">${badgeLabel}</span></td>
       </tr>
     `;
+
+    // detect during vs post using asset warranty
+    if(isDuringWarranty(asset)){
+      duringHTML += row;
+    }else{
+      postHTML += row;
+    }
   });
 
-  html += `</table>`;
+  // kalau semua dalam during, letak semua dalam during
+  if(!duringHTML && !postHTML){
+    duringHTML = list.map(p => {
+      let cls = p.actual ? "green" : (new Date(p.planned) < new Date() ? "red" : "orange");
+      const badgeClass = p.actual ? "done" : (cls === "red" ? "overdue" : "pending");
+      const badgeLabel = p.actual ? "Done" : (cls === "red" ? "Overdue" : "Pending");
+      return `
+        <tr class="${cls}">
+          <td>${p.cycleLabel}</td>
+          <td>${formatDate(p.planned)}</td>
+          <td>${p.actual ? formatDate(p.actual) : "-"}</td>
+          <td><span class="badge ${badgeClass}">${badgeLabel}</span></td>
+        </tr>
+      `;
+    }).join("");
+  }
 
-  html += `<h3 style="margin-top:20px;">Post Warranty</h3>
-  <div style="padding:10px; background:#f5f5f5; border-radius:8px;">
-    Coming Soon
-  </div>`;
+  const tableTemplate = (rows) => `
+    <table class="ppm-table" style="width:100%;border-collapse:collapse;font-size:14px;">
+      <thead>
+        <tr>
+          <th style="padding:9px 12px;background:#f1f5f9;text-align:left;border-bottom:2px solid #e5e7eb;">Cycle</th>
+          <th style="padding:9px 12px;background:#f1f5f9;text-align:left;border-bottom:2px solid #e5e7eb;">Planned Date</th>
+          <th style="padding:9px 12px;background:#f1f5f9;text-align:left;border-bottom:2px solid #e5e7eb;">Actual Date</th>
+          <th style="padding:9px 12px;background:#f1f5f9;text-align:left;border-bottom:2px solid #e5e7eb;">Status</th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>
+  `;
+
+  let html = `<div class="ppm-wrapper" style="padding:10px 0;">`;
+
+  html += `<h4 style="margin:0 0 10px;color:#1e293b;">During Warranty</h4>`;
+  html += duringHTML ? tableTemplate(duringHTML) : `<div style="color:#9ca3af;padding:10px;">No data</div>`;
+
+  html += `<h4 style="margin:20px 0 10px;color:#1e293b;">Post Warranty</h4>`;
+  html += postHTML ? tableTemplate(postHTML) : `<div style="color:#9ca3af;padding:10px;background:#f9fafb;border-radius:8px;">Coming Soon</div>`;
+
+  html += `
+    <div style="margin-top:16px;text-align:right;">
+      <a href="update-ppm.html" style="
+        display:inline-block;
+        padding:8px 18px;
+        background:#2563eb;
+        color:#fff;
+        border-radius:8px;
+        text-decoration:none;
+        font-size:13px;
+        font-weight:600;
+      ">✏️ Update PPM</a>
+    </div>
+  `;
 
   html += `</div>`;
 
   return html;
 }
 
+// ======================
+// WARRANTY CHECK
+// ======================
+function isDuringWarranty(asset){
+  let start = asset.startDate || asset.warrantyStart;
+  let duration = asset.warrantyPeriod || asset.warrantyDuration;
 
+  if(!start) return false;
+
+  const s = new Date(start);
+
+  // kalau ada duration, calculate end
+  if(duration){
+    const end = new Date(s);
+    end.setMonth(end.getMonth() + parseInt(duration));
+    return new Date() <= end;
+  }
+
+  // kalau ada endDate terus
+  const end = new Date(asset.endDate || asset.warrantyEnd);
+  if(!isNaN(end)) return new Date() <= end;
+
+  return false;
+}
+
+// ======================
+// CLICK HANDLER — FIX PATAH BALIK
+// ======================
 document.addEventListener("click", function(e){
 
-  // ✅ OPEN MODAL
+  // ✅ OPEN ASSET MODAL
   const btn = e.target.closest(".open-asset");
   if(btn){
     openAssetDetailById(btn.dataset.id);
     return;
   }
 
-  // ✅ CLICK PPM
+  // ✅ PPM ROW — VIEW ONLY, STOP PROPAGATION
   const row = e.target.closest("tr[data-cycle]");
   if(row){
-    showPPMDetail(row.dataset.id, row.dataset.cycle);
+    // 🔥 buang — tak buat apa, view only
     return;
   }
 
-  // ✅ CLOSE MODAL
+  // ✅ CLOSE MODAL — only close globalDetailModal, jangan close ppmModal
   if(e.target.classList.contains("close-btn")){
     const modal = e.target.closest(".modal");
     if(modal) modal.style.display = "none";
+    return;
   }
 
   // ✅ TAB SWITCH
   if(e.target.classList.contains("tab-btn")){
-    document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
-    document.querySelectorAll(".tab-content").forEach(c=>c.classList.remove("active"));
+    // 🔥 cari tab container (parent) supaya tak affect modal lain
+    const tabContainer = e.target.closest(".modal-content") || document;
+
+    tabContainer.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+    tabContainer.querySelectorAll(".tab-content").forEach(c => c.classList.remove("active"));
 
     e.target.classList.add("active");
 
     const tab = e.target.dataset.tab;
-    document.getElementById("tab-"+tab).classList.add("active");
+    const tabContent = tabContainer.querySelector("#tab-" + tab);
+    if(tabContent) tabContent.classList.add("active");
 
     if(tab === "ppm" && currentAsset){
-      document.getElementById("tab-ppm").innerHTML = renderPPM(currentAsset);
+      const ppmTab = tabContainer.querySelector("#tab-ppm");
+      if(ppmTab) ppmTab.innerHTML = renderPPM(currentAsset);
     }
-  }
-
-});
-
-
-// ======================
-// PPM DETAIL
-// ======================
-/*function showPPMDetail(assetId, cycle){
-  selectedPPM = { assetId, cycle };
-
-  const titleEl = document.getElementById("ppmModalTitle");
-  const modal = document.getElementById("ppmModal");
-
-  // 🔥 kalau modal tak wujud dalam page ni, skip
-  if(!modal || !titleEl){
-    console.warn("❌ ppmModal not found in this page");
     return;
   }
 
-  titleEl.textContent = `Update PPM ${cycle}`;
-  document.getElementById("ppmActualDate").value = "";
-  modal.style.display = "flex";
-}*/
-/*function showPPMDetail(assetId, cycle){
+  // ✅ CLOSE MODAL bila click backdrop
+  if(e.target.classList.contains("modal") && e.target.id === "globalDetailModal"){
+    e.target.style.display = "none";
+    return;
+  }
 
-  const asset = assetCache.find(a => a.id == assetId);
-  if(!asset) return;
-
-  const key = "done_" + getOrdinal(cycle);
-
-  const newDate = prompt(`Update Actual Date (PPM ${cycle})\nFormat: YYYY-MM-DD`);
-
-  if(!newDate) return;
-
-  // 🔥 update data
-  asset[key] = newDate;
-
-  // 🔥 re-render table
-  document.getElementById("tab-ppm").innerHTML = renderPPM(asset);
-}*/
-
+});
 
 function getOrdinal(n){
   const s = ["th","st","nd","rd"];
@@ -389,87 +432,3 @@ function getOrdinal(n){
   return n + (s[(v-20)%10] || s[v] || s[0]);
 }
 
-/*function closePPMModal(){
-  document.getElementById("ppmModal").style.display = "none";
-}*/
-
-async function savePPM(){
-  console.log("1️⃣ savePPM called");
-
-  if(!selectedPPM || !selectedPPM.assetId){
-    console.log("❌ selectedPPM:", selectedPPM);
-    alert("No PPM selected");
-    return;
-  }
-  console.log("2️⃣ selectedPPM:", selectedPPM);
-
-  const { assetId, cycle } = selectedPPM;
-  const date = document.getElementById("ppmActualDate").value;
-  console.log("3️⃣ date:", date, "assetId:", assetId, "cycle:", cycle);
-
-  if(!date){ alert("Please select date"); return; }
-  if(isFutureDate(date)){ 
-    console.log("❌ future date:", date);
-    alert("Tak boleh isi future date"); 
-    return; 
-  }
-
-  const asset = assetCache.find(a => a.id == assetId);
-  console.log("4️⃣ asset found:", asset);
-
-  if(!asset){ alert("Asset not found"); return; }
-
-  console.log("5️⃣ calling updatePPMAPI...");
-  const res = await updatePPMAPI(assetId, cycle, date);
-  console.log("6️⃣ res:", res);
-}
-
-function ensurePPMModal(){
-  console.log("🔥 ensurePPMModal called");
-  
-  const existing = document.getElementById("ppmModal");
-  console.log("existing ppmModal:", existing);
-  
-  if(existing) return;
-
-  const modal = document.createElement("div");
-  modal.id = "ppmModal";
-  modal.style.cssText = "display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:99999; justify-content:center; align-items:center;";
-  
-  modal.innerHTML = `
-    <div style="background:#fff; padding:24px; border-radius:12px; min-width:320px;">
-      <h3 id="ppmModalTitle">Update PPM</h3>
-      <label>Actual Date:</label>
-      <input type="date" id="ppmActualDate" style="width:100%; margin:10px 0; padding:8px; border:1px solid #ccc; border-radius:6px;">
-      <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:16px;">
-        <button onclick="closePPMModal()" style="padding:8px 16px;">Cancel</button>
-        <button onclick="savePPM()" style="padding:8px 16px; background:#2563eb; color:#fff; border:none; border-radius:6px; cursor:pointer;">Save</button>
-      </div>
-    </div>
-  `;
-
-  document.body.appendChild(modal);
-  console.log("✅ ppmModal injected:", document.getElementById("ppmModal"));
-}
-
-function showPPMDetail(assetId, cycle){
-  console.log("🔥 showPPMDetail called:", assetId, cycle);
-  
-  selectedPPM = { assetId, cycle };
-  ensurePPMModal();
-  
-  // 🔥 check betul-betul selepas inject
-  const titleEl = document.getElementById("ppmModalTitle");
-  const modalEl = document.getElementById("ppmModal");
-  console.log("titleEl:", titleEl);
-  console.log("modalEl:", modalEl);
-
-  if(!titleEl || !modalEl){
-    console.error("❌ STILL NULL after ensurePPMModal");
-    return;
-  }
-
-  titleEl.textContent = `Update PPM ${cycle}`;
-  document.getElementById("ppmActualDate").value = "";
-  modalEl.style.display = "flex";
-}
