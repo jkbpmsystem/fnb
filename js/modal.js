@@ -379,7 +379,6 @@ function closePPMModal(){
 
 async function savePPM(){
   if(!selectedPPM || !selectedPPM.assetId){
-    console.log("❌ selectedPPM:", selectedPPM);
     alert("No PPM selected");
     return;
   }
@@ -395,36 +394,16 @@ async function savePPM(){
 
   const key = "done_" + getOrdinal(cycle);
 
-  // 🔥 Ambil module dari sessionStorage
-  const module = sessionStorage.getItem("cmmsModule") || "fems";
+  // 🔥 guna updatePPMAPI yang dah ada dalam api.js
+  const res = await updatePPMAPI(assetId, cycle, date);
 
-  try{
-    const res = await apiFetch(API.BASE, {
-      method: "POST",
-      body: JSON.stringify({
-        action: "SAVE_PPM",
-        assetId,
-        cycle,
-        key,
-        date,
-        module   // ← 🔥 ini yang missing sebelum ni
-      })
-    });
-
-    console.log("📥 Response:", res);
-    
-    if(res?.success){
-      asset[key] = date;
-      document.getElementById("tab-ppm").innerHTML = renderPPM(asset);
-      closePPMModal();
-      alert("Saved ✅");
-    }else{
-      alert("Failed ❌ : " + (res?.message || res?.error || "Unknown error"));
-    }
-
-  }catch(err){
-    alert("Server error ❌");
-    console.error(err);
+  if(res?.success){
+    asset[key] = date;
+    document.getElementById("tab-ppm").innerHTML = renderPPM(asset);
+    closePPMModal();
+    alert("Saved ✅");
+  }else{
+    alert("Failed ❌ : " + (res?.error || res?.status || "Unknown"));
   }
 }
 
