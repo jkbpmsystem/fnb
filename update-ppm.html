@@ -395,7 +395,7 @@ function renderTable(rows){
    // 🔥 BUANG equipment dari onclick, guna data-attribute
 return `
   <tr class="${rowClass}">
-    <td>${r.id}</td>
+    <td class="clickable" onclick="onClickId('${r.id}')" style="cursor:pointer;color:#2563eb;text-decoration:underline;">${r.id}</td>
     <td>${r.equipment}</td>
     <td>${r.location}</td>
     <td>${r.vendor}</td>
@@ -426,6 +426,17 @@ function formatDateLocal(dateStr){
   return d.toLocaleDateString("en-GB");
 }
 
+// ==========================
+// OPEN ASSET DETAIL BY ID
+// ==========================
+function onClickId(id){
+  if(typeof openAssetDetailById === "function"){
+    openAssetDetailById(id);
+  }else{
+    console.error("❌ openAssetDetailById not found");
+  }
+}
+    
 // ==========================
 // OPEN EDIT MODAL
 // ==========================
@@ -483,12 +494,12 @@ async function saveEdit(){
     alert("Failed ❌ : " + (res?.error || res?.status || "Unknown"));
   }
 }
-
+</script>
 <script src="js/api.js"></script>
 <script src="js/auth.js"></script>
 <script src="js/modal.js"></script>
 <script src="js/ppm.js"></script>
 <script src="js/toggletheme"></script>
-</script>
+
 </body>
 </html>
