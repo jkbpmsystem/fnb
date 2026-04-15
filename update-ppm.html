@@ -383,40 +383,40 @@ function renderTable(rows){
   tbody.innerHTML = rows.map(r => {
 
     const rowClass = r.status === "done" ? "done" : r.status === "overdue" ? "danger" : r.leftDays <= 30 ? "warning" : "";
-
     const badgeClass = r.status === "done" ? "done" : r.status === "overdue" ? "overdue" : "pending";
     const badgeLabel = r.status === "done" ? "Done" : r.status === "overdue" ? "Overdue" : "Pending";
-
     const leftDaysDisplay = r.actual ? "-" : r.leftDays + " days";
-
     const btnClass = r.status === "done" ? "btn-edit done-btn" : "btn-edit";
     const btnLabel = r.status === "done" ? "✏️ Edit" : "✏️ Update";
 
-   // 🔥 BUANG equipment dari onclick, guna data-attribute
-return `
-  <tr class="${rowClass}">
-    <td class="clickable" onclick="onClickId('${r.id}')" style="cursor:pointer;color:#2563eb;text-decoration:underline;">${r.id}</td>
-    <td>${r.equipment}</td>
-    <td>${r.location}</td>
-    <td>${r.vendor}</td>
-    <td>${r.cycleLabel}</td>
-    <td>${formatDateLocal(r.planned)}</td>
-    <td>${r.actual ? formatDateLocal(r.actual) : "-"}</td>
-    <td>${leftDaysDisplay}</td>
-    <td><span class="badge ${badgeClass}">${badgeLabel}</span></td>
-    <td>
-      <button class="${btnClass}"
-        data-id="${r.id}"
-        data-cycle="${r.cycle}"
-        data-cyclelabel="${r.cycleLabel}"
-        data-actual="${r.actual || ""}"
-        onclick="openEditModal(this)">
-        ${btnLabel}
-      </button>
-    </td>
-  </tr>
-`;
-}
+    return `
+      <tr class="${rowClass}">
+        <td class="clickable" onclick="onClickId('${r.id}')" style="cursor:pointer;color:#2563eb;text-decoration:underline;">${r.id}</td>
+        <td>${r.equipment}</td>
+        <td>${r.location}</td>
+        <td>${r.vendor}</td>
+        <td>${r.cycleLabel}</td>
+        <td>${formatDateLocal(r.planned)}</td>
+        <td>${r.actual ? formatDateLocal(r.actual) : "-"}</td>
+        <td>${leftDaysDisplay}</td>
+        <td><span class="badge ${badgeClass}">${badgeLabel}</span></td>
+        <td>
+          <button class="${btnClass}"
+            data-id="${r.id}"
+            data-cycle="${r.cycle}"
+            data-cyclelabel="${r.cycleLabel}"
+            data-actual="${r.actual || ""}"
+            onclick="openEditModal(this)">
+            ${btnLabel}
+          </button>
+        </td>
+      </tr>
+    `;
+
+  }).join(""); // 🔥 tutup .map()
+
+} // 🔥 tutup renderTable
+
 // ==========================
 // FORMAT DATE
 // ==========================
@@ -428,7 +428,7 @@ function formatDateLocal(dateStr){
 }
 
 // ==========================
-// OPEN ASSET DETAIL BY ID
+// OPEN ASSET DETAIL
 // ==========================
 function onClickId(id){
   if(typeof openAssetDetailById === "function"){
@@ -437,18 +437,16 @@ function onClickId(id){
     console.error("❌ openAssetDetailById not found");
   }
 }
-    
+
 // ==========================
 // OPEN EDIT MODAL
 // ==========================
 function openEditModal(btn){
-  const id        = btn.dataset.id;
-  const cycle     = parseInt(btn.dataset.cycle);
+  const id         = btn.dataset.id;
+  const cycle      = parseInt(btn.dataset.cycle);
   const cycleLabel = btn.dataset.cyclelabel;
-  const actual    = btn.dataset.actual || "";
-
-  // ambil equipment dari td dalam row yang sama
-  const equipment = btn.closest("tr").querySelector("td:nth-child(2)").textContent;
+  const actual     = btn.dataset.actual || "";
+  const equipment  = btn.closest("tr").querySelector("td:nth-child(2)").textContent;
 
   selectedEdit = { id, cycle, cycleLabel };
 
@@ -460,7 +458,7 @@ function openEditModal(btn){
 
   document.getElementById("editModal").style.display = "flex";
 }
-    
+
 function closeEditModal(){
   document.getElementById("editModal").style.display = "none";
   selectedEdit = null;
@@ -482,14 +480,13 @@ async function saveEdit(){
   const res = await updatePPMAPI(selectedEdit.id, selectedEdit.cycle, date);
 
   if(res?.success){
-    // 🔥 update local data
     const row = allRows.find(r => r.id === selectedEdit.id && r.cycle === selectedEdit.cycle);
     if(row){
       row.actual = date;
       row.status = "done";
     }
     closeEditModal();
-    applyFilter(); // re-render with current filter
+    applyFilter();
     alert("Saved ✅");
   }else{
     alert("Failed ❌ : " + (res?.error || res?.status || "Unknown"));
