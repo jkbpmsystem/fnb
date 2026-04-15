@@ -425,24 +425,26 @@ async function savePPM(){
 }
 
 function ensurePPMModal(){
-  if(document.getElementById("ppmModal")) return; // dah ada, skip
+  if(document.getElementById("ppmModal")) return;
 
-  // 🔥 create dan inject modal
-  const div = document.createElement("div");
-  div.innerHTML = `
-    <div id="ppmModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:99999; justify-content:center; align-items:center;">
-      <div style="background:#fff; padding:24px; border-radius:12px; min-width:320px;">
-        <h3 id="ppmModalTitle">Update PPM</h3>
-        <label>Actual Date:</label>
-        <input type="date" id="ppmActualDate" style="width:100%; margin:10px 0; padding:8px; border:1px solid #ccc; border-radius:6px;">
-        <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:16px;">
-          <button onclick="closePPMModal()" style="padding:8px 16px;">Cancel</button>
-          <button onclick="savePPM()" style="padding:8px 16px; background:#2563eb; color:#fff; border:none; border-radius:6px; cursor:pointer;">Save</button>
-        </div>
+  // 🔥 inject terus ke body tanpa wrapper
+  const modal = document.createElement("div");
+  modal.id = "ppmModal";
+  modal.style.cssText = "display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:99999; justify-content:center; align-items:center;";
+  
+  modal.innerHTML = `
+    <div style="background:#fff; padding:24px; border-radius:12px; min-width:320px;">
+      <h3 id="ppmModalTitle">Update PPM</h3>
+      <label>Actual Date:</label>
+      <input type="date" id="ppmActualDate" style="width:100%; margin:10px 0; padding:8px; border:1px solid #ccc; border-radius:6px;">
+      <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:16px;">
+        <button onclick="closePPMModal()" style="padding:8px 16px;">Cancel</button>
+        <button onclick="savePPM()" style="padding:8px 16px; background:#2563eb; color:#fff; border:none; border-radius:6px; cursor:pointer;">Save</button>
       </div>
     </div>
   `;
-  document.body.appendChild(div.firstElementChild);
+
+  document.body.appendChild(modal);
 }
 
 function showPPMDetail(assetId, cycle){
