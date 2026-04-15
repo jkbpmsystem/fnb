@@ -349,6 +349,14 @@ document.addEventListener("click", function(e){
 // PPM DETAIL
 // ======================
 function showPPMDetail(assetId, cycle){
+  selectedPPM = { assetId, cycle };
+
+  // 🔥 populate modal
+  document.getElementById("ppmModalTitle").textContent = `Update PPM ${cycle}`;
+  document.getElementById("ppmActualDate").value = "";
+  document.getElementById("ppmModal").style.display = "flex";
+}
+/*function showPPMDetail(assetId, cycle){
 
   const asset = assetCache.find(a => a.id == assetId);
   if(!asset) return;
@@ -364,7 +372,7 @@ function showPPMDetail(assetId, cycle){
 
   // 🔥 re-render table
   document.getElementById("tab-ppm").innerHTML = renderPPM(asset);
-}
+}*/
 
 
 function getOrdinal(n){
