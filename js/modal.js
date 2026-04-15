@@ -381,9 +381,9 @@ function getOrdinal(n){
   return n + (s[(v-20)%10] || s[v] || s[0]);
 }
 
-function closePPMModal(){
+/*function closePPMModal(){
   document.getElementById("ppmModal").style.display = "none";
-}
+}*/
 
 async function savePPM(){
   console.log("1️⃣ savePPM called");
