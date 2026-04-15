@@ -378,33 +378,32 @@ function closePPMModal(){
 }
 
 async function savePPM(){
+  console.log("1️⃣ savePPM called");
+
   if(!selectedPPM || !selectedPPM.assetId){
+    console.log("❌ selectedPPM:", selectedPPM);
     alert("No PPM selected");
     return;
   }
+  console.log("2️⃣ selectedPPM:", selectedPPM);
 
   const { assetId, cycle } = selectedPPM;
   const date = document.getElementById("ppmActualDate").value;
+  console.log("3️⃣ date:", date, "assetId:", assetId, "cycle:", cycle);
 
   if(!date){ alert("Please select date"); return; }
-  if(isFutureDate(date)){ alert("Tak boleh isi future date"); return; }
+  if(isFutureDate(date)){ 
+    console.log("❌ future date:", date);
+    alert("Tak boleh isi future date"); 
+    return; 
+  }
 
   const asset = assetCache.find(a => a.id == assetId);
+  console.log("4️⃣ asset found:", asset);
+
   if(!asset){ alert("Asset not found"); return; }
 
-  const key = "done_" + getOrdinal(cycle);
-
-  // 🔥 guna updatePPMAPI yang dah ada dalam api.js
+  console.log("5️⃣ calling updatePPMAPI...");
   const res = await updatePPMAPI(assetId, cycle, date);
-
-  if(res?.success){
-    asset[key] = date;
-    document.getElementById("tab-ppm").innerHTML = renderPPM(asset);
-    closePPMModal();
-    alert("Saved ✅");
-  }else{
-    alert("Failed ❌ : " + (res?.error || res?.status || "Unknown"));
-  }
+  console.log("6️⃣ res:", res);
 }
-
-
