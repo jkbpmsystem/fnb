@@ -348,7 +348,7 @@ document.addEventListener("click", function(e){
 // ======================
 // PPM DETAIL
 // ======================
-function showPPMDetail(assetId, cycle){
+/*function showPPMDetail(assetId, cycle){
   selectedPPM = { assetId, cycle };
 
   const titleEl = document.getElementById("ppmModalTitle");
@@ -363,7 +363,7 @@ function showPPMDetail(assetId, cycle){
   titleEl.textContent = `Update PPM ${cycle}`;
   document.getElementById("ppmActualDate").value = "";
   modal.style.display = "flex";
-}
+}*/
 /*function showPPMDetail(assetId, cycle){
 
   const asset = assetCache.find(a => a.id == assetId);
