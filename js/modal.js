@@ -382,12 +382,6 @@ function isDuringWarranty(asset){
 // ======================
 document.addEventListener("click", function(e){
 
-  // ✅ OPEN ASSET MODAL
-  const btn = e.target.closest(".open-asset");
-  if(btn){
-    openAssetDetailById(btn.dataset.id);
-    return;
-  }
 
   // ✅ PPM ROW — VIEW ONLY, STOP PROPAGATION
   const row = e.target.closest("tr[data-cycle]");
