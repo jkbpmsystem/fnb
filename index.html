@@ -1,91 +1,108 @@
-
 <!DOCTYPE html>
-<html>
+<html lang="ms">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Login</title>
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/login.css">
+
 </head>
 <body>
 
-<div id="globalLoader" style="
-  position:fixed;
-  top:0;left:0;
-  width:100%;height:100%;
-  background:rgba(0,0,0,0.3);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  z-index:9999;
-">
-  <div style="background:#fff;padding:20px;border-radius:10px;">
-    Loading...
+<div id="globalLoader">
+  <div class="loader-box">
+    <div class="spinner-sm"></div>
+    Mengesahkan...
   </div>
 </div>
 
-<div class="main" style="max-width:420px;margin:60px auto;">
-  <h2 class="title">Login</h2>
-  <div class="asset-card" style="margin-top:16px;">
-    <input id="username" placeholder="Username"><br><br>
-    <input id="password" type="password" placeholder="Password"><br><br>
-    <button id="loginBtn" onclick="login()">Login</button>
 
-<div id="loginLoader" style="display:none;">
-  <div class="spinner"></div>
-</div>
+
+  <h2>JKB</h2>
+  <p class="sub">Preventive Maintenance System</p>
+
+  <div id="loginError"></div>
+
+  <div class="form-group">
+    <label for="username">Username</label>
+    <input id="username" type="text" placeholder="Masukkan username" autocomplete="username">
   </div>
+
+  <div class="form-group">
+    <label for="password">Password</label>
+    <input id="password" type="password" placeholder="••••••••" autocomplete="current-password">
+  </div>
+
+  <button id="btnLogin" onclick="doLogin()">Log Masuk</button>
+  <button class="forgot" onclick="alert('Sila hubungi admin sistem.')">Lupa kata laluan?</button>
+
 </div>
+
 <script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/electric-spark.js"></script>
+
 <script>
-async function login(){
-
-  const btn = document.getElementById("loginBtn");
-  const loader = document.getElementById("loginLoader");
-
-  btn.disabled = true;
-  loader.style.display = "block";
-
-  try{
-
-    const username = document.getElementById("username").value;
-    const password = document.getElementById("password").value;
-
-    const res = await fetch(API.LOGIN, {
-      method: "POST",
-      body: JSON.stringify({
-        action: "login",
-        username,
-        password
-      })
-    });
-
-    const text = await res.text();
-    const data = JSON.parse(text);
-
-    console.log("LOGIN RESULT:", data);
-
-    if(data.status === "success"){
-
-sessionStorage.setItem("cmmsUser", username);
-
-// delay sikit
-setTimeout(()=>{
-  window.location.href = "module.html";
-}, 200);
-
-    }else{
-      alert("Login gagal");
+  // Redirect jika sudah login
+  (function () {
+    if (sessionStorage.getItem('cmmsUser')) {
+      window.location.href = 'module.html';
     }
+  })();
 
-  }catch(err){
-    console.error("LOGIN ERROR:", err);
-  }finally{
-    btn.disabled = false;
-    loader.style.display = "none";
+  const btn = document.getElementById('btnLogin');
+
+  function setButtonLoading(isLoading) {
+    btn.disabled = isLoading;
+
+    // disable input fields semasa loading
+    document.getElementById('username').disabled = isLoading;
+    document.getElementById('password').disabled = isLoading;
+
+    if (isLoading) {
+      btn.innerHTML = `
+        <span class="btn-logging-text">Logging in</span>
+        <div class="btn-dots">
+          <span></span><span></span><span></span>
+        </div>`;
+    } else {
+      btn.innerHTML = 'Log Masuk';
+    }
   }
 
-}
+  function doLogin() {
+    const user = document.getElementById('username').value.trim();
+    const pass = document.getElementById('password').value;
 
+    // clear error
+    const errEl = document.getElementById('loginError');
+    if (errEl) { errEl.style.display = 'none'; errEl.textContent = ''; }
+
+    if (!user || !pass) {
+      if (errEl) { errEl.textContent = 'Sila masukkan username dan password.'; errEl.style.display = 'block'; }
+      return;
+    }
+
+    setButtonLoading(true);
+
+    // Panggil login() dari auth.js
+    // auth.js akan reset button jika gagal via finally block
+    login(user, pass).finally(() => {
+      // Hanya reset jika masih di page yang sama (gagal login)
+      // Jika redirect berjaya, page akan unload — finally ni tak affect apa-apa
+      setButtonLoading(false);
+    });
+  }
+
+  // Enter key
+  document.getElementById('username').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') document.getElementById('password').focus();
+  });
+
+  document.getElementById('password').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') doLogin();
+  });
 </script>
+
 </body>
 </html>
