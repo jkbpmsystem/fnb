@@ -250,9 +250,11 @@ function renderPPM(asset){
     return `<div style="padding:20px;color:#9ca3af;">No PPM Data</div>`;
   }
 
-  // split during / post warranty
-  let duringHTML = "";
-  let postHTML = "";
+  // 🔥 dapat tarikh warranty end
+  const warrantyEnd = getWarrantyEnd(asset);
+
+  let duringRows = "";
+  let postRows = "";
 
   list.forEach(p => {
 
@@ -279,30 +281,13 @@ function renderPPM(asset){
       </tr>
     `;
 
-    // detect during vs post using asset warranty
-    if(isDuringWarranty(asset)){
-      duringHTML += row;
+    // 🔥 check tarikh planned vs warranty end
+    if(warrantyEnd && new Date(p.planned) <= warrantyEnd){
+      duringRows += row;
     }else{
-      postHTML += row;
+      postRows += row;
     }
   });
-
-  // kalau semua dalam during, letak semua dalam during
-  if(!duringHTML && !postHTML){
-    duringHTML = list.map(p => {
-      let cls = p.actual ? "green" : (new Date(p.planned) < new Date() ? "red" : "orange");
-      const badgeClass = p.actual ? "done" : (cls === "red" ? "overdue" : "pending");
-      const badgeLabel = p.actual ? "Done" : (cls === "red" ? "Overdue" : "Pending");
-      return `
-        <tr class="${cls}">
-          <td>${p.cycleLabel}</td>
-          <td>${formatDate(p.planned)}</td>
-          <td>${p.actual ? formatDate(p.actual) : "-"}</td>
-          <td><span class="badge ${badgeClass}">${badgeLabel}</span></td>
-        </tr>
-      `;
-    }).join("");
-  }
 
   const tableTemplate = (rows) => `
     <table class="ppm-table" style="width:100%;border-collapse:collapse;font-size:14px;">
@@ -321,10 +306,10 @@ function renderPPM(asset){
   let html = `<div class="ppm-wrapper" style="padding:10px 0;">`;
 
   html += `<h4 style="margin:0 0 10px;color:#1e293b;">During Warranty</h4>`;
-  html += duringHTML ? tableTemplate(duringHTML) : `<div style="color:#9ca3af;padding:10px;">No data</div>`;
+  html += duringRows ? tableTemplate(duringRows) : `<div style="color:#9ca3af;padding:10px;">No data</div>`;
 
   html += `<h4 style="margin:20px 0 10px;color:#1e293b;">Post Warranty</h4>`;
-  html += postHTML ? tableTemplate(postHTML) : `<div style="color:#9ca3af;padding:10px;background:#f9fafb;border-radius:8px;">Coming Soon</div>`;
+  html += postRows ? tableTemplate(postRows) : `<div style="color:#9ca3af;padding:10px;background:#f9fafb;border-radius:8px;">Coming Soon</div>`;
 
   html += `
     <div style="margin-top:16px;text-align:right;">
@@ -342,8 +327,28 @@ function renderPPM(asset){
   `;
 
   html += `</div>`;
-
   return html;
+}
+
+// 🔥 helper — dapat warranty end date
+function getWarrantyEnd(asset){
+  // cara 1: ada endDate/warrantyEnd terus
+  const direct = asset.endDate || asset.warrantyEnd;
+  if(direct){
+    const d = new Date(direct);
+    if(!isNaN(d)) return d;
+  }
+
+  // cara 2: startDate + warrantyPeriod/warrantyDuration (bulan)
+  const start = asset.startDate || asset.warrantyStart;
+  const duration = asset.warrantyPeriod || asset.warrantyDuration;
+  if(start && duration){
+    const s = new Date(start);
+    s.setMonth(s.getMonth() + parseInt(duration));
+    return s;
+  }
+
+  return null;
 }
 
 // ======================
