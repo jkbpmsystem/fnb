@@ -28,6 +28,7 @@ async function getAssetCached(){
 // OPEN DETAIL
 // ======================
 async function openAssetDetailById(assetId){
+  console.trace("📍 openAssetDetailById called:", assetId);
   console.trace("🔥 MODAL DIPANGGIL DARI SINI:", assetId);
   console.log("CALL SOURCE:", isUserClick, assetId);
 
