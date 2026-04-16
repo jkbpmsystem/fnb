@@ -440,10 +440,10 @@ alert("Error saving BEMS");
 }
 
 document.addEventListener("click", function(e){
-  if(e.target.classList.contains("open-asset")){
-    const id = e.target.dataset.id;
+  const btn = e.target.closest(".open-asset"); // 🔥 guna closest
+  if(btn){
+    const id = btn.dataset.id;
     console.log("CLICK ID:", id);
-
     openAssetDetailById(id);
   }
 });
