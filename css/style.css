@@ -1,26 +1,39 @@
 /* =========================
    ROOT THEME SYSTEM
+   Electric Dark Theme — selaras dengan login page
 ========================= */
 :root{
-  --bg:#f6f8fb;
-  --card:#ffffff;
-  --text:#1f2937;
-  --subtext:#6b7280;
-  --border:#e5e7eb;
-  --primary:#2563eb;
-  --hover:#f3f4f6;
+  --bg:#050a12;
+  --card:rgba(10,20,35,0.82);
+  --text:#e8f4ff;
+  --subtext:rgba(160,200,240,0.65);
+  --border:rgba(0,180,255,0.25);
+  --primary:#00c8ff;
+  --hover:rgba(0,160,255,0.12);
+
+  /* tambahan electric theme */
+  --input-bg:rgba(0,30,60,0.6);
+  --input-border:rgba(0,140,220,0.22);
+  --input-focus:rgba(0,200,255,0.55);
+  --glow:rgba(0,180,255,0.28);
+  --accent-purple:rgba(80,0,255,0.15);
 }
 
 body.dark{
-  --bg:#0f172a;
-  --card:#111827;
-  --text:#e5e7eb;
-  --subtext:#9ca3af;
-  --border:#1f2937;
-  --primary:#3b82f6;
-  --hover:#1f2937;
-}
+  --bg:#030710;
+  --card:rgba(6,14,26,0.88);
+  --text:#d0eaff;
+  --subtext:rgba(120,170,220,0.65);
+  --border:rgba(0,140,200,0.2);
+  --primary:#00aadd;
+  --hover:rgba(0,120,200,0.1);
 
+  --input-bg:rgba(0,20,45,0.7);
+  --input-border:rgba(0,110,180,0.2);
+  --input-focus:rgba(0,180,230,0.5);
+  --glow:rgba(0,150,220,0.22);
+  --accent-purple:rgba(60,0,200,0.12);
+}
 /* =========================
    BASE
 ========================= */
