@@ -58,7 +58,7 @@ async function login(username, password) {
     }
  
     // Redirect ke dashboard
-    window.location.href = 'dashboard.html';
+    window.location.href = 'module.html';
  
   } catch (err) {
     console.error('login error:', err);
