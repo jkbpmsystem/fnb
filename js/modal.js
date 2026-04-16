@@ -251,7 +251,7 @@ function renderPPM(asset){
     return `<div style="padding:20px;color:#9ca3af;">No PPM Data</div>`;
   }
 
-  // 🔥 dapat tarikh warranty end
+  // 🔥 dapat warranty end date
   const warrantyEnd = getWarrantyEnd(asset);
 
   let duringRows = "";
@@ -282,7 +282,7 @@ function renderPPM(asset){
       </tr>
     `;
 
-    // 🔥 check tarikh planned vs warranty end
+    // 🔥 compare tarikh planned vs warranty end
     if(warrantyEnd && new Date(p.planned) <= warrantyEnd){
       duringRows += row;
     }else{
@@ -304,16 +304,8 @@ function renderPPM(asset){
     </table>
   `;
 
-  let html = `<div class="ppm-wrapper" style="padding:10px 0;">`;
-
-  html += `<h4 style="margin:0 0 10px;color:#1e293b;">During Warranty</h4>`;
-  html += duringRows ? tableTemplate(duringRows) : `<div style="color:#9ca3af;padding:10px;">No data</div>`;
-
-  html += `<h4 style="margin:20px 0 10px;color:#1e293b;">Post Warranty</h4>`;
-  html += postRows ? tableTemplate(postRows) : `<div style="color:#9ca3af;padding:10px;background:#f9fafb;border-radius:8px;">Coming Soon</div>`;
-
-  html += `
-    <div style="margin-top:16px;text-align:right;">
+  const updateBtn = `
+    <div style="text-align:right; margin-top:8px; margin-bottom:16px;">
       <a href="update-ppm.html" style="
         display:inline-block;
         padding:8px 18px;
@@ -327,10 +319,47 @@ function renderPPM(asset){
     </div>
   `;
 
+  let html = `<div class="ppm-wrapper" style="padding:10px 0;">`;
+
+  // 🔥 DURING WARRANTY
+  html += `<h4 style="margin:0 0 10px;color:#1e293b;">🔵 During Warranty</h4>`;
+  html += duringRows
+    ? tableTemplate(duringRows)
+    : `<div style="color:#9ca3af;padding:10px;">No data</div>`;
+  html += updateBtn;
+
+  // 🔥 POST WARRANTY
+  html += `<h4 style="margin:20px 0 10px;color:#1e293b;">🟠 Post Warranty</h4>`;
+  html += postRows
+    ? tableTemplate(postRows)
+    : `<div style="color:#9ca3af;padding:10px;background:#f9fafb;border-radius:8px;">No post warranty PPM</div>`;
+  html += updateBtn;
+
   html += `</div>`;
   return html;
 }
 
+// 🔥 helper — dapat warranty end date
+function getWarrantyEnd(asset){
+
+  // cara 1: ada endDate atau warrantyEnd terus
+  const direct = asset.endDate || asset.warrantyEnd;
+  if(direct){
+    const d = new Date(direct);
+    if(!isNaN(d)) return d;
+  }
+
+  // cara 2: startDate + duration (bulan)
+  const start = asset.startDate || asset.warrantyStart;
+  const duration = asset.warrantyPeriod || asset.warrantyDuration;
+  if(start && duration){
+    const s = new Date(start);
+    s.setMonth(s.getMonth() + parseInt(duration));
+    return s;
+  }
+
+  return null;
+}
 // 🔥 helper — dapat warranty end date
 function getWarrantyEnd(asset){
   // cara 1: ada endDate/warrantyEnd terus
