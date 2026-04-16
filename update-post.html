@@ -282,8 +282,9 @@ let selectedEdit = null;
 // INIT
 // ==========================
 async function initUpdatePost(){
-  const assets = await getAssets();
-  allRows = buildRows(assets);
+  // 🔥 TUKAR: guna getPostWarrantyAPI (bukan getAssets)
+  const data = await getPostWarrantyAPI();
+  allRows = buildRows(data);
   populateFilters(allRows);
   renderTable(allRows);
 }
@@ -291,68 +292,39 @@ async function initUpdatePost(){
 document.addEventListener("DOMContentLoaded", initUpdatePost);
 
 // ==========================
-// HELPER — GET WARRANTY END DATE
+// BUILD FLAT ROWS
+// Data dari backend:
+// [{ id, equipment, location, vendor, frequency, PostDate, endContract,
+//    ppmDates: [{cycle, cycleLabel, planned, actual}] }]
 // ==========================
-function getWarrantyEnd(asset){
-  // cara 1: ada endDate atau warrantyEnd terus
-  const direct = asset.endDate || asset.warrantyEnd;
-  if(direct){
-    const d = new Date(direct);
-    if(!isNaN(d)) return d;
-  }
-
-  // cara 2: startDate + duration (bulan)
-  const start = asset.startDate || asset.warrantyStart;
-  const duration = asset.warrantyPeriod || asset.warrantyDuration;
-  if(start && duration){
-    const s = new Date(start);
-    s.setMonth(s.getMonth() + parseInt(duration));
-    return s;
-  }
-
-  return null;
-}
-
-// ==========================
-// BUILD FLAT ROWS — POST WARRANTY ONLY
-// ==========================
-function buildRows(assets){
+function buildRows(data){
   const rows = [];
-  const ordinals = ["1st","2nd","3rd","4th","5th","6th","7th","8th","9th","10th",
-    "11th","12th","13th","14th","15th","16th","17th","18th","19th","20th","21st"];
 
-  assets.forEach(asset => {
-    const warrantyEnd = getWarrantyEnd(asset);
+  (data || []).forEach(asset => {
+    const cycles = asset.ppmDates || [];
 
-    ordinals.forEach((ord, idx) => {
-      const planned = asset[ord];
-      if(!planned) return;
+    cycles.forEach(c => {
+      if(!c.planned) return;
 
-      // 🔥 HANYA AMBIL POST WARRANTY — planned date > warranty end
-      // Kalau takde warrantyEnd, anggap semua sebagai post warranty
-      if(warrantyEnd && new Date(planned) <= warrantyEnd){
-        return; // skip — ini during warranty
-      }
-
-      const actual = asset["done_" + ord] || "";
       const today = new Date();
       today.setHours(0,0,0,0);
-      const due = new Date(planned);
+      const due = new Date(c.planned);
       const diff = Math.ceil((due - today) / (1000*60*60*24));
 
       let status = "pending";
-      if(actual) status = "done";
+      if(c.actual) status = "done";
       else if(diff < 0) status = "overdue";
 
       rows.push({
         id: asset.id,
-        equipment: asset.equipmentName || asset.assetDescription || "-",
-        location: asset.codeLocation || asset.locationCode || asset.location || "-",
-        vendor: asset.supplier || asset.vendor || "-",
-        cycle: idx + 1,
-        cycleLabel: ord,
-        planned: planned,
-        actual: actual,
+        equipment: asset.equipment || "-",
+        location: asset.location || "-",
+        vendor: asset.vendor || "-",
+        frequency: asset.frequency || "-",
+        cycle: c.cycle,
+        cycleLabel: c.cycleLabel,
+        planned: c.planned,
+        actual: c.actual,
         leftDays: diff,
         status: status
       });
@@ -434,7 +406,7 @@ function renderTable(rows){
   count.textContent = `Showing ${rows.length} Post Warranty record(s)`;
 
   if(rows.length === 0){
-    tbody.innerHTML = `<tr><td colspan="10" class="no-data">No post warranty PPM found</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="11" class="no-data">No post warranty PPM found</td></tr>`;
     return;
   }
 
@@ -457,6 +429,7 @@ function renderTable(rows){
         <td>${r.equipment}</td>
         <td>${r.location}</td>
         <td>${r.vendor}</td>
+        <td>${r.frequency}</td>
         <td>${r.cycleLabel}</td>
         <td>${formatDateLocal(r.planned)}</td>
         <td>${r.actual ? formatDateLocal(r.actual) : "-"}</td>
@@ -553,7 +526,8 @@ async function saveEdit(){
   saveBtn.style.opacity = "0.5";
   saveBtn.style.cursor = "not-allowed";
 
-  const res = await updatePPMAPI(selectedEdit.id, selectedEdit.cycle, date);
+  // 🔥 TUKAR: guna updatePostAPI (bukan updatePPMAPI)
+  const res = await updatePostAPI(selectedEdit.id, selectedEdit.cycle, date);
 
   if(res?.success){
     const row = allRows.find(r => r.id === selectedEdit.id && r.cycle === selectedEdit.cycle);
