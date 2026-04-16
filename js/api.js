@@ -4,13 +4,14 @@
 const API = {
   BASE: "https://script.google.com/macros/s/AKfycbyLxPzgzonubQGqgRoLqsuz6EQLj2JAEcTVC2TCFdkPG9CMI6cZ1iHuyTm1ui4QBIlRxg/exec",
   LOGIN: "https://script.google.com/macros/s/AKfycbwHDAybRqO3zs6SXSaP3wQcdkNH9bU6v2QAGNy2yKT2GqfRRfcOczkCCI94oWxZEVcbPw/exec",
-
   ACTIONS: {
     GET_ASSETS: "getAssets",
     GET_DASHBOARD: "getDashboard",
     SAVE_ASSET: "saveAsset",
     GENERATE_ID: "generateId",
-    UPDATE_PPM: "updatePPM"
+    UPDATE_PPM: "updatePPM",
+    GET_POST_WARRANTY: "getPostWarranty",   // 🔥 BARU
+    UPDATE_POST: "updatePost"                // 🔥 BARU
   }
 };
 
@@ -148,5 +149,36 @@ async function updatePPMAPI(assetId, cycle, date){
   }) || {status:"error"};
 
   console.log("📥 updatePPMAPI response:", res);
+  return res;
+}
+
+// =====================
+// GET POST WARRANTY
+// =====================
+async function getPostWarrantyAPI(){
+  const url = `${API.BASE}?action=${API.ACTIONS.GET_POST_WARRANTY}&module=${getModule()}`;
+  return await apiFetch(url) || [];
+}
+
+// =====================
+// UPDATE POST WARRANTY ACTUAL
+// =====================
+async function updatePostAPI(assetId, cycle, date){
+
+  const payload = {
+    action: API.ACTIONS.UPDATE_POST,    // 🔥 guna constant
+    module: getModule(),
+    id: assetId,
+    cycle: cycle,
+    date: date
+  };
+
+  const res = await apiFetch(API.BASE, {
+    method: "POST",
+    redirect: "follow",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify(payload)
+  }) || {status:"error"};
+
   return res;
 }
