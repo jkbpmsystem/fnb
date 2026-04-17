@@ -31,7 +31,46 @@ async function initPPM(){
 async function getAssetsByModule(){
   return await getAssets(); // dari api.js
 }
- 
+
+function formatToISO(val){
+  const d = new Date(val);
+  return d.toISOString().split("T")[0];
+}
+
+function isValidDate(val){
+  if(!val) return false;
+  const d = new Date(val);
+  return !isNaN(d);
+}
+
+// ==========================
+// WARRANTY STATUS (3-state)
+// ==========================
+function getWarrantyStatus(asset){
+  let start    = asset.startDate     || asset.warrantyStart;
+  let duration = asset.warrantyPeriod || asset.warrantyDuration;
+  if(!start || !duration) return "post";
+  const s = new Date(start);
+  if(isNaN(s)) return "post";
+  const end = new Date(s);
+  end.setMonth(end.getMonth() + parseInt(duration));
+  return new Date() <= end ? "during" : "post";
+}
+
+// ==========================
+// BUILD EVENT OBJECT (DRY)
+// ==========================
+function buildEvent(asset, freq, iso){
+  return {
+    id:        asset.id,
+    equipment: asset.equipmentName || asset.assetDescription || "-",
+    location:  asset.codeLocation  || asset.location          || "-",
+    vendor:    asset.vendor         || asset.supplier          || "-",
+    freq:      freq,
+    date:      iso
+  };
+}
+
 // ==========================
 // LOAD DATA
 // ==========================
@@ -89,23 +128,6 @@ function isValidDate(val){
   return !isNaN(d);
 }
  
-// ==========================
-// WARRANTY STATUS (3-state)
-// ==========================
-function getWarrantyStatus(asset){
-  let start    = asset.startDate     || asset.warrantyStart;
-  let duration = asset.warrantyPeriod || asset.warrantyDuration;
-
-  if(!start || !duration) return "post"; // tiada warranty data = rawat sebagai post
-
-  const s   = new Date(start);
-  if(isNaN(s)) return "post";
-
-  const end = new Date(s);
-  end.setMonth(end.getMonth() + parseInt(duration));
-
-  return new Date() <= end ? "during" : "post";
-}
  
 // ==========================
 // SWITCH MODULE
@@ -268,16 +290,5 @@ function setActiveButton(type){
   }
 }
 
-// ==========================
-// BUILD EVENT OBJECT (DRY)
-// ==========================
-function buildEvent(asset, freq, iso){
-  return {
-    id:        asset.id,
-    equipment: asset.equipmentName || asset.assetDescription || "-",
-    location:  asset.codeLocation  || asset.location          || "-",
-    vendor:    asset.vendor         || asset.supplier          || "-",
-    freq:      freq,
-    date:      iso
-  };
-}
+
+
