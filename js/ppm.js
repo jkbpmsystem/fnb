@@ -37,32 +37,37 @@ async function getAssetsByModule(){
 // ==========================
 async function loadEvents(){
   const assets = await getAssetsByModule();
- 
+
   duringEvents = {};
   postEvents   = {};
- 
+
+  let countDuring = 0, countPost = 0, countSkipped = 0;
+
   assets.forEach(asset => {
+    const warrantyStatus = getWarrantyStatus(asset); // "during" | "post" | "unknown"
+
     for(let i = 1; i <= 21; i++){
       const key  = getOrdinal(i);
       const date = asset[key];
- 
-      if(!isValidDate(date)) continue;
- 
-      const iso    = formatToISO(date);
-      const target = isDuringWarranty(asset) ? duringEvents : postEvents;
- 
-      if(!target[iso]) target[iso] = [];
- 
-      target[iso].push({
-        id:        asset.id,
-        equipment: asset.equipmentName || asset.assetDescription || "-",
-        location:  asset.codeLocation  || asset.location          || "-",
-        vendor:    asset.vendor         || asset.supplier          || "-",
-        freq:      key,
-        date:      iso
-      });
+
+      if(!isValidDate(date)){ countSkipped++; continue; }
+
+      const iso = formatToISO(date);
+
+      if(warrantyStatus === "during"){
+        if(!duringEvents[iso]) duringEvents[iso] = [];
+        duringEvents[iso].push(buildEvent(asset, key, iso));
+        countDuring++;
+      } else {
+        // "post" atau "unknown" (no warranty data) → masuk postEvents
+        if(!postEvents[iso]) postEvents[iso] = [];
+        postEvents[iso].push(buildEvent(asset, key, iso));
+        countPost++;
+      }
     }
   });
+
+  console.log(`[PPM] Loaded → During: ${countDuring}, Post: ${countPost}, Skipped: ${countSkipped}`);
 }
  
 // ==========================
@@ -85,24 +90,21 @@ function isValidDate(val){
 }
  
 // ==========================
-// WARRANTY CHECK
+// WARRANTY STATUS (3-state)
 // ==========================
-function isDuringWarranty(asset){
+function getWarrantyStatus(asset){
   let start    = asset.startDate     || asset.warrantyStart;
   let duration = asset.warrantyPeriod || asset.warrantyDuration;
- 
-  if(!start || !duration) return false;
- 
+
+  if(!start || !duration) return "post"; // tiada warranty data = rawat sebagai post
+
   const s   = new Date(start);
+  if(isNaN(s)) return "post";
+
   const end = new Date(s);
   end.setMonth(end.getMonth() + parseInt(duration));
- 
-  return new Date() <= end;
-}
- 
-function formatToISO(val){
-  const d = new Date(val);
-  return d.toISOString().split("T")[0];
+
+  return new Date() <= end ? "during" : "post";
 }
  
 // ==========================
@@ -264,4 +266,18 @@ function setActiveButton(type){
   } else {
     document.getElementById("btnPost")?.classList.add("active");
   }
+}
+
+// ==========================
+// BUILD EVENT OBJECT (DRY)
+// ==========================
+function buildEvent(asset, freq, iso){
+  return {
+    id:        asset.id,
+    equipment: asset.equipmentName || asset.assetDescription || "-",
+    location:  asset.codeLocation  || asset.location          || "-",
+    vendor:    asset.vendor         || asset.supplier          || "-",
+    freq:      freq,
+    date:      iso
+  };
 }
