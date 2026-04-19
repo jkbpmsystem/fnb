@@ -304,7 +304,7 @@ function renderPPM(asset){
     </table>
   `;
 
-  const updateBtn = `
+const updateBtnDuring = `
     <div style="text-align:right; margin-top:8px; margin-bottom:16px;">
       <a href="update-ppm.html" style="
         display:inline-block;
@@ -318,6 +318,22 @@ function renderPPM(asset){
       ">✏️ Update PPM</a>
     </div>
   `;
+
+const updateBtnPost = `
+    <div style="text-align:right; margin-top:8px; margin-bottom:16px;">
+      <a href="update-post.html" style="
+        display:inline-block;
+        padding:8px 18px;
+        background:#2563eb;
+        color:#fff;
+        border-radius:8px;
+        text-decoration:none;
+        font-size:13px;
+        font-weight:600;
+      ">✏️ Update Post Warranty</a>
+    </div>
+  `;
+  
 
   let html = `<div class="ppm-wrapper" style="padding:10px 0;">`;
 
