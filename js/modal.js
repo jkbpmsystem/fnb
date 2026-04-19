@@ -342,14 +342,14 @@ const updateBtnPost = `
   html += duringRows
     ? tableTemplate(duringRows)
     : `<div style="color:#9ca3af;padding:10px;">No data</div>`;
-  html += updateBtn;
+  html += updateBtnDuring;
 
   // 🔥 POST WARRANTY
   html += `<h4 style="margin:20px 0 10px;color:#1e293b;">🟠 Post Warranty</h4>`;
   html += postRows
     ? tableTemplate(postRows)
     : `<div style="color:#9ca3af;padding:10px;background:#f9fafb;border-radius:8px;">No post warranty PPM</div>`;
-  html += updateBtn;
+  html += updateBtnPost;
 
   html += `</div>`;
   return html;
