@@ -1,4 +1,5 @@
 let allData = [];
+let filteredData = [];
 let currentFilter = 'ALL';
 let currentPage = 1;
 const rowsPerPage = 10;
@@ -22,16 +23,13 @@ async function initDashboard() {
   applyFilter();
 }
 
-function renderTable(data) {
+function renderTable() {
   const tbody = document.querySelector("#durationTable tbody");
   if (!tbody) return;
   tbody.innerHTML = "";
 
-  // Pagination logic
-  const totalPages = Math.ceil(data.length / rowsPerPage);
-  if (currentPage > totalPages) currentPage = totalPages || 1;
   const start = (currentPage - 1) * rowsPerPage;
-  const pageData = data.slice(start, start + rowsPerPage);
+  const pageData = filteredData.slice(start, start + rowsPerPage);
 
   pageData.forEach(function (a) {
     const tr = document.createElement("tr");
@@ -47,80 +45,79 @@ function renderTable(data) {
     `;
     tbody.appendChild(tr);
   });
-
-  renderPagination(data.length, totalPages);
 }
 
-function renderPagination(totalItems, totalPages) {
-  let pag = document.getElementById("pagination");
-  if (!pag) {
-    pag = document.createElement("div");
-    pag.id = "pagination";
-    document.querySelector("#durationTable").after(pag);
-  }
-  pag.innerHTML = "";
-
-  if (totalPages <= 1) return;
-
-  // Info text
-  const info = document.createElement("span");
-  info.style.cssText = "font-size:12px;color:var(--subtext);margin-right:12px;";
-  const start = (currentPage - 1) * rowsPerPage + 1;
-  const end = Math.min(currentPage * rowsPerPage, totalItems);
-  info.textContent = `${start}-${end} of ${totalItems}`;
-  pag.appendChild(info);
-
-  // Prev button
-  const prev = document.createElement("button");
-  prev.className = "btn";
-  prev.textContent = "‹";
-  prev.disabled = currentPage === 1;
-  prev.style.cssText = "min-width:32px;opacity:" + (currentPage === 1 ? "0.4" : "1");
-  prev.onclick = () => { currentPage--; applyFilter(); };
-  pag.appendChild(prev);
-
-  // Page buttons (max 5 visible)
+function renderPagination() {
+  const pageBox = document.getElementById("pagination");
+  pageBox.innerHTML = "";
+  const totalPages = Math.ceil(filteredData.length / rowsPerPage);
+  const maxVisible = 5;
   let startPage = Math.max(1, currentPage - 2);
-  let endPage = Math.min(totalPages, startPage + 4);
-  if (endPage - startPage < 4) startPage = Math.max(1, endPage - 4);
+  let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+  if (endPage - startPage < maxVisible - 1) {
+    startPage = Math.max(1, endPage - maxVisible + 1);
+  }
+
+  const prev = document.createElement("button");
+  prev.innerText = "Prev";
+  prev.className = "btn";
+  if (currentPage === 1) {
+    prev.disabled = true;
+    prev.style.opacity = "0.4";
+  }
+  prev.onclick = () => {
+    currentPage--;
+    renderTable();
+    renderPagination();
+  };
+  pageBox.appendChild(prev);
 
   for (let i = startPage; i <= endPage; i++) {
     const btn = document.createElement("button");
+    btn.innerText = i;
     btn.className = "btn";
-    btn.textContent = i;
     if (i === currentPage) {
-      btn.style.cssText = "background:var(--primary);color:#fff;border-color:var(--primary);min-width:32px;";
-    } else {
-      btn.style.cssText = "min-width:32px;";
+      btn.style.background = "#00e5ff";
+      btn.style.color = "#000";
     }
-    btn.onclick = () => { currentPage = i; applyFilter(); };
-    pag.appendChild(btn);
+    btn.onclick = () => {
+      currentPage = i;
+      renderTable();
+      renderPagination();
+    };
+    pageBox.appendChild(btn);
   }
 
-  // Next button
   const next = document.createElement("button");
+  next.innerText = "Next";
   next.className = "btn";
-  next.textContent = "›";
-  next.disabled = currentPage === totalPages;
-  next.style.cssText = "min-width:32px;opacity:" + (currentPage === totalPages ? "0.4" : "1");
-  next.onclick = () => { currentPage++; applyFilter(); };
-  pag.appendChild(next);
+  if (currentPage === totalPages || totalPages === 0) {
+    next.disabled = true;
+    next.style.opacity = "0.4";
+  }
+  next.onclick = () => {
+    currentPage++;
+    renderTable();
+    renderPagination();
+  };
+  pageBox.appendChild(next);
 }
 
 function applyFilter() {
   const keyword = document.getElementById("searchInput").value.toLowerCase();
-  let filtered = allData.filter(a => {
+  filteredData = allData.filter(a => {
     const matchSearch = a.id.toLowerCase().includes(keyword) || (a.name || "").toLowerCase().includes(keyword);
     if (currentFilter === 'OVERDUE') return matchSearch && a.daysLeft < 0;
     if (currentFilter === 'NEAR') return matchSearch && a.daysLeft >= 0 && a.daysLeft < 30;
     return matchSearch;
   });
-  renderTable(filtered);
+  currentPage = 1;
+  renderTable();
+  renderPagination();
 }
 
 function setFilter(type) {
   currentFilter = type;
-  currentPage = 1; // reset ke page 1 bila tukar filter
   document.querySelectorAll('.filter-bar button').forEach(b => b.classList.remove('filter-active'));
   if (type === 'ALL') document.getElementById('f_all').classList.add('filter-active');
   if (type === 'OVERDUE') document.getElementById('f_overdue').classList.add('filter-active');
