@@ -21,7 +21,6 @@
     <div class="app-topbar-right">
       <div class="app-topbar-date" id="topbarDate"></div>
       <span style="font-size:12px;opacity:.8;">User: <span id="userDisplay"></span></span>
-      <button class="btn-theme" onclick="exportCSV()" title="Export Excel">📊</button>
       <button class="btn-theme" onclick="logout()">Logout</button>
     </div>
   </div>
@@ -65,6 +64,7 @@
         <button onclick="setFilter('ALL')" id="f_all">All</button>
         <button onclick="setFilter('OVERDUE')" id="f_overdue">Expired</button>
         <button onclick="setFilter('NEAR')" id="f_near">Expiring Soon</button>
+        <button class="btn-theme" onclick="exportCSV()" title="Export Excel">📊</button>
       </div>
 
       <div class="table-box">
