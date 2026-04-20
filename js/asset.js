@@ -333,11 +333,11 @@ return `
 
 <input id="ppmFrequency" placeholder="PPM Frequency">
 
-<input type="date" id="purchaseDate">
-<input type="date" id="commissioningDate">
+<input type="date" id="purchaseDate" placeholder="Purchase Date">
+<input type="date" id="commissioningDate" placeholder="Comissioning Date">
 
-<input type="date" id="warrantyStart">
-<input type="date" id="warrantyEnd">
+<input type="date" id="warrantyStart" placeholder="Warranty Start">
+<input type="date" id="warrantyEnd" placeholder="Warranty End">
 <input id="warrantyDuration" placeholder="Warranty Duration">
 
 <input id="manufacturer" placeholder="Manufacturer">
@@ -354,7 +354,10 @@ return `
 
 <input id="remarks" placeholder="Remarks">
 
-<input id="contract" placeholder="Contract Info">
+<select id="contract">
+<option value="">Contract Edgenta</option>
+<option>YES</option>
+<option>NO</option>
 
 <select id="maintenanceType">
 <option value="">Maintenance Type</option>
