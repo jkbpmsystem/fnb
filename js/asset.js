@@ -368,8 +368,7 @@ return `
 
 <input id="month" placeholder="Month">
 <input id="statusWarranty" placeholder="Warranty Status">
-<input id="ppm" placeholder="PPM">
-<input id="remark" placeholder="Remark">
+
 
 </div>
 
@@ -423,8 +422,7 @@ contract:contract.value,
 maintenanceType:maintenanceType.value,
 month:month.value,
 statusWarranty:statusWarranty.value,
-ppm:ppm.value,
-remark:remark.value,
+
 
 module:"BEMS"
 };
