@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Select Module</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="wrapper">
+
+  <!-- TOPBAR HEADER -->
+  <div class="app-topbar">
+    <div class="app-topbar-left">
+      <div class="app-topbar-logo">JKB</div>
+      <div class="app-topbar-info">
+        <div class="app-topbar-title">Monitoring Assets</div>
+        <div class="app-topbar-sub">Hospital Sultan Zainal Abidin - UniSZA</div>
+      </div>
+    </div>
+    <div class="app-topbar-right">
+      <div class="app-topbar-date" id="topbarDate"></div>
+    </div>
+  </div>
+
+  <!-- CONTENT AREA (no sidebar for module selection) -->
+  <div class="content-area">
+    <div class="main" style="display:flex;align-items:center;justify-content:center;">
+      <div style="text-align:center;">
+        <h2 class="title" style="margin-bottom:40px;">Select Module</h2>
+        <div style="display:flex;gap:40px;justify-content:center;flex-wrap:wrap;">
+          <div class="asset-card" style="cursor:pointer;min-width:200px;text-align:center;" onclick="setModule('FEMS')">
+            <h3 style="color:var(--primary);margin-bottom:8px;">FEMS</h3>
+            <p>Facility Engineering</p>
+          </div>
+          <div class="asset-card" style="cursor:pointer;min-width:200px;text-align:center;" onclick="setModule('BEMS')">
+            <h3 style="color:var(--primary);margin-bottom:8px;">BEMS</h3>
+            <p>Biomedical Engineering</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function(){var t=new Date();var el=document.getElementById('topbarDate');if(el)el.textContent=t.toLocaleDateString('ms-MY',{weekday:'long',year:'numeric',month:'long',day:'numeric'});})();
+</script>
+<script src="js/firebase-config.local.js"></script>
+<script src="js/firebase-init.js"></script>
+<script src="js/auth.js"></script>
+</body>
+</html>

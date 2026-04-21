@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Update Post Warranty PPM</title>
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/loader.css">
+<style>
+  .ppm-table { width:100%; border-collapse:collapse; font-size:14px; }
+  .ppm-table th { background:var(--card); padding:10px 12px; text-align:left; font-weight:600; color:var(--subtext); border-bottom:2px solid var(--border); }
+  .ppm-table td { padding:10px 12px; border-bottom:1px solid var(--border); color:var(--text); }
+  .ppm-table tr:hover { background:var(--hover); }
+  .ppm-table tr.done td { background:rgba(22,163,74,0.08); }
+  .ppm-table tr.warning td { background:rgba(245,158,11,0.08); }
+  .ppm-table tr.danger td { background:rgba(220,38,38,0.08); }
+
+  .badge { padding:3px 10px; border-radius:20px; font-size:12px; font-weight:600; }
+  .badge.done { background:rgba(22,163,74,0.15); color:#16a34a; }
+  .badge.pending { background:rgba(202,138,4,0.15); color:#ca8a04; }
+  .badge.overdue { background:rgba(220,38,38,0.15); color:#dc2626; }
+
+  .btn-edit { padding:5px 14px; background:#f59e0b; color:#fff; border:none; border-radius:6px; cursor:pointer; font-size:13px; }
+  .btn-edit:hover { opacity:.85; }
+  .btn-edit.done-btn { background:var(--hover); color:var(--subtext); }
+
+  #editModal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); backdrop-filter:blur(6px); z-index:9999; justify-content:center; align-items:center; }
+  .edit-modal-box { background:var(--card); border:1px solid var(--border); padding:28px; border-radius:14px; min-width:340px; box-shadow:0 10px 40px rgba(0,0,0,0.3); color:var(--text); }
+  .edit-modal-box h3 { margin:0 0 6px; font-size:17px; }
+  .edit-modal-box .sub { font-size:13px; color:var(--subtext); margin-bottom:18px; }
+  .edit-modal-box label { font-size:13px; font-weight:600; color:var(--subtext); display:block; margin-bottom:6px; }
+  .edit-modal-box input[type="date"] { width:100%; padding:9px 12px; border:1px solid var(--border); border-radius:8px; font-size:14px; background:var(--input-bg); color:var(--text); }
+  .modal-actions { display:flex; gap:10px; justify-content:flex-end; margin-top:20px; }
+  .modal-actions button { padding:8px 20px; border-radius:8px; font-size:14px; cursor:pointer; border:none; }
+  .btn-cancel { background:var(--hover); color:var(--text); }
+  .btn-save { background:#f59e0b; color:#fff; }
+
+  .table-wrapper { overflow-x:auto; background:var(--card); border:1px solid var(--border); border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.04); }
+  .result-count { font-size:13px; color:var(--subtext); margin-bottom:10px; }
+  .no-data { text-align:center; padding:40px; color:var(--subtext); font-size:15px; }
+
+  .page-header-badge { display:inline-block; padding:4px 12px; background:rgba(245,158,11,0.15); color:#f59e0b; border-radius:20px; font-size:12px; font-weight:600; margin-left:10px; border:1px solid rgba(245,158,11,0.3); }
+</style>
+</head>
+<body onload="checkAuth()">
+<div class="wrapper">
+
+  <div id="globalLoader"><div></div></div>
+
+  <!-- TOPBAR HEADER -->
+  <div class="app-topbar">
+    <div class="app-topbar-left">
+      <div class="app-topbar-logo">JKB</div>
+      <div class="app-topbar-info">
+        <div class="app-topbar-title">Monitoring Assets</div>
+        <div class="app-topbar-sub">Hospital Sultan Zainal Abidin - UniSZA</div>
+      </div>
+    </div>
+    <div class="app-topbar-right">
+      <div class="app-topbar-date" id="topbarDate"></div>
+    </div>
+  </div>
+
+  <!-- CONTENT AREA -->
+  <div class="content-area">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="sidebar-label">Menu</div>
+      <a href="dashboard.html" class="side-item"><span class="nav-icon">📊</span> Dashboard</a>
+      <a href="asset-master.html" class="side-item"><span class="nav-icon">📦</span> Assets</a>
+      <a href="update-ppm.html" class="side-item"><span class="nav-icon">🔧</span> During Warranty</a>
+      <a href="update-post.html" class="side-item active"><span class="nav-icon">🛠️</span> Post Warranty</a>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main">
+      <div class="topbar">
+        <div class="title">Update Post Warranty <span class="page-header-badge">🟠 Post Warranty Only</span></div>
+      </div>
+
+      <div class="filter-bar">
+        <select id="filterMonth" onchange="applyFilter()"><option value="">-- All Months --</option></select>
+        <select id="filterVendor" onchange="applyFilter()"><option value="">-- All Vendors --</option></select>
+        <select id="filterStatus" onchange="applyFilter()">
+          <option value="">-- All Status --</option>
+          <option value="pending">Pending</option>
+          <option value="done">Done</option>
+          <option value="overdue">Overdue</option>
+        </select>
+        <button onclick="resetFilter()">Reset</button>
+      </div>
+
+      <div class="result-count" id="resultCount"></div>
+
+      <div class="table-wrapper">
+        <table class="ppm-table">
+          <thead>
+            <tr>
+              <th>ID</th><th>Equipment</th><th>Location</th><th>Vendor</th><th>Frequency</th>
+              <th>Cycle</th><th>Planned Date</th><th>Actual Date</th><th>Left Days</th><th>Status</th><th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="ppmTableBody">
+            <tr><td colspan="11" class="no-data">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT MODAL -->
+<div id="editModal">
+  <div class="edit-modal-box">
+    <h3 id="editModalTitle">Update Post Warranty PPM</h3>
+    <div class="sub" id="editModalSub"></div>
+    <label>Actual Date:</label>
+    <input type="date" id="editActualDate">
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeEditModal()">Cancel</button>
+      <button class="btn-save" onclick="saveEdit()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- ASSET DETAIL MODAL -->
+<div class="modal" id="globalDetailModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 id="detailTitle">Asset Detail</h3>
+      <span class="close-btn">&times;</span>
+    </div>
+    <div id="detailBody"></div>
+  </div>
+</div>
+
+<script>
+(function(){var t=new Date();var el=document.getElementById('topbarDate');if(el)el.textContent=t.toLocaleDateString('ms-MY',{weekday:'long',year:'numeric',month:'long',day:'numeric'});})();
+</script>
+<script src="js/firebase-config.local.js"></script>
+<script src="js/firebase-init.js"></script>
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/modal.js"></script>
+<script src="js/toggletheme"></script>
+<script>
+let allRows=[];let selectedEdit=null;
+async function initUpdatePost(){const data=await getPostWarrantyAPI();allRows=buildRows(data);populateFilters(allRows);renderTable(allRows);}
+document.addEventListener("DOMContentLoaded",initUpdatePost);
+function buildRows(data){const rows=[];(data||[]).forEach(asset=>{const cycles=asset.ppmDates||[];cycles.forEach(c=>{if(!c.planned)return;const today=new Date();today.setHours(0,0,0,0);const due=new Date(c.planned);const diff=Math.ceil((due-today)/(1000*60*60*24));let status="pending";if(c.actual)status="done";else if(diff<0)status="overdue";rows.push({id:asset.id,equipment:asset.equipment||"-",location:asset.location||"-",vendor:asset.vendor||"-",frequency:asset.frequency||"-",cycle:c.cycle,cycleLabel:c.cycleLabel,planned:c.planned,actual:c.actual,leftDays:diff,status:status});});});return rows;}
+function populateFilters(rows){const months=[...new Set(rows.map(r=>{const d=new Date(r.planned);return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;}))].sort();const monthSel=document.getElementById("filterMonth");months.forEach(m=>{const[y,mo]=m.split("-");const label=new Date(y,mo-1).toLocaleString("default",{month:"long",year:"numeric"});monthSel.innerHTML+=`<option value="${m}">${label}</option>`;});const vendors=[...new Set(rows.map(r=>r.vendor).filter(v=>v&&v!=="-"))].sort();const vendorSel=document.getElementById("filterVendor");vendors.forEach(v=>{vendorSel.innerHTML+=`<option value="${v}">${v}</option>`;});}
+function applyFilter(){const month=document.getElementById("filterMonth").value;const vendor=document.getElementById("filterVendor").value;const status=document.getElementById("filterStatus").value;let filtered=allRows;if(month)filtered=filtered.filter(r=>{const d=new Date(r.planned);const m=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;return m===month;});if(vendor)filtered=filtered.filter(r=>r.vendor===vendor);if(status)filtered=filtered.filter(r=>r.status===status);renderTable(filtered);}
+function resetFilter(){document.getElementById("filterMonth").value="";document.getElementById("filterVendor").value="";document.getElementById("filterStatus").value="";renderTable(allRows);}
+function renderTable(rows){const tbody=document.getElementById("ppmTableBody");const count=document.getElementById("resultCount");count.textContent=`Showing ${rows.length} Post Warranty record(s)`;if(rows.length===0){tbody.innerHTML=`<tr><td colspan="11" class="no-data">No post warranty PPM found</td></tr>`;return;}tbody.innerHTML=rows.map(r=>{const rowClass=r.status==="done"?"done":r.status==="overdue"?"danger":r.leftDays<=30?"warning":"";const badgeClass=r.status==="done"?"done":r.status==="overdue"?"overdue":"pending";const badgeLabel=r.status==="done"?"Done":r.status==="overdue"?"Overdue":"Pending";const leftDaysDisplay=r.actual?"-":r.leftDays+" days";const btnClass=r.status==="done"?"btn-edit done-btn":"btn-edit";const btnLabel=r.status==="done"?"✏️ Edit":"✏️ Update";return`<tr class="${rowClass}"><td class="clickable" onclick="event.stopPropagation();onClickId('${r.id}')" style="cursor:pointer;color:var(--primary);text-decoration:underline;">${r.id}</td><td>${r.equipment}</td><td>${r.location}</td><td>${r.vendor}</td><td>${r.frequency}</td><td>${r.cycleLabel}</td><td>${formatDateLocal(r.planned)}</td><td>${r.actual?formatDateLocal(r.actual):"-"}</td><td>${leftDaysDisplay}</td><td><span class="badge ${badgeClass}">${badgeLabel}</span></td><td><button class="${btnClass}" data-id="${r.id}" data-cycle="${r.cycle}" data-cyclelabel="${r.cycleLabel}" data-actual="${r.actual||""}" onclick="openEditModal(this)">${btnLabel}</button></td></tr>`;}).join("");}
+function formatDateLocal(dateStr){if(!dateStr)return"-";const d=new Date(dateStr);if(isNaN(d))return"-";return d.toLocaleDateString("en-GB");}
+function onClickId(id){if(typeof openAssetDetailById==="function")openAssetDetailById(id);else console.error("openAssetDetailById not found");}
+function openEditModal(btn){const id=btn.dataset.id;const cycle=parseInt(btn.dataset.cycle);const cycleLabel=btn.dataset.cyclelabel;const actual=btn.dataset.actual||"";const equipment=btn.closest("tr").querySelector("td:nth-child(2)").textContent;selectedEdit={id,cycle,cycleLabel};document.getElementById("editModalTitle").textContent=`Update Post Warranty — Cycle ${cycleLabel}`;document.getElementById("editModalSub").textContent=equipment;document.getElementById("editActualDate").value=actual?new Date(actual).toISOString().split("T")[0]:"";document.getElementById("editModal").style.display="flex";}
+function closeEditModal(){const saveBtn=document.querySelector(".btn-save");if(saveBtn){saveBtn.disabled=false;saveBtn.textContent="Save";saveBtn.style.opacity="1";saveBtn.style.cursor="pointer";}document.getElementById("editModal").style.display="none";selectedEdit=null;}
+async function saveEdit(){if(!selectedEdit){alert("No PPM selected");return;}const date=document.getElementById("editActualDate").value;if(!date){alert("Please select date");return;}const today=new Date();today.setHours(0,0,0,0);if(new Date(date)>today){alert("Tak boleh isi future date");return;}const saveBtn=document.querySelector(".btn-save");saveBtn.disabled=true;saveBtn.textContent="Saving...";saveBtn.style.opacity="0.5";saveBtn.style.cursor="not-allowed";const res=await updatePostAPI(selectedEdit.id,selectedEdit.cycle,date);if(res?.success){const row=allRows.find(r=>r.id===selectedEdit.id&&r.cycle===selectedEdit.cycle);if(row){row.actual=date;row.status="done";}closeEditModal();applyFilter();alert("Saved ✅");}else{saveBtn.disabled=false;saveBtn.textContent="Save";saveBtn.style.opacity="1";saveBtn.style.cursor="pointer";alert("Failed ❌ : "+(res?.error||res?.status||"Unknown"));}}
+</script>
+</body>
+</html>

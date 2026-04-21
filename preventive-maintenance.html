@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PPM</title>
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/loader.css">
+<link rel="stylesheet" href="css/gantt.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body onload="checkAuth()">
+<div class="wrapper">
+
+  <div id="globalLoader"><div></div></div>
+
+  <!-- TOPBAR HEADER -->
+  <div class="app-topbar">
+    <div class="app-topbar-left">
+      <div class="app-topbar-logo">JKB</div>
+      <div class="app-topbar-info">
+        <div class="app-topbar-title">Monitoring Assets</div>
+        <div class="app-topbar-sub">Hospital Sultan Zainal Abidin - UniSZA</div>
+      </div>
+    </div>
+    <div class="app-topbar-right">
+      <div class="app-topbar-date" id="topbarDate"></div>
+    </div>
+  </div>
+
+  <!-- CONTENT AREA -->
+  <div class="content-area">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="sidebar-label">Menu</div>
+      <a href="dashboard.html" class="side-item"><span class="nav-icon">📊</span> Dashboard</a>
+      <a href="asset-master.html" class="side-item"><span class="nav-icon">📦</span> Assets</a>
+      <a href="preventive-maintenance.html" class="side-item active"><span class="nav-icon">📅</span> PPM</a>
+      <a href="update-ppm.html" class="side-item"><span class="nav-icon">🔧</span> Update During</a>
+      <a href="update-post.html" class="side-item"><span class="nav-icon">🛠️</span> Update Post</a>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main">
+
+      <div class="topbar">
+        <div class="title">Preventive Maintenance</div>
+      </div>
+
+      <div class="toggle-group">
+        <button id="btnDuring" onclick="showDuring()">Post Warranty</button>
+        <button id="btnPost" onclick="showPost()">During Warranty</button>
+      </div>
+
+      <div id="calendarGrid"></div>
+
+      <!-- GANTT CHART SECTION -->
+      <div class="gantt-section">
+        <div class="gantt-section-header">
+          <h4>Gantt Chart — Jadual PM</h4>
+          <span class="gantt-tab-badge" id="ganttTabLabel">Post Warranty</span>
+        </div>
+
+        <div class="gantt-toolbar">
+          <div class="gantt-toolbar-left">
+            <div class="gantt-search-wrap">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                <circle cx="6.5" cy="6.5" r="5" stroke="#999" stroke-width="1.5"/>
+                <path d="M10.5 10.5L14 14" stroke="#999" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+              <input class="gantt-search-input" id="ganttSearch" type="text" placeholder="Cari nama, ID, lokasi...">
+            </div>
+            <select class="gantt-flt" id="ganttCatFilter"><option value="">Semua kategori</option></select>
+            <select class="gantt-flt" id="ganttStatusFilter">
+              <option value="">Semua status</option>
+              <option value="done">Selesai</option>
+              <option value="progress">Dalam proses</option>
+              <option value="overdue">Overdue</option>
+              <option value="plan">Dijadual</option>
+              <option value="future">Akan datang</option>
+            </select>
+            <select class="gantt-flt" id="ganttTypeFilter">
+              <option value="">Semua jenis</option>
+              <option>Bulanan</option>
+              <option>Suku Tahunan</option>
+              <option>Tahunan</option>
+            </select>
+          </div>
+          <div class="gantt-toolbar-right">
+            <button class="gantt-btn-nav" id="ganttPrev">&#8249;</button>
+            <div class="gantt-month-lbl" id="ganttMonthLbl"></div>
+            <button class="gantt-btn-nav" id="ganttNext">&#8250;</button>
+            <select class="gantt-flt" id="ganttViewSel">
+              <option value="month">Bulan</option>
+              <option value="quarter">Suku Tahun</option>
+            </select>
+            <button class="gantt-btn-export" id="ganttExportBtn">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                <path d="M3 12h10M8 3v7M5 7l3 3 3-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Export Excel
+            </button>
+          </div>
+        </div>
+
+        <div class="gantt-legend">
+          <div class="gantt-leg"><div class="gantt-leg-dot" style="background:#C0DD97"></div>Selesai</div>
+          <div class="gantt-leg"><div class="gantt-leg-dot" style="background:#B5D4F4"></div>Dalam proses</div>
+          <div class="gantt-leg"><div class="gantt-leg-dot" style="background:#F7C1C1"></div>Overdue</div>
+          <div class="gantt-leg"><div class="gantt-leg-dot" style="background:#D3D1C7"></div>Dijadual</div>
+          <div class="gantt-leg"><div class="gantt-leg-dot" style="background:#EEEDFE"></div>Akan datang</div>
+        </div>
+
+        <div class="gantt-result-info" id="ganttResultInfo"></div>
+
+        <div class="gantt-outer">
+          <table class="gantt-tbl" id="ganttTable"></table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- MONTH DETAIL MODAL -->
+<div id="monthModal" class="modal">
+  <div class="modal-content">
+    <span onclick="closeMonthModal()">✖</span>
+    <table id="monthTable">
+      <thead>
+        <tr><th>ID</th><th>Equipment</th><th>Location</th><th>Vendor</th><th>Cycle</th><th>Date</th><th>Left Days</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ASSET DETAIL MODAL -->
+<div class="modal" id="globalDetailModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 id="detailTitle">Asset Detail</h3>
+      <span class="close-btn">&times;</span>
+    </div>
+    <div id="detailBody"></div>
+  </div>
+</div>
+
+<!-- GANTT TOOLTIP -->
+<div class="gantt-tooltip" id="ganttTooltip" style="display:none"></div>
+
+<script>
+(function(){var t=new Date();var el=document.getElementById('topbarDate');if(el)el.textContent=t.toLocaleDateString('ms-MY',{weekday:'long',year:'numeric',month:'long',day:'numeric'});})();
+</script>
+<script src="js/firebase-config.local.js"></script>
+<script src="js/firebase-init.js"></script>
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/modal.js"></script>
+<script src="js/toggletheme"></script>
+<script src="js/ppm.js"></script>
+<script src="js/gantt-ppm.js"></script>
+</body>
+</html>
