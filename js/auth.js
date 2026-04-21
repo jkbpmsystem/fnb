@@ -1,58 +1,56 @@
 async function login(username, password) {
   const errEl = document.getElementById('loginError');
   const btnEl = document.getElementById('btnLogin');
-  if (errEl) { errEl.textContent = ''; errEl.style.display = 'none'; }
+
+  if (errEl) {
+    errEl.textContent = '';
+    errEl.style.display = 'none';
+  }
+
   if (!username || !password) {
-    showLoginError('Sila masukkan username dan password.');
+    showLoginError('Sila masukkan email dan password.');
     return;
   }
 
-  if (btnEl) { btnEl.disabled = true; btnEl.textContent = 'Logging in...'; }
+  if (btnEl) {
+    btnEl.disabled = true;
+    btnEl.textContent = 'Logging in...';
+  }
 
   try {
     const { auth, db, authMod, fsMod } = await window.firebaseReady;
-    let email = String(username || '').trim();
 
-    if (!email.includes('@')) {
-      const q = fsMod.query(fsMod.collection(db, 'users'), fsMod.where('username', '==', email), fsMod.limit(1));
-      const snap = await fsMod.getDocs(q);
-      if (snap.empty) {
-        showLoginError('Username tidak dijumpai.');
-        return;
-      }
-      email = snap.docs[0].data().email;
-    }
+    const email = String(username || '').trim();
 
     const cred = await authMod.signInWithEmailAndPassword(auth, email, password);
     const user = cred.user;
-    let profile = null;
 
+    let profile = null;
     try {
       const profSnap = await fsMod.getDoc(fsMod.doc(db, 'users', user.uid));
       if (profSnap.exists()) profile = profSnap.data();
-      if (!profile) {
-        const q2 = fsMod.query(fsMod.collection(db, 'users'), fsMod.where('email', '==', user.email), fsMod.limit(1));
-        const snap2 = await fsMod.getDocs(q2);
-        if (!snap2.empty) profile = snap2.docs[0].data();
-      }
     } catch (e) {
       console.warn('User profile lookup failed:', e);
     }
 
-    sessionStorage.setItem('cmmsUser', profile?.username || user.email || username);
+    sessionStorage.setItem('cmmsUser', profile?.username || user.email || email);
     sessionStorage.setItem('cmmsRole', profile?.role || 'user');
     sessionStorage.setItem('cmmsToken', await user.getIdToken());
     sessionStorage.setItem('cmmsUid', user.uid);
+
     if (profile?.defaultModule) {
       sessionStorage.setItem('cmmsModule', String(profile.defaultModule).toUpperCase());
     }
 
     window.location.href = 'module.html';
   } catch (err) {
-    console.error('login error:', err);
-    showLoginError('Login gagal. Semak username/email dan password.');
+    console.error('login error:', err.code, err.message, err);
+    showLoginError('Login gagal. Semak email dan password.');
   } finally {
-    if (btnEl) { btnEl.disabled = false; btnEl.textContent = 'Log Masuk'; }
+    if (btnEl) {
+      btnEl.disabled = false;
+      btnEl.textContent = 'Log Masuk';
+    }
   }
 }
 
