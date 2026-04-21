@@ -205,8 +205,6 @@ function renderBEMSDetail(a){
     <b>Type of Maintenance</b><div>${a.maintenanceType}</div>
     <b>Month</b><div>${a.month}</div>
     <b>Status Warranty</b><div>${a.statusWarranty}</div>
-    <b>PPM</b><div>${a.ppm}</div>
-    <b>Remark</b><div>${a.remark}</div>
   </div>
 
 </div>
