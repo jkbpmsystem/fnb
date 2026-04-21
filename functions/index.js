@@ -5,7 +5,7 @@ const nodemailer = require("nodemailer");
 admin.initializeApp();
 const db = admin.firestore();
 
-// =====================
+// ===================== 
 // GMAIL CONFIG
 // Set these with: firebase functions:config:set gmail.email="you@gmail.com" gmail.password="your-app-password"
 // =====================
