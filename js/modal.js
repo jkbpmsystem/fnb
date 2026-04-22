@@ -1,6 +1,6 @@
 let assetCache = [];
 let currentAsset = null;
-let selectedPPM = {
+let selectedPPM = { 
   assetId: null,
   cycle: null
 };
