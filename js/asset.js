@@ -180,83 +180,592 @@
   }
 
   // simple add modal (reuse global modal body)
-  async function openAddAsset() {
-    const body = document.getElementById("detailBody");
-    document.getElementById("detailTitle").innerText = "Add Asset";
-    document.getElementById("globalDetailModal").style.display = "flex";
-    const idRes = await generateId();
-    const mod = (sessionStorage.getItem("cmmsModule") || "FEMS");
-    console.log(idRes);
+async function openAddAsset() {
+  const body = document.getElementById("detailBody");
+  document.getElementById("detailTitle").innerText = "Add Asset";
+  document.getElementById("globalDetailModal").style.display = "flex";
+  const idRes = await peekNextId();
+  const mod = (sessionStorage.getItem("cmmsModule") || "FEMS");
+  console.log(idRes);
 
-    const modNow = (sessionStorage.getItem("cmmsModule") || "FEMS");
-    if (modNow === "BEMS") {
-      body.innerHTML = renderBEMSForm(idRes);
-    } else {
-      body.innerHTML = `
+  const modNow = (sessionStorage.getItem("cmmsModule") || "FEMS");
+  if (modNow === "BEMS") {
+    body.innerHTML = renderBEMSForm(idRes, true);
+  } else {
+    body.innerHTML = renderFEMSForm(idRes.id, "Save", true);
+  }
 
+  // set module values
+  const modVal = (sessionStorage.getItem("cmmsModule") || "FEMS");
+  const modInput = document.getElementById("module");
+  if (modInput) modInput.value = modVal;
+  const md = document.getElementById("moduleDisplay");
+  if (md) md.value = modVal;
+
+  document.getElementById("saveAssetBtn").onclick = saveAsset;
+
+  // 🔥 autofill listeners
+  setTimeout(() => {
+    const typeInput = document.getElementById("typeCode");
+    if (typeInput) typeInput.addEventListener("input", autoFillEquipmentDesc);
+
+    const locInput = document.getElementById("codeLocation");
+    if (locInput) {
+      locInput.addEventListener("input", function () {
+        this.value = this.value.toUpperCase();
+        autoFillLocation(this.value);
+      });
+    }
+  }, 0);
+}
+
+// ======================
+// FEMS FORM TEMPLATE (with labels)
+// ======================
+function renderFEMSForm(assetIdValue, btnLabel = "Save", isNew = false) {
+  return `
     <input type="hidden" id="module">
+    <input type="hidden" id="isNewAsset" value="${isNew ? 'yes' : 'no'}">
     <div class="form-grid">
-      <div><label>Module</label><input id="moduleDisplay" readonly></div>
-    
-    <div class="form-grid">
-      <input id="assetId" value="${idRes.id}" readonly>
-      <input id="assetNo" placeholder="Asset No">
-      <input id="equipmentName" placeholder="Equipment Name">
-      <input id="typeCode" placeholder="Type Code">
-      <input id="typeDescription" placeholder="Type Description" readonly>
-      <input id="taskCode" placeholder="Task Code" readonly>
-      <select id="discipline">
-            <option>Select Discipline</option>
-            <option>Mechanical</option>
-            <option>Electrical</option>
-      </select>
-      <input id="codeLocation" placeholder="Code Location">
-      <input id="area" placeholder="Area" readonly>
-      <input id="department" placeholder="Department" readonly>
-      <input id="bumi" placeholder="Bumi">
-      <input id="bumi contact" placeholder="Bumi Contact">
-      <input id="supplier" placeholder="Supplier">
-      <input id="supplierContact" placeholder="Supplier Contact">
-      <input id="manufacture" placeholder="Manufacturer">
-      <input id="model" placeholder="Model">
-      <input id="serialNumber" placeholder="Serial Number">
-      <input id="price" placeholder="Price">
-      <input id="lpoNo" placeholder="LPO No">
-      <select id="category">
-            <option>Category</option>
-            <option>ASSET</option>
-            <option>INVENTORY</option> 
-      </select>
-      <input id="startDate" type="date">
-      <input id="endDate" type="date">
-      <input id="ppmFrequency" placeholder="PPM Frequency">
-      <select id="status">
-            <option>Status dalam Kontrak Konsesi</option>
-            <option>YES</option>
-            <option>NO</option>
-      </select>
+      <div>
+        <label>Module</label>
+        <input id="moduleDisplay" readonly>
+      </div>
+
+      <div>
+        <label>Asset ID</label>
+        <input id="assetId" value="${isNew ? '(Auto)' : (assetIdValue || '')}" readonly style="${isNew ? 'color: var(--subtext); font-style: italic;' : ''}">      </div>
+
+      <div>
+        <label>Asset No</label>
+        <input id="assetNo" placeholder="Asset No">
+      </div>
+
+      <div>
+        <label>Equipment Name</label>
+        <input id="equipmentName" placeholder="Equipment Name">
+      </div>
+
+      <div>
+        <label>Type Code</label>
+        <input id="typeCode" placeholder="Type Code">
+      </div>
+
+      <div>
+        <label>Type Description</label>
+        <input id="typeDescription" placeholder="Type Description" readonly>
+      </div>
+
+      <div>
+        <label>Task Code</label>
+        <input id="taskCode" placeholder="Task Code" readonly>
+      </div>
+
+      <div>
+        <label>Discipline</label>
+        <select id="discipline">
+          <option>Select Discipline</option>
+          <option>Mechanical</option>
+          <option>Electrical</option>
+        </select>
+      </div>
+
+      <div>
+        <label>Code Location</label>
+        <input id="codeLocation" placeholder="Code Location">
+      </div>
+
+      <div>
+        <label>Area</label>
+        <input id="area" placeholder="Area" readonly>
+      </div>
+
+      <div>
+        <label>Department</label>
+        <input id="department" placeholder="Department" readonly>
+      </div>
+
+      <div>
+        <label>Bumi</label>
+        <input id="bumi" placeholder="Bumi">
+      </div>
+
+      <div>
+        <label>Bumi Contact</label>
+        <input id="bumiContact" placeholder="Bumi Contact">
+      </div>
+
+      <div>
+        <label>Supplier</label>
+        <input id="supplier" placeholder="Supplier">
+      </div>
+
+      <div>
+        <label>Supplier Contact</label>
+        <input id="supplierContact" placeholder="Supplier Contact">
+      </div>
+
+      <div>
+        <label>Manufacturer</label>
+        <input id="manufacture" placeholder="Manufacturer">
+      </div>
+
+      <div>
+        <label>Model</label>
+        <input id="model" placeholder="Model">
+      </div>
+
+      <div>
+        <label>Serial Number</label>
+        <input id="serialNumber" placeholder="Serial Number">
+      </div>
+
+      <div>
+        <label>Price</label>
+        <input id="price" placeholder="Price">
+      </div>
+
+      <div>
+        <label>LPO No</label>
+        <input id="lpoNo" placeholder="LPO No">
+      </div>
+
+      <div>
+        <label>Category</label>
+        <select id="category">
+          <option>Category</option>
+          <option>ASSET</option>
+          <option>INVENTORY</option>
+        </select>
+      </div>
+
+      <div>
+        <label>Start Date</label>
+        <input id="startDate" type="date">
+      </div>
+
+      <div>
+        <label>End Date</label>
+        <input id="endDate" type="date">
+      </div>
+
+      <div>
+        <label>PPM Frequency</label>
+        <input id="ppmFrequency" placeholder="PPM Frequency">
+      </div>
+
+      <div>
+        <label>Status dalam Kontrak Konsesi</label>
+        <select id="status">
+          <option>Status dalam Kontrak Konsesi</option>
+          <option>YES</option>
+          <option>NO</option>
+        </select>
+      </div>
     </div>
-    <button class="btn btn-primary" id="saveAssetBtn">Save</button>
+
+    <button class="btn btn-primary" id="saveAssetBtn">${btnLabel}</button>
   `;
+}
+
+async function saveAsset() {
+  // If new asset, generate real ID now (only on save)
+  const isNew = document.getElementById("isNewAsset");
+  let finalId = assetId.value;
+
+  if (isNew && isNew.value === "yes") {
+    const idRes = await generateId();
+    if (!idRes || !idRes.id || idRes.id.includes("ERROR")) {
+      alert("Failed to generate ID");
+      return;
     }
+    finalId = idRes.id;
+  }
 
-    // set module values
-    const modVal = (sessionStorage.getItem("cmmsModule") || "FEMS");
-    const modInput = document.getElementById("module");
-    if (modInput) {
-      modInput.value = modVal;
+  const data = {
+    action: "saveAsset",
+    id: finalId,
+    assetNo: assetNo.value,
+    equipmentName: equipmentName.value,
+    typeCode: typeCode.value,
+    taskCode: taskCode.value,
+    typeDescription: typeDescription.value,
+    discipline: discipline.value,
+    codeLocation: codeLocation.value,
+    area: area.value,
+    department: department.value,
+    bumi: bumi.value,
+    bumiContact: document.getElementById("bumiContact")?.value || "",
+    supplier: supplier.value,
+    supplierContact: supplierContact.value,
+    manufacturer: document.getElementById("manufacture")?.value || "",
+    model: model.value,
+    serialNumber: serialNumber.value,
+    price: price.value,
+    lpoNo: lpoNo.value,
+    category: category.value,
+    startDate: startDate.value,
+    endDate: endDate.value,
+    ppmFrequency: ppmFrequency.value,
+    status: status.value,
+    module: (document.getElementById("module")
+      ? document.getElementById("module").value
+      : (sessionStorage.getItem("cmmsModule") || "FEMS"))
+  };
+
+  const res = await saveAssetAPI(data);
+  if (res.status === "success") {
+    alert("Saved — ID: " + finalId);
+    document.getElementById("globalDetailModal").style.display = "none";
+    assetCache = []; // reset cache
+    loadAssets();
+  } else {
+    alert("Save failed");
+  }
+}
+
+// ======================
+// BEMS FORM TEMPLATE (with labels)
+// ======================
+function renderBEMSForm(idRes, isNew = false) {
+  return `
+    <input type="hidden" id="module">
+    <input type="hidden" id="isNewAsset" value="${isNew ? 'yes' : 'no'}">
+    <div class="form-grid">
+      <div>
+        <label>Module</label>
+        <input id="moduleDisplay" readonly>
+      </div>
+
+      <div>
+        <label>Asset ID</label>
+        <input id="assetId" value="${isNew ? '(Auto)' : (idRes?.id || '')}" readonly style="${isNew ? 'color: var(--subtext); font-style: italic;' : ''}">
+      </div>
+
+      <div>
+        <label>Asset Number</label>
+        <input id="assetNumber" placeholder="Asset Number">
+      </div>
+
+      <div>
+        <label>Asset Number Konsesi</label>
+        <input id="assetNumberKonsesi" placeholder="Asset Number Konsesi">
+      </div>
+
+      <div>
+        <label>Type Code</label>
+        <input id="typeCode" placeholder="Type Code">
+      </div>
+
+      <div>
+        <label>Type Description</label>
+        <input id="typeDescription" placeholder="Type Description" readonly>
+      </div>
+
+      <div>
+        <label>Task Code</label>
+        <input id="taskCode" placeholder="Task Code" readonly>
+      </div>
+
+      <div>
+        <label>Asset Description</label>
+        <input id="assetDescription" placeholder="Asset Description">
+      </div>
+
+      <div>
+        <label>Service</label>
+        <input id="service" placeholder="Service">
+      </div>
+
+      <div>
+        <label>Department</label>
+        <input id="department" placeholder="Department" readonly>
+      </div>
+
+      <div>
+        <label>Area</label>
+        <input id="area" placeholder="Area" readonly>
+      </div>
+
+      <div>
+        <label>Code Location</label>
+        <input id="codeLocation" placeholder="Code Location">
+      </div>
+
+      <div>
+        <label>Location</label>
+        <input id="location" placeholder="Location">
+      </div>
+
+      <div>
+        <label>PPM Frequency</label>
+        <input id="ppmFrequency" placeholder="PPM Frequency">
+      </div>
+
+      <div>
+        <label>Purchase Date</label>
+        <input type="date" id="purchaseDate">
+      </div>
+
+      <div>
+        <label>Commissioning Date</label>
+        <input type="date" id="commissioningDate">
+      </div>
+
+      <div>
+        <label>Warranty Start</label>
+        <input type="date" id="warrantyStart">
+      </div>
+
+      <div>
+        <label>Warranty End</label>
+        <input type="date" id="warrantyEnd">
+      </div>
+
+      <div>
+        <label>Warranty Duration</label>
+        <input id="warrantyDuration" placeholder="Warranty Duration">
+      </div>
+
+      <div>
+        <label>Manufacturer</label>
+        <input id="manufacturer" placeholder="Manufacturer">
+      </div>
+
+      <div>
+        <label>Brand</label>
+        <input id="brand" placeholder="Brand">
+      </div>
+
+      <div>
+        <label>Model</label>
+        <input id="model" placeholder="Model">
+      </div>
+
+      <div>
+        <label>Serial No</label>
+        <input id="serialNo" placeholder="Serial No">
+      </div>
+
+      <div>
+        <label>LO No</label>
+        <input id="loNo" placeholder="LO No">
+      </div>
+
+      <div>
+        <label>LO Price</label>
+        <input id="loPrice" placeholder="LO Price">
+      </div>
+
+      <div>
+        <label>Price Per Unit</label>
+        <input id="pricePerUnit" placeholder="Price Per Unit">
+      </div>
+
+      <div>
+        <label>Bumi Agent</label>
+        <input id="bumiAgent" placeholder="Bumi Agent">
+      </div>
+
+      <div>
+        <label>Vendor</label>
+        <input id="vendor" placeholder="Vendor">
+      </div>
+
+      <div>
+        <label>Remarks</label>
+        <input id="remarks" placeholder="Remarks">
+      </div>
+
+      <div>
+        <label>Contract Edgenta</label>
+        <select id="contract">
+          <option value="">Contract Edgenta</option>
+          <option>YES</option>
+          <option>NO</option>
+        </select>
+      </div>
+
+      <div>
+        <label>Maintenance Type</label>
+        <select id="maintenanceType">
+          <option value="">Maintenance Type</option>
+          <option>PPM</option>
+          <option>RI</option>
+          <option>CALIBRATION</option>
+        </select>
+      </div>
+
+      <div>
+        <label>Month</label>
+        <input id="month" placeholder="Month">
+      </div>
+
+      <div>
+        <label>Warranty Status</label>
+        <input id="statusWarranty" placeholder="Warranty Status">
+      </div>
+
+      <div>
+        <label>PPM</label>
+        <input id="ppm" placeholder="PPM">
+      </div>
+
+      <div>
+        <label>Remark</label>
+        <input id="remark" placeholder="Remark">
+      </div>
+    </div>
+
+    <button class="btn btn-primary" onclick="saveBEMS()">Save</button>
+  `;
+}
+
+async function saveBEMS() {
+  // If new asset, generate real ID now (only on save)
+  const isNew = document.getElementById("isNewAsset");
+  let finalId = assetId.value;
+
+  if (isNew && isNew.value === "yes") {
+    const idRes = await generateId();
+    if (!idRes || !idRes.id || idRes.id.includes("ERROR")) {
+      alert("Failed to generate ID");
+      return;
     }
-    const md = document.getElementById("moduleDisplay");
-    if (md) md.value = modVal;
+    finalId = idRes.id;
+  }
 
-    document.getElementById("saveAssetBtn").onclick = saveAsset;
+  const data = {
+    action: "saveAsset",
 
-    // 🔥 TAMBAH SINI
+    id: finalId,
+    assetNumber: assetNumber.value,
+    assetNumberKonsesi: assetNumberKonsesi.value,
+    typeCode: typeCode.value,
+    typeDescription: typeDescription.value,
+    assetDescription: assetDescription.value,
+
+    service: service.value,
+    department: department.value,
+    area: area.value,
+
+    locationCode: codeLocation.value,
+    location: location.value,
+
+    ppmFrequency: ppmFrequency.value,
+
+    purchaseDate: purchaseDate.value,
+    commissioningDate: commissioningDate.value,
+
+    warrantyStart: warrantyStart.value,
+    warrantyEnd: warrantyEnd.value,
+    warrantyDuration: warrantyDuration.value,
+
+    manufacturer: manufacturer.value,
+    brand: brand.value,
+    model: model.value,
+    serialNo: serialNo.value,
+
+    loNo: loNo.value,
+    loPrice: loPrice.value,
+    pricePerUnit: pricePerUnit.value,
+
+    bumiAgent: bumiAgent.value,
+    vendor: vendor.value,
+
+    remarks: remarks.value,
+    contract: contract.value,
+
+    maintenanceType: maintenanceType.value,
+    month: month.value,
+    statusWarranty: statusWarranty.value,
+    ppm: ppm.value,
+    remark: remark.value,
+
+    module: "BEMS"
+  };
+
+  const res = await saveAssetAPI(data);
+
+  if (res.status === "success") {
+    alert("BEMS Asset Saved — ID: " + finalId);
+    document.getElementById("globalDetailModal").style.display = "none";
+    assetCache = [];
+    loadAssets();
+  } else {
+    alert("Error saving BEMS");
+  }
+}
+
+// ======================
+// EDIT ASSET
+// ======================
+window.openEditAsset = async function openEditAsset(assetId) {
+  const assets = await getAssetCached();
+  const a = assets.find(x => x.id == assetId);
+  if (!a) { alert("Asset not found"); return; }
+
+  const body = document.getElementById("detailBody");
+  document.getElementById("detailTitle").innerText = "Edit Asset";
+
+  const modNow = getModule();
+
+  if (modNow === "BEMS") {
+    body.innerHTML = renderBEMSForm({ id: a.id });
+
+    // pre-fill BEMS fields
     setTimeout(() => {
-      const typeInput = document.getElementById("typeCode");
-      if (typeInput) {
-        typeInput.addEventListener("input", autoFillEquipmentDesc);
+      const fields = {
+        assetId: a.id,
+        assetNumber: a.assetNumber || "",
+        assetNumberKonsesi: a.assetNumberKonsesi || "",
+        typeCode: a.typeCode || "",
+        typeDescription: a.typeDescription || "",
+        taskCode: a.taskCode || "",
+        assetDescription: a.assetDescription || "",
+        service: a.service || "",
+        department: a.department || "",
+        area: a.area || "",
+        codeLocation: a.locationCode || "",
+        location: a.location || "",
+        ppmFrequency: a.ppmFrequency || "",
+        purchaseDate: a.purchaseDate || "",
+        commissioningDate: a.commissioningDate || "",
+        warrantyStart: a.warrantyStart || "",
+        warrantyEnd: a.warrantyEnd || "",
+        warrantyDuration: a.warrantyDuration || "",
+        manufacturer: a.manufacturer || "",
+        brand: a.brand || "",
+        model: a.model || "",
+        serialNo: a.serialNo || "",
+        loNo: a.loNo || "",
+        loPrice: a.loPrice || "",
+        pricePerUnit: a.pricePerUnit || "",
+        bumiAgent: a.bumiAgent || "",
+        vendor: a.vendor || "",
+        remarks: a.remarks || "",
+        contract: a.contract || "",
+        maintenanceType: a.maintenanceType || "",
+        month: a.month || "",
+        statusWarranty: a.statusWarranty || "",
+        ppm: a.ppm || "",
+        remark: a.remark || ""
+      };
+
+      for (const [key, val] of Object.entries(fields)) {
+        const el = document.getElementById(key);
+        if (el) el.value = val;
       }
+
+      // set module
+      const modInput = document.getElementById("module");
+      if (modInput) modInput.value = "BEMS";
+      const md = document.getElementById("moduleDisplay");
+      if (md) md.value = "BEMS";
+
+      // attach autofill listeners
+      const typeInput = document.getElementById("typeCode");
+      if (typeInput) typeInput.addEventListener("input", autoFillEquipmentDesc);
 
       const locInput = document.getElementById("codeLocation");
       if (locInput) {
@@ -267,383 +776,87 @@
       }
     }, 0);
 
+  } else {
+    // FEMS — guna template yang sama dengan label
+    body.innerHTML = renderFEMSForm(a.id, "Update");
+
+    // pre-fill FEMS fields
+    setTimeout(() => {
+      const fields = {
+        assetNo: a.assetNo || "",
+        equipmentName: a.equipmentName || "",
+        typeCode: a.typeCode || "",
+        typeDescription: a.typeDescription || "",
+        taskCode: a.taskCode || "",
+        codeLocation: a.codeLocation || "",
+        area: a.area || "",
+        department: a.department || "",
+        bumi: a.bumi || "",
+        bumiContact: a.bumiContact || "",
+        supplier: a.supplier || "",
+        supplierContact: a.supplierContact || "",
+        manufacture: a.manufacture || "",
+        model: a.model || "",
+        serialNumber: a.serialNumber || "",
+        price: a.price || "",
+        lpoNo: a.lpoNo || "",
+        startDate: a.startDate || "",
+        endDate: a.endDate || "",
+        ppmFrequency: a.ppmFrequency || ""
+      };
+
+      for (const [key, val] of Object.entries(fields)) {
+        const el = document.getElementById(key);
+        if (el) el.value = val;
+      }
+
+      // set select values
+      const discEl = document.getElementById("discipline");
+      if (discEl && a.discipline) {
+        for (let i = 0; i < discEl.options.length; i++) {
+          if (discEl.options[i].text === a.discipline) discEl.selectedIndex = i;
+        }
+      }
+      const catEl = document.getElementById("category");
+      if (catEl && a.category) {
+        for (let i = 0; i < catEl.options.length; i++) {
+          if (catEl.options[i].text === a.category) catEl.selectedIndex = i;
+        }
+      }
+      const statusEl = document.getElementById("status");
+      if (statusEl && a.status) {
+        for (let i = 0; i < statusEl.options.length; i++) {
+          if (statusEl.options[i].text === a.status) statusEl.selectedIndex = i;
+        }
+      }
+
+      // set module
+      const modInput = document.getElementById("module");
+      if (modInput) modInput.value = modNow;
+      const md = document.getElementById("moduleDisplay");
+      if (md) md.value = modNow;
+
+      // attach autofill listeners
+      const typeInput = document.getElementById("typeCode");
+      if (typeInput) typeInput.addEventListener("input", autoFillEquipmentDesc);
+
+      const locInput = document.getElementById("codeLocation");
+      if (locInput) {
+        locInput.addEventListener("input", function () {
+          this.value = this.value.toUpperCase();
+          autoFillLocation(this.value);
+        });
+      }
+    }, 0);
+
+    document.getElementById("saveAssetBtn").onclick = saveAsset;
   }
-
-  async function saveAsset() {
-    const data = {
-      action: "saveAsset",
-      id: assetId.value,
-      assetNo: assetNo.value,
-      equipmentName: equipmentName.value,
-      typeCode: typeCode.value,
-      taskCode: taskCode.value,
-      typeDescription: typeDescription.value,
-      discipline: discipline.value,
-      codeLocation: codeLocation.value,
-      area: area.value,
-      department: department.value,
-      bumi: bumi.value,
-      supplier: supplier.value,
-      supplierContact: supplierContact.value,
-      manufacturer: manufacturer.value,
-      model: model.value,
-      serialNumber: serialNumber.value,
-      price: price.value,
-      lpoNo: lpoNo.value,
-      category: category.value,
-      startDate: startDate.value,
-      endDate: endDate.value,
-      ppmFrequency: ppmFrequency.value,
-      status: status.value,
-      module: (document.getElementById("module") ? document.getElementById("module").value : (sessionStorage.getItem("cmmsModule") || "FEMS"))
-    };
-
-
-    const res = await saveAssetAPI(data);
-    if (res.status === "success") {
-      alert("Saved");
-      document.getElementById("globalDetailModal").style.display = "none";
-      assetCache = []; // reset cache
-      loadAssets();
-    } else {
-      alert("Save failed");
-    }
-  }
-
-
-  function renderBEMSForm(idRes) {
-    return `
-<input type="hidden" id="module">
-    <div class="form-grid">
-      <div><label>Module</label><input id="moduleDisplay" readonly></div>
-<input id="assetId" value="${idRes?.id || ""}" readonly>
-<input id="assetNumber" placeholder="Asset Number">
-<input id="assetNumberKonsesi" placeholder="Asset Number Konsesi">
-
-<input id="typeCode" placeholder="Type Code">
-<input id="typeDescription" placeholder="Type Description" readonly>
-<input id="taskCode" placeholder="Task Code" readonly>
-
-<input id="assetDescription" placeholder="Asset Description">
-
-<input id="service" placeholder="Service">
-<input id="department" placeholder="Department" readonly>
-<input id="area" placeholder="Area" readonly>
-
-<input id="codeLocation" placeholder="Code Location">
-<input id="location" placeholder="Location">
-
-<input id="ppmFrequency" placeholder="PPM Frequency">
-
-<input type="date" id="purchaseDate" placeholder="Purchase Date">
-<input type="date" id="commissioningDate" placeholder="Comissioning Date">
-
-<input type="date" id="warrantyStart" placeholder="Warranty Start">
-<input type="date" id="warrantyEnd" placeholder="Warranty End">
-<input id="warrantyDuration" placeholder="Warranty Duration">
-
-<input id="manufacturer" placeholder="Manufacturer">
-<input id="brand" placeholder="Brand">
-<input id="model" placeholder="Model">
-<input id="serialNo" placeholder="Serial No">
-
-<input id="loNo" placeholder="LO No">
-<input id="loPrice" placeholder="LO Price">
-<input id="pricePerUnit" placeholder="Price Per Unit">
-
-<input id="bumiAgent" placeholder="Bumi Agent">
-<input id="vendor" placeholder="Vendor">
-
-<input id="remarks" placeholder="Remarks">
-
-<select id="contract">
-<option value="">Contract Edgenta</option>
-<option>YES</option>
-<option>NO</option>
-</select>
-
-<select id="maintenanceType">
-<option value="">Maintenance Type</option>
-<option>PPM</option>
-<option>RI</option>
-<option>CALIBRATION</option>
-</select>
-
-<input id="month" placeholder="Month">
-<input id="statusWarranty" placeholder="Warranty Status">
-<input id="ppm" placeholder="PPM">
-<input id="remark" placeholder="Remark">
-
-</div>
-
-<button class="btn btn-primary" onclick="saveBEMS()">Save</button>
-`;
-  }
-
-  async function saveBEMS() {
-
-    const data = {
-      action: "saveAsset",
-
-      id: assetId.value,
-      assetNumber: assetNumber.value,
-      assetNumberKonsesi: assetNumberKonsesi.value,
-      typeCode: typeCode.value,
-      typeDescription: typeDescription.value,
-      assetDescription: assetDescription.value,
-
-      service: service.value,
-      department: department.value,
-      area: area.value,
-
-      locationCode: codeLocation.value,
-      location: location.value,
-
-      ppmFrequency: ppmFrequency.value,
-
-      purchaseDate: purchaseDate.value,
-      commissioningDate: commissioningDate.value,
-
-      warrantyStart: warrantyStart.value,
-      warrantyEnd: warrantyEnd.value,
-      warrantyDuration: warrantyDuration.value,
-
-      manufacturer: manufacturer.value,
-      brand: brand.value,
-      model: model.value,
-      serialNo: serialNo.value,
-
-      loNo: loNo.value,
-      loPrice: loPrice.value,
-      pricePerUnit: pricePerUnit.value,
-
-      bumiAgent: bumiAgent.value,
-      vendor: vendor.value,
-
-      remarks: remarks.value,
-      contract: contract.value,
-
-      maintenanceType: maintenanceType.value,
-      month: month.value,
-      statusWarranty: statusWarranty.value,
-      ppm: ppm.value,
-      remark: remark.value,
-
-      module: "BEMS"
-    };
-
-    const res = await saveAssetAPI(data);
-
-    if (res.status === "success") {
-      alert("BEMS Asset Saved");
-      document.getElementById("globalDetailModal").style.display = "none";
-      assetCache = [];
-      loadAssets();
-    } else {
-      alert("Error saving BEMS");
-    }
-
-  }
-
-  // ======================
-  // EDIT ASSET
-  // ======================
-  window.openEditAsset = async function openEditAsset(assetId) {
-    const assets = await getAssetCached();
-    const a = assets.find(x => x.id == assetId);
-    if (!a) { alert("Asset not found"); return; }
-
-    const body = document.getElementById("detailBody");
-    document.getElementById("detailTitle").innerText = "Edit Asset";
-
-    const modNow = getModule();
-
-    if (modNow === "BEMS") {
-      body.innerHTML = renderBEMSForm({ id: a.id });
-
-      // pre-fill BEMS fields
-      setTimeout(() => {
-        const fields = {
-          assetId: a.id,
-          assetNumber: a.assetNumber || "",
-          assetNumberKonsesi: a.assetNumberKonsesi || "",
-          typeCode: a.typeCode || "",
-          typeDescription: a.typeDescription || "",
-          taskCode: a.taskCode || "",
-          assetDescription: a.assetDescription || "",
-          service: a.service || "",
-          department: a.department || "",
-          area: a.area || "",
-          codeLocation: a.locationCode || "",
-          location: a.location || "",
-          ppmFrequency: a.ppmFrequency || "",
-          purchaseDate: a.purchaseDate || "",
-          commissioningDate: a.commissioningDate || "",
-          warrantyStart: a.warrantyStart || "",
-          warrantyEnd: a.warrantyEnd || "",
-          warrantyDuration: a.warrantyDuration || "",
-          manufacturer: a.manufacturer || "",
-          brand: a.brand || "",
-          model: a.model || "",
-          serialNo: a.serialNo || "",
-          loNo: a.loNo || "",
-          loPrice: a.loPrice || "",
-          pricePerUnit: a.pricePerUnit || "",
-          bumiAgent: a.bumiAgent || "",
-          vendor: a.vendor || "",
-          remarks: a.remarks || "",
-          contract: a.contract || "",
-          maintenanceType: a.maintenanceType || "",
-          month: a.month || "",
-          statusWarranty: a.statusWarranty || "",
-          ppm: a.ppm || "",
-          remark: a.remark || ""
-        };
-
-        for (const [key, val] of Object.entries(fields)) {
-          const el = document.getElementById(key);
-          if (el) el.value = val;
-        }
-
-        // set module
-        const modInput = document.getElementById("module");
-        if (modInput) modInput.value = "BEMS";
-        const md = document.getElementById("moduleDisplay");
-        if (md) md.value = "BEMS";
-
-        // attach autofill listeners
-        const typeInput = document.getElementById("typeCode");
-        if (typeInput) typeInput.addEventListener("input", autoFillEquipmentDesc);
-
-        const locInput = document.getElementById("codeLocation");
-        if (locInput) {
-          locInput.addEventListener("input", function () {
-            this.value = this.value.toUpperCase();
-            autoFillLocation(this.value);
-          });
-        }
-      }, 0);
-
-    } else {
-      // FEMS
-      body.innerHTML = `
-    <input type="hidden" id="module">
-    <div class="form-grid">
-      <div><label>Module</label><input id="moduleDisplay" readonly></div>
-
-    <div class="form-grid">
-      <input id="assetId" value="${a.id}" readonly>
-      <input id="assetNo" placeholder="Asset No">
-      <input id="equipmentName" placeholder="Equipment Name">
-      <input id="typeCode" placeholder="Type Code">
-      <input id="typeDescription" placeholder="Type Description" readonly>
-      <input id="taskCode" placeholder="Task Code" readonly>
-      <select id="discipline">
-            <option>Select Discipline</option>
-            <option>Mechanical</option>
-            <option>Electrical</option>
-      </select>
-      <input id="codeLocation" placeholder="Code Location">
-      <input id="area" placeholder="Area" readonly>
-      <input id="department" placeholder="Department" readonly>
-      <input id="bumi" placeholder="Bumi">
-      <input id="bumi contact" placeholder="Bumi Contact">
-      <input id="supplier" placeholder="Supplier">
-      <input id="supplierContact" placeholder="Supplier Contact">
-      <input id="manufacture" placeholder="Manufacturer">
-      <input id="model" placeholder="Model">
-      <input id="serialNumber" placeholder="Serial Number">
-      <input id="price" placeholder="Price">
-      <input id="lpoNo" placeholder="LPO No">
-      <select id="category">
-            <option>Category</option>
-            <option>ASSET</option>
-            <option>INVENTORY</option> 
-      </select>
-      <input id="startDate" type="date">
-      <input id="endDate" type="date">
-      <input id="ppmFrequency" placeholder="PPM Frequency">
-      <select id="status">
-            <option>Status dalam Kontrak Konsesi</option>
-            <option>YES</option>
-            <option>NO</option>
-      </select>
-    </div>
-    <button class="btn btn-primary" id="saveAssetBtn">Update</button>
-    `;
-
-      // pre-fill FEMS fields
-      setTimeout(() => {
-        const fields = {
-          assetNo: a.assetNo || "",
-          equipmentName: a.equipmentName || "",
-          typeCode: a.typeCode || "",
-          typeDescription: a.typeDescription || "",
-          taskCode: a.taskCode || "",
-          codeLocation: a.codeLocation || "",
-          area: a.area || "",
-          department: a.department || "",
-          bumi: a.bumi || "",
-          supplier: a.supplier || "",
-          supplierContact: a.supplierContact || "",
-          manufacture: a.manufacture || "",
-          model: a.model || "",
-          serialNumber: a.serialNumber || "",
-          price: a.price || "",
-          lpoNo: a.lpoNo || "",
-          startDate: a.startDate || "",
-          endDate: a.endDate || "",
-          ppmFrequency: a.ppmFrequency || ""
-        };
-
-        for (const [key, val] of Object.entries(fields)) {
-          const el = document.getElementById(key);
-          if (el) el.value = val;
-        }
-
-        // set select values
-        const discEl = document.getElementById("discipline");
-        if (discEl && a.discipline) {
-          for (let i = 0; i < discEl.options.length; i++) {
-            if (discEl.options[i].text === a.discipline) discEl.selectedIndex = i;
-          }
-        }
-        const catEl = document.getElementById("category");
-        if (catEl && a.category) {
-          for (let i = 0; i < catEl.options.length; i++) {
-            if (catEl.options[i].text === a.category) catEl.selectedIndex = i;
-          }
-        }
-        const statusEl = document.getElementById("status");
-        if (statusEl && a.status) {
-          for (let i = 0; i < statusEl.options.length; i++) {
-            if (statusEl.options[i].text === a.status) statusEl.selectedIndex = i;
-          }
-        }
-
-        // set module
-        const modInput = document.getElementById("module");
-        if (modInput) modInput.value = modNow;
-        const md = document.getElementById("moduleDisplay");
-        if (md) md.value = modNow;
-
-        // attach autofill listeners
-        const typeInput = document.getElementById("typeCode");
-        if (typeInput) typeInput.addEventListener("input", autoFillEquipmentDesc);
-
-        const locInput = document.getElementById("codeLocation");
-        if (locInput) {
-          locInput.addEventListener("input", function () {
-            this.value = this.value.toUpperCase();
-            autoFillLocation(this.value);
-          });
-        }
-      }, 0);
-
-      document.getElementById("saveAssetBtn").onclick = saveAsset;
-    }
 
     document.getElementById("globalDetailModal").style.display = "flex";
   }
+
+  window.openAddAsset = openAddAsset;
+  window.saveBEMS = saveBEMS;
+  window.saveAsset = saveAsset;
 
 })(); // end IIFE
