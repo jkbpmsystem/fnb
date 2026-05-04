@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login</title>
+<link rel="stylesheet" href="css/login.css">
+
+</head>
+<body>
+
+<div id="globalLoader">
+  <div class="loader-box">
+    <div class="spinner-sm"></div>
+    
+  </div>
+</div>
+
+<canvas id="spark-canvas"></canvas>
+ 
+<div class="login-card">
+ 
+  <div class="logo-mark">
+    <svg viewBox="0 0 26 26" fill="none">
+      <path d="M13 2L5 14h7l-2 10 11-14h-7l2-10z" fill="#00c8ff" opacity=".9"/>
+    </svg>
+  </div>
+
+  <h2>JKB</h2>
+  <p class="sub">Preventive Maintenance System</p>
+
+  <div id="loginError"></div>
+
+  <div class="form-group">
+    <label for="username">Username</label>
+    <input id="username" type="text" placeholder="Masukkan username" autocomplete="username">
+  </div>
+
+  <div class="form-group">
+    <label for="password">Password</label>
+    <input id="password" type="password" placeholder="••••••••" autocomplete="current-password">
+  </div>
+
+  <button id="btnLogin" onclick="doLogin()">Log Masuk</button>
+  <button class="forgot" onclick="alert('Sila hubungi admin sistem.')">Lupa kata laluan?</button>
+  <p>© 2026 PMBACKEND. All rights reserved.</p>
+
+</div>
+
+<script src="js/firebase-config.local.js"></script>
+<script src="js/firebase-init.js"></script>
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/electric-spark.js"></script>
+
+<script>
+  // Redirect jika sudah login
+  (function () {
+    if (sessionStorage.getItem('cmmsUser')) {
+      window.location.href = 'module.html';
+    }
+  })();
+
+  const btn = document.getElementById('btnLogin');
+
+  function setButtonLoading(isLoading) {
+    btn.disabled = isLoading;
+
+    // disable input fields semasa loading
+    document.getElementById('username').disabled = isLoading;
+    document.getElementById('password').disabled = isLoading;
+
+    if (isLoading) {
+      btn.innerHTML = `
+        <span class="btn-logging-text">Logging in</span>
+        <div class="btn-dots">
+          <span></span><span></span><span></span>
+        </div>`;
+    } else {
+      btn.innerHTML = 'Log Masuk';
+    }
+  }
+
+  function doLogin() {
+    const user = document.getElementById('username').value.trim();
+    const pass = document.getElementById('password').value;
+
+    // clear error
+    const errEl = document.getElementById('loginError');
+    if (errEl) { errEl.style.display = 'none'; errEl.textContent = ''; }
+
+    if (!user || !pass) {
+      if (errEl) { errEl.textContent = 'Sila masukkan username dan password.'; errEl.style.display = 'block'; }
+      return;
+    }
+
+    setButtonLoading(true);
+
+    // Panggil login() dari auth.js
+    // auth.js akan reset button jika gagal via finally block
+    login(user, pass).finally(() => {
+      // Hanya reset jika masih di page yang sama (gagal login)
+      // Jika redirect berjaya, page akan unload — finally ni tak affect apa-apa
+      setButtonLoading(false);
+    });
+  }
+
+  // Enter key
+  document.getElementById('username').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') document.getElementById('password').focus();
+  });
+
+  document.getElementById('password').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') doLogin();
+  });
+</script>
+
+</body>
+</html>
