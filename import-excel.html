@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="ms">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Import Excel — JKB</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/loader.css">
+  <!-- SheetJS for Excel parsing -->
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+  <style>
+    .import-wrap {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 24px 20px
+    }
+
+    .import-title {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 4px
+    }
+
+    .import-sub {
+      font-size: 13px;
+      color: var(--subtext);
+      margin-bottom: 24px
+    }
+
+    .step-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 16px
+    }
+
+    .step-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px
+    }
+
+    .step-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-size: 13px;
+      font-weight: 700;
+      flex-shrink: 0
+    }
+
+    .step-num.done {
+      background: #16a34a
+    }
+
+    .step-label {
+      font-size: 14px;
+      font-weight: 600
+    }
+
+    .cfg-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+      flex-wrap: wrap
+    }
+
+    .cfg-row .field {
+      flex: 1;
+      min-width: 200px
+    }
+
+    .cfg-row label {
+      font-size: 12px;
+      color: var(--subtext);
+      display: block;
+      margin-bottom: 4px
+    }
+
+    .cfg-row input,
+    .cfg-row select {
+      width: 100%;
+      padding: 9px 12px;
+      background: var(--input-bg, rgba(0, 30, 60, 0.6));
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 13px;
+      outline: none
+    }
+
+    .cfg-row input:focus,
+    .cfg-row select:focus {
+      border-color: var(--primary)
+    }
+
+    .drop-zone {
+      border: 2px dashed rgba(0, 180, 255, 0.35);
+      border-radius: 12px;
+      padding: 32px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: .25s
+    }
+
+    .drop-zone:hover,
+    .drop-zone.dragover {
+      border-color: var(--primary);
+      background: rgba(0, 160, 255, 0.08)
+    }
+
+    .drop-zone .dz-icon {
+      font-size: 36px;
+      margin-bottom: 8px
+    }
+
+    .drop-zone .dz-text {
+      font-size: 13px;
+      color: var(--subtext)
+    }
+
+    .drop-zone .dz-text b {
+      color: var(--primary)
+    }
+
+    .drop-zone .dz-hint {
+      font-size: 11px;
+      color: var(--subtext);
+      opacity: .7;
+      margin-top: 4px
+    }
+
+    .file-info {
+      margin-top: 10px;
+      font-size: 13px;
+      color: #4ade80;
+      display: none
+    }
+
+    .preview-wrap {
+      margin-top: 14px;
+      overflow-x: auto;
+      max-height: 320px;
+      overflow-y: auto;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      display: none
+    }
+
+    .preview-wrap table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px
+    }
+
+    .preview-wrap th {
+      background: rgba(0, 180, 255, 0.1);
+      padding: 8px 6px;
+      text-align: left;
+      font-weight: 600;
+      color: var(--primary);
+      position: sticky;
+      top: 0;
+      border-bottom: 1px solid var(--border)
+    }
+
+    .preview-wrap td {
+      padding: 6px;
+      border-bottom: 1px solid rgba(0, 180, 255, 0.08);
+      color: var(--text);
+      white-space: nowrap;
+      max-width: 180px;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+
+    .preview-wrap tr:hover td {
+      background: rgba(0, 180, 255, 0.04)
+    }
+
+    .btn-import {
+      width: 100%;
+      padding: 13px;
+      border: none;
+      border-radius: 10px;
+      background: var(--primary);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: .2s;
+      letter-spacing: .3px
+    }
+
+    .btn-import:hover {
+      opacity: .9;
+      box-shadow: 0 0 20px rgba(0, 180, 255, 0.28)
+    }
+
+    .btn-import:disabled {
+      opacity: .4;
+      cursor: not-allowed
+    }
+
+    .prog-wrap {
+      margin-top: 14px;
+      display: none
+    }
+
+    .prog-bg {
+      width: 100%;
+      height: 8px;
+      background: rgba(0, 60, 120, 0.3);
+      border-radius: 4px;
+      overflow: hidden
+    }
+
+    .prog-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--primary);
+      border-radius: 4px;
+      transition: width .3s
+    }
+
+    .prog-fill.ok {
+      background: #16a34a
+    }
+
+    .prog-fill.err {
+      background: #dc2626
+    }
+
+    .prog-text {
+      margin-top: 6px;
+      font-size: 13px;
+      color: var(--subtext)
+    }
+
+    .log-box {
+      margin-top: 12px;
+      max-height: 180px;
+      overflow-y: auto;
+      font-size: 11px;
+      font-family: Consolas, monospace;
+      background: rgba(0, 10, 20, 0.5);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+      display: none
+    }
+
+    .log-ok {
+      color: #4ade80
+    }
+
+    .log-err {
+      color: #f87171
+    }
+
+    .log-info {
+      color: var(--subtext)
+    }
+
+    .result-box {
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      display: none;
+      text-align: center
+    }
+
+    .result-box.ok {
+      background: rgba(22, 163, 74, 0.15);
+      border: 1px solid rgba(22, 163, 74, 0.3);
+      color: #4ade80
+    }
+
+    .result-box.err {
+      background: rgba(220, 38, 38, 0.15);
+      border: 1px solid rgba(220, 38, 38, 0.3);
+      color: #f87171
+    }
+
+    .summary-cards {
+      display: none;
+      margin-top: 16px;
+      gap: 10px;
+      grid-template-columns: repeat(3, 1fr)
+    }
+
+    .summary-cards.show {
+      display: grid
+    }
+
+    .sum-card {
+      border-radius: 12px;
+      padding: 14px 10px;
+      text-align: center;
+      border: 1px solid
+    }
+
+    .sum-card.ok {
+      background: rgba(22, 163, 74, 0.12);
+      border-color: rgba(22, 163, 74, 0.3)
+    }
+
+    .sum-card.err {
+      background: rgba(220, 38, 38, 0.12);
+      border-color: rgba(220, 38, 38, 0.3)
+    }
+
+    .sum-card.dup {
+      background: rgba(251, 191, 36, 0.1);
+      border-color: rgba(251, 191, 36, 0.3)
+    }
+
+    .sum-card .sc-num {
+      font-size: 28px;
+      font-weight: 800;
+      line-height: 1
+    }
+
+    .sum-card.ok .sc-num {
+      color: #4ade80
+    }
+
+    .sum-card.err .sc-num {
+      color: #f87171
+    }
+
+    .sum-card.dup .sc-num {
+      color: #fbbf24
+    }
+
+    .sum-card .sc-label {
+      font-size: 11px;
+      color: var(--subtext);
+      margin-top: 5px;
+      font-weight: 500
+    }
+
+    .btn-download {
+      display: none;
+      margin-top: 14px;
+      width: 100%;
+      padding: 11px;
+      border: 1px solid var(--primary);
+      border-radius: 10px;
+      background: transparent;
+      color: var(--primary);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: .2s
+    }
+
+    .btn-download:hover {
+      background: rgba(0, 180, 255, 0.1)
+    }
+
+    .btn-download.show {
+      display: block
+    }
+
+    .tmpl-link {
+      display: inline-block;
+      margin-top: 8px;
+      color: var(--primary);
+      font-size: 12px;
+      cursor: pointer;
+      text-decoration: underline
+    }
+
+    .back-link {
+      display: block;
+      text-align: center;
+      margin-top: 20px;
+      color: var(--subtext);
+      font-size: 13px;
+      text-decoration: none
+    }
+
+    .back-link:hover {
+      color: var(--primary)
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="spark-canvas"></canvas>
+  <div class="wrapper">
+    <div id="globalLoader">
+      <div></div>
+    </div>
+
+    <!-- TOPBAR -->
+    <div class="app-topbar">
+      <div class="app-topbar-left">
+        <div class="app-topbar-logo">JKB</div>
+        <div class="app-topbar-info">
+          <div class="app-topbar-title">Import Excel Tool</div>
+          <div class="app-topbar-sub">Hospital Sultan Zainal Abidin - UniSZA</div>
+        </div>
+      </div>
+      <div class="app-topbar-right">
+        <div class="app-topbar-date" id="topbarDate"></div>
+      </div>
+    </div>
+
+    <div class="content-area">
+      <!-- SIDEBAR -->
+      <div class="sidebar">
+        <div class="sidebar-label">Menu</div>
+        <a href="dashboard.html" class="side-item"><span class="nav-icon">📊</span> Dashboard</a>
+        <a href="asset-master.html" class="side-item"><span class="nav-icon">📦</span> Assets</a>
+        <a href="update-ppm.html" class="side-item"><span class="nav-icon">🔧</span> During Warranty</a>
+        <a href="update-post.html" class="side-item"><span class="nav-icon">🛠️</span> Post Warranty</a>
+        <a href="import-excel.html" class="side-item active"><span class="nav-icon">📥</span> Import Excel</a>
+      </div>
+
+      <div class="main">
+        <div class="import-wrap">
+          <div class="import-title">📥 Import Data dari Excel</div>
+          <div class="import-sub">Upload fail .xlsx atau .xls dan import terus ke Firebase Firestore.</div>
+
+          <!-- STEP 1: MODULE & CONFIG -->
+          <div class="step-card" id="step1">
+            <div class="step-head">
+              <div class="step-num" id="s1n">1</div>
+              <div class="step-label">Pilih Module & Firebase Config</div>
+            </div>
+            <div class="cfg-row">
+              <div class="field">
+                <label>Module</label>
+                <select id="moduleSelect" onchange="onModuleChange()">
+                  <option value="FEMS">FEMS — Facility Engineering</option>
+                  <option value="BEMS">BEMS — Biomedical Engineering</option>
+                </select>
+              </div>
+            </div>
+            <div class="cfg-row">
+              <div class="field"><label>API Key</label><input id="cfgApiKey" placeholder="AIzaSy..."
+                  oninput="checkReady()"></div>
+            </div>
+            <div class="cfg-row">
+              <div class="field"><label>Project ID</label><input id="cfgProjectId" placeholder="my-project-id"
+                  oninput="autoFillAuth();checkReady()"></div>
+              <div class="field"><label>Auth Domain</label><input id="cfgAuthDomain"
+                  placeholder="my-project.firebaseapp.com"></div>
+            </div>
+            <div class="cfg-row">
+              <div class="field"><label>Email (Firebase Auth)</label><input id="cfgEmail"
+                  placeholder="admin@hospital.com" oninput="checkReady()"></div>
+              <div class="field"><label>Password</label><input type="password" id="cfgPassword" placeholder="••••••••"
+                  oninput="checkReady()"></div>
+            </div>
+          </div>
+
+          <!-- STEP 2: FILE -->
+          <div class="step-card" id="step2">
+            <div class="step-head">
+              <div class="step-num" id="s2n">2</div>
+              <div class="step-label">Upload Excel File</div>
+            </div>
+            <div class="drop-zone" id="dropZone">
+              <div class="dz-icon">📊</div>
+              <div class="dz-text">Klik atau drag fail <b>.xlsx / .xls</b> ke sini</div>
+              <div class="dz-hint">Baris pertama mesti header — rujuk template di bawah</div>
+              <input type="file" id="fileInput" style="display:none" accept=".xlsx,.xls,.csv">
+            </div>
+            <div class="file-info" id="fileInfo"></div>
+            <span class="tmpl-link" onclick="downloadTemplate()">📋 Download Template Excel</span>
+            <span class="tmpl-link" style="margin-left:16px" onclick="showExpectedHeaders()">📖 Lihat Header</span>
+            <div class="preview-wrap" id="previewWrap">
+              <table id="previewTable"></table>
+            </div>
+          </div>
+
+          <!-- STEP 3: IMPORT -->
+          <div class="step-card" id="step3">
+            <div class="step-head">
+              <div class="step-num" id="s3n">3</div>
+              <div class="step-label">Import ke Firestore</div>
+            </div>
+            <button class="btn-import" id="btnImport" disabled onclick="startImport()">Import Sekarang</button>
+            <div class="prog-wrap" id="progWrap">
+              <div class="prog-bg">
+                <div class="prog-fill" id="progFill"></div>
+              </div>
+              <div class="prog-text" id="progText">Sedia...</div>
+            </div>
+            <div class="log-box" id="logBox"></div>
+            <div class="result-box" id="resultBox"></div>
+
+            <!-- SUMMARY CARDS -->
+            <div class="summary-cards" id="summaryCards">
+              <div class="sum-card ok">
+                <div class="sc-num" id="scOk">0</div>
+                <div class="sc-label">✅ Berjaya Diimport</div>
+              </div>
+              <div class="sum-card err">
+                <div class="sc-num" id="scErr">0</div>
+                <div class="sc-label">❌ Gagal</div>
+              </div>
+              <div class="sum-card dup">
+                <div class="sc-num" id="scDup">0</div>
+                <div class="sc-label">⚠️ Duplikat Dilangkau</div>
+              </div>
+            </div>
+
+            <!-- DOWNLOAD REPORT -->
+            <button class="btn-download" id="btnDownload" onclick="downloadReport()">📥 Download Report Excel</button>
+          </div>
+
+          <a href="dashboard.html" class="back-link">← Kembali ke Dashboard</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () { var t = new Date(); var el = document.getElementById('topbarDate'); if (el) el.textContent = t.toLocaleDateString('ms-MY', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) })();
+  </script>
+  <script src="js/electric-spark.js"></script>
+
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js';
+    import { getAuth, signInWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js';
+    import { getFirestore, writeBatch, doc, serverTimestamp, setDoc, collection, getDocs } from 'https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js';
+
+    // ===== HEADER DEFINITIONS =====
+    const FEMS_HEADERS = [
+      "id", "codeLocation", "area", "department",
+      "assetNo", "assetNoHosza", "equipmentName", "typeCode", "typeDescription", "discipline",
+      "bumi", "bumi contact", "supplier", "supplierContact", "manufacture",
+      "model", "serialNumber", "price", "lpoNo", "category",
+      "startDate", "endDate", "ppmFrequency", "status", "taskCode", "freqPPM",
+      "1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th", "10th",
+      "11th", "12th", "13th", "14th", "15th", "16th", "17th", "18th", "19th", "20th", "21st",
+      "done_1st", "done_2nd", "done_3rd", "done_4th", "done_5th", "done_6th", "done_7th",
+      "done_8th", "done_9th", "done_10th", "done_11th", "done_12th", "done_13th", "done_14th",
+      "done_15th", "done_16th", "done_17th", "done_18th", "done_19th", "done_20th", "done_21st"
+    ];
+
+    const BEMS_HEADERS = [
+      "id", "assetNumber", "assetNumberKonsesi", "typeCode", "typeDescription", "taskCode",
+      "assetDescription", "service", "department", "area", "codeLocation", "location",
+      "ppmFrequency", "purchaseDate", "commissioningDate", "warrantyStart", "warrantyEnd",
+      "warrantyDuration", "manufacturer", "brand", "model", "serialNo",
+      "loNo", "loPrice", "pricePerUnit", "bumiAgent", "vendor",
+      "contract", "maintenanceType"
+    ];
+
+    // Headers yang diabaikan (tidak diperlukan dalam import)
+    const IGNORED_HEADERS = ["endContract", "postFrequency"];
+
+    window.parsedRows = [];
+    let currentHeaders = FEMS_HEADERS;
+    // Shorthand untuk akses dalam module
+    Object.defineProperty(window, '_getRows', { get: () => window.parsedRows });
+    const getParsedRows = () => window.parsedRows;
+    const setParsedRows = (v) => { window.parsedRows = v; };
+
+    // ===== MODULE CHANGE =====
+    window.onModuleChange = function () {
+      const mod = document.getElementById("moduleSelect").value;
+      currentHeaders = mod === "BEMS" ? BEMS_HEADERS : FEMS_HEADERS;
+      setParsedRows([]);
+      document.getElementById("previewWrap").style.display = "none";
+      document.getElementById("fileInfo").style.display = "none";
+      document.getElementById("btnImport").disabled = true;
+    };
+
+    // ===== AUTO FILL =====
+    window.autoFillAuth = function () {
+      const pid = document.getElementById("cfgProjectId").value.trim();
+      const ad = document.getElementById("cfgAuthDomain");
+      if (!ad.value || ad.value.endsWith(".firebaseapp.com")) {
+        ad.value = pid + ".firebaseapp.com";
+      }
+    };
+
+    window.checkReady = function () {
+      const ok = document.getElementById("cfgApiKey").value.trim()
+        && document.getElementById("cfgProjectId").value.trim()
+        && document.getElementById("cfgEmail").value.trim()
+        && document.getElementById("cfgPassword").value.trim()
+        && getParsedRows().length > 0;
+      document.getElementById("btnImport").disabled = !ok;
+    };
+
+    // ===== TEMPLATE DOWNLOAD =====
+    window.downloadTemplate = function () {
+      const mod = document.getElementById("moduleSelect").value;
+      const headers = mod === "BEMS" ? BEMS_HEADERS : FEMS_HEADERS;
+      const ws = XLSX.utils.aoa_to_sheet([headers]);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, mod);
+      XLSX.writeFile(wb, `template_${mod}.xlsx`);
+    };
+
+    window.showExpectedHeaders = function () {
+      const mod = document.getElementById("moduleSelect").value;
+      const headers = mod === "BEMS" ? BEMS_HEADERS : FEMS_HEADERS;
+      alert(`Header untuk ${mod}:\n\n${headers.join("\n")}`);
+    };
+
+    // ===== FILE HANDLING =====
+    const dropZone = document.getElementById("dropZone");
+    const fileInput = document.getElementById("fileInput");
+
+    dropZone.addEventListener("click", () => fileInput.click());
+    dropZone.addEventListener("dragover", e => { e.preventDefault(); dropZone.classList.add("dragover"); });
+    dropZone.addEventListener("dragleave", () => dropZone.classList.remove("dragover"));
+    dropZone.addEventListener("drop", e => { e.preventDefault(); dropZone.classList.remove("dragover"); if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]); });
+    fileInput.addEventListener("change", e => { if (e.target.files.length) handleFile(e.target.files[0]); });
+
+    function handleFile(file) {
+      if (!file) return;
+      const ext = file.name.split(".").pop().toLowerCase();
+      if (!["xlsx", "xls", "csv"].includes(ext)) { alert("Sila upload .xlsx, .xls atau .csv"); return; }
+
+      const reader = new FileReader();
+      reader.onload = e => {
+        try {
+          const data = new Uint8Array(e.target.result);
+          const wb = XLSX.read(data, { type: "array", cellDates: true });
+          const ws = wb.Sheets[wb.SheetNames[0]];
+          const json = XLSX.utils.sheet_to_json(ws, { defval: "" });
+
+          if (!json.length) { alert("Fail kosong"); return; }
+
+          // Map headers
+          const mod = document.getElementById("moduleSelect").value;
+          const expected = mod === "BEMS" ? BEMS_HEADERS : FEMS_HEADERS;
+          const fileHeaders = Object.keys(json[0]);
+
+          // Check for missing required headers (abaikan IGNORED_HEADERS)
+          const missing = expected.filter(h => !fileHeaders.includes(h));
+          if (missing.length > 0 && missing.length > expected.length / 2) {
+            alert(`⚠️ Banyak header tidak sepadan.\n\nDijangka: ${expected.join(", ")}\n\nDijumpai: ${fileHeaders.join(", ")}`);
+            return;
+          }
+
+          // Clean data — convert dates, trim strings, buang IGNORED_HEADERS
+          const rows = json.map((row, idx) => {
+            const clean = {};
+            // Strip ignored headers dari row
+            IGNORED_HEADERS.forEach(h => delete row[h]);
+            expected.forEach(key => {
+              let val = row[key] !== undefined ? row[key] : "";
+              // Convert Date objects to ISO string
+              if (val instanceof Date && !isNaN(val)) {
+                val = val.toISOString().split("T")[0];
+              }
+              // Convert numbers where needed
+              if (["ppmFrequency", "freqPPM", "price", "loPrice", "pricePerUnit", "warrantyDuration"].includes(key) && val !== "") {
+                const n = parseFloat(val);
+                if (!isNaN(n)) val = n;
+              }
+              clean[key] = val;
+            });
+            // Auto-assign ID if empty
+            if (!clean.id) clean.id = `${mod}-IMPORT-${String(idx + 1).padStart(4, "0")}`;
+            return clean;
+          });
+          setParsedRows(rows);
+
+          // Show info
+          const info = document.getElementById("fileInfo");
+          info.style.display = "block";
+          info.textContent = `✅ ${file.name} — ${getParsedRows().length} record dijumpai`;
+          if (missing.length > 0) {
+            const missingFiltered = missing.filter(h => !IGNORED_HEADERS.includes(h));
+            if (missingFiltered.length > 0) {
+              info.textContent += ` (⚠️ ${missingFiltered.length} header tiada: ${missingFiltered.join(", ")})`;
+              info.style.color = "#f59e0b";
+            } else {
+              info.style.color = "#4ade80";
+            }
+          } else {
+            info.style.color = "#4ade80";
+          }
+          document.getElementById("s2n").classList.add("done");
+
+          // Render preview (first 20 rows)
+          renderPreview(getParsedRows().slice(0, 20), expected);
+          checkReady();
+
+        } catch (err) {
+          alert("Error membaca fail: " + err.message);
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    function renderPreview(rows, headers) {
+      const wrap = document.getElementById("previewWrap");
+      const table = document.getElementById("previewTable");
+      wrap.style.display = "block";
+
+      let html = "<thead><tr>" + headers.map(h => `<th>${h}</th>`).join("") + "</tr></thead><tbody>";
+      rows.forEach(r => {
+        html += "<tr>" + headers.map(h => `<td title="${r[h] || ''}">${r[h] || '-'}</td>`).join("") + "</tr>";
+      });
+      html += "</tbody>";
+      table.innerHTML = html;
+    }
+
+    // ===== IMPORT =====
+    window.startImport = async function () {
+      const apiKey = document.getElementById("cfgApiKey").value.trim();
+      const projectId = document.getElementById("cfgProjectId").value.trim();
+      const authDomain = document.getElementById("cfgAuthDomain").value.trim() || (projectId + ".firebaseapp.com");
+      const email = document.getElementById("cfgEmail").value.trim();
+      const password = document.getElementById("cfgPassword").value.trim();
+      const mod = document.getElementById("moduleSelect").value;
+      const modKey = mod.toLowerCase();
+
+      const progWrap = document.getElementById("progWrap");
+      const progFill = document.getElementById("progFill");
+      const progText = document.getElementById("progText");
+      const logBox = document.getElementById("logBox");
+      const resultBox = document.getElementById("resultBox");
+      const btn = document.getElementById("btnImport");
+
+      progWrap.style.display = "block";
+      logBox.style.display = "block";
+      logBox.innerHTML = "";
+      resultBox.style.display = "none";
+      progFill.style.width = "0%";
+      progFill.className = "prog-fill";
+      btn.disabled = true;
+      btn.textContent = "Checking...";
+
+      function log(msg, cls) {
+        logBox.innerHTML += `<div class="log-${cls}">${msg}</div>`;
+        logBox.scrollTop = logBox.scrollHeight;
+      }
+
+      try {
+        log("🔌 Connecting ke Firebase...", "info");
+        // Avoid duplicate app error on re-import
+        let app;
+        try {
+          app = initializeApp({ apiKey, authDomain, projectId, storageBucket: projectId + ".firebasestorage.app" });
+        } catch (e) {
+          const { getApp } = await import('https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js');
+          app = getApp();
+        }
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        document.getElementById("s1n").classList.add("done");
+        log("✅ Firebase initialized", "ok");
+
+        log(`🔐 Login sebagai ${email}...`, "info");
+        await signInWithEmailAndPassword(auth, email, password);
+        log("✅ Login berjaya", "ok");
+
+        // ===== DUPLICATE CHECK =====
+        log("🔍 Menyemak data sedia ada di Firestore...", "info");
+        const existingIds = new Set();
+        try {
+          const snap = await getDocs(collection(db, "modules", modKey, "assets"));
+          snap.forEach(d => existingIds.add(d.id));
+          log(`📊 Dijumpai ${existingIds.size} asset sedia ada dalam Firestore`, "info");
+        } catch (e) {
+          log("⚠️ Tidak dapat semak data sedia ada: " + e.message, "err");
+        }
+
+        // Filter out duplicates
+        const allRows = window.parsedRows || [];
+        const newRows = allRows.filter(r => !existingIds.has(String(r.id)));
+        const dupCount = allRows.length - newRows.length;
+
+        if (dupCount > 0) {
+          log(`⚠️ ${dupCount} record sudah wujud (akan dilangkau)`, "info");
+          log(`✅ ${newRows.length} record baru akan diimport`, "ok");
+        }
+
+        if (newRows.length === 0) {
+          log("ℹ️ Tiada data baru untuk diimport — semua sudah wujud!", "info");
+          resultBox.className = "result-box ok";
+          resultBox.textContent = `✅ Tiada data baru. Semua ${allRows.length} record sudah wujud dalam Firestore.`;
+          resultBox.style.display = "block";
+          btn.disabled = false;
+          btn.textContent = "Import Sekarang";
+          return;
+        }
+
+        // Confirm before importing
+        const confirmMsg = `📦 Sedia untuk import:\n\n• ${newRows.length} record BARU akan ditambah\n• ${dupCount} record SEDIA ADA akan dilangkau\n\nTeruskan?`;
+        if (!confirm(confirmMsg)) {
+          log("❌ Import dibatalkan oleh pengguna", "err");
+          btn.disabled = false;
+          btn.textContent = "Import Sekarang";
+          return;
+        }
+
+        btn.textContent = "Importing...";
+        const total = newRows.length;
+        let imported = 0, errors = 0;
+        const importedRows = [], failedRows = [];
+
+        log(`📦 Mula import ${total} asset BARU ke modules/${modKey}/assets/`, "info");
+        console.log("[DEBUG] Starting loop, total:", total, "newRows:", newRows.length);
+
+        for (let i = 0; i < total; i++) {
+          const asset = newRows[i];
+          const assetId = String(asset.id);
+          const ref = doc(db, "modules", modKey, "assets", assetId);
+
+          try {
+            console.log("[DEBUG] Writing asset", i, assetId);
+            await setDoc(ref, { ...asset, module: mod, importedAt: serverTimestamp(), updatedAt: serverTimestamp() }, { merge: true });
+            imported++;
+            importedRows.push({ ...asset, _status: "Berjaya" });
+            console.log("[DEBUG] Success", assetId);
+          } catch (e) {
+            console.error("[DEBUG] Failed", assetId, e);
+            errors++;
+            failedRows.push({ ...asset, _status: "Gagal", _error: e.message });
+            log(`  ❌ [${assetId}] gagal: ${e.message}`, "err");
+          }
+
+          const pct = Math.round(((i + 1) / total) * 100);
+          progFill.style.width = pct + "%";
+          progText.textContent = `${i + 1} / ${total} — ${asset.equipmentName || assetId} (${pct}%)`;
+          await new Promise(r => requestAnimationFrame(r));
+        }
+
+        // Update counter
+        log(`🔢 Updating counter...`, "info");
+        try {
+          await setDoc(doc(db, "counters", `${modKey}_asset`), { value: total, module: mod, updatedAt: serverTimestamp() }, { merge: true });
+          log("✅ Counter updated", "ok");
+        } catch (e) { log("⚠️ Counter gagal: " + e.message, "err"); }
+
+        document.getElementById("s3n").classList.add("done");
+        progFill.classList.add("ok");
+        resultBox.className = errors === 0 ? "result-box ok" : "result-box err";
+        resultBox.textContent = errors === 0
+          ? `🎉 Berjaya! ${imported} asset baru telah di-import. (${dupCount} duplikat dilangkau)`
+          : `⚠️ ${imported} berjaya, ${errors} gagal. (${dupCount} duplikat dilangkau)`;
+        resultBox.style.display = "block";
+
+        // Show summary cards
+        document.getElementById("scOk").textContent = imported;
+        document.getElementById("scErr").textContent = errors;
+        document.getElementById("scDup").textContent = dupCount;
+        document.getElementById("summaryCards").classList.add("show");
+
+        // Store report data and show download button
+        window._reportData = { importedRows, failedRows, dupCount, mod, modKey };
+        document.getElementById("btnDownload").classList.add("show");
+
+      } catch (err) {
+        log("❌ Error: " + err.message, "err");
+        progFill.classList.add("err");
+        progFill.style.width = "100%";
+        resultBox.className = "result-box err";
+        resultBox.textContent = "❌ Import gagal: " + err.message;
+        resultBox.style.display = "block";
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Import Sekarang";
+      }
+    };
+  </script>
+
+  <script>
+    window.downloadReport = function () {
+      const data = window._reportData;
+      if (!data) return;
+
+      const { importedRows, failedRows, dupCount, mod } = data;
+      const wb = XLSX.utils.book_new();
+      const now = new Date().toLocaleString('ms-MY');
+
+      // Sheet 1: Summary
+      const summaryData = [
+        ["LAPORAN IMPORT — " + mod],
+        ["Tarikh Import", now],
+        [""],
+        ["STATUS", "JUMLAH"],
+        ["✅ Berjaya Diimport", importedRows.length],
+        ["❌ Gagal", failedRows.length],
+        ["⚠️ Duplikat Dilangkau", dupCount],
+        ["JUMLAH KESELURUHAN", importedRows.length + failedRows.length + dupCount],
+      ];
+      const wsSummary = XLSX.utils.aoa_to_sheet(summaryData);
+      wsSummary['!cols'] = [{ wch: 30 }, { wch: 20 }];
+      XLSX.utils.book_append_sheet(wb, wsSummary, "Ringkasan");
+
+      // Sheet 2: Berjaya
+      if (importedRows.length > 0) {
+        const keys = Object.keys(importedRows[0]);
+        const wsOk = XLSX.utils.json_to_sheet(importedRows, { header: keys });
+        XLSX.utils.book_append_sheet(wb, wsOk, "Berjaya");
+      }
+
+      // Sheet 3: Gagal
+      if (failedRows.length > 0) {
+        const keys = Object.keys(failedRows[0]);
+        const wsErr = XLSX.utils.json_to_sheet(failedRows, { header: keys });
+        XLSX.utils.book_append_sheet(wb, wsErr, "Gagal");
+      }
+
+      const dateStr = new Date().toISOString().split("T")[0];
+      XLSX.writeFile(wb, `report_import_${mod}_${dateStr}.xlsx`);
+    };
+  </script>
+</body>
+
+</html>

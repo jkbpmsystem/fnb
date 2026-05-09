@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body onload="checkAuth()">
+  <canvas id="spark-canvas"></canvas>
+  <div class="wrapper">
+
+    <!-- TOPBAR HEADER -->
+    <div class="app-topbar">
+      <div class="app-topbar-left">
+        <div class="app-topbar-logo">JKB</div>
+        <div class="app-topbar-info">
+          <div class="app-topbar-title">Monitoring Assets</div>
+          <div class="app-topbar-sub">Hospital Sultan Zainal Abidin - UniSZA</div>
+        </div>
+      </div>
+      <div class="app-topbar-right">
+        <div class="app-topbar-date" id="topbarDate"></div>
+        <span style="font-size:12px;opacity:.8;">User: <span id="userDisplay"></span></span>
+        <button class="btn-theme" onclick="logout()">Logout</button>
+      </div>
+    </div>
+
+    <!-- CONTENT AREA -->
+    <div class="content-area">
+
+      <!-- SIDEBAR -->
+      <div class="sidebar">
+        <div class="sidebar-label">Menu</div>
+        <a href="dashboard.html" class="side-item active">
+          <span class="nav-icon">📊</span> Dashboard
+        </a>
+        <a href="asset-master.html" class="side-item">
+          <span class="nav-icon">📦</span> Assets
+        </a>
+        <a href="update-ppm.html" class="side-item">
+          <span class="nav-icon">🔧</span> During Warranty
+        </a>
+        <a href="update-post.html" class="side-item">
+          <span class="nav-icon">🛠️</span> Post Warranty
+        </a>
+      </div>
+
+      <!-- MAIN -->
+      <div class="main">
+
+        <div class="topbar">
+          <div class="title">Dashboard (<span id="moduleName"></span>)</div>
+          <div class="toggle-group" id="moduleToggle">
+            <button onclick="switchModule('FEMS')" id="btn_fems">FEMS</button>
+            <button onclick="switchModule('BEMS')" id="btn_bems">BEMS</button>
+          </div>
+        </div>
+
+        <div class="kpi">
+          <div class="card">
+            <div>Total Assets</div>
+            <div class="value" id="totalAssets">0</div>
+          </div>
+          <div class="card">
+            <div>Overdue</div>
+            <div class="value" id="overdueCount">0</div>
+          </div>
+          <div class="card">
+            <div>Upcoming</div>
+            <div class="value" id="upcomingCount">0</div>
+          </div>
+        </div>
+
+        <!-- PIE CHART: WARRANTY STATUS -->
+        <div class="chart-row">
+          <div class="chart-card">
+            <div class="chart-card-title">Warranty Status Overview</div>
+            <div class="chart-body">
+              <canvas id="warrantyPieChart" width="220" height="220"></canvas>
+              <div class="chart-legend" id="warrantyLegend"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 1. SUMMARY STATS BAR -->
+        <div class="summary-stats" id="summaryStats">
+          <div class="stat-card">
+            <div class="stat-icon">⏱️</div>
+            <div class="stat-info">
+              <div class="stat-value" id="statAvgDuration">-</div>
+              <div class="stat-label">Avg Duration</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">⚡</div>
+            <div class="stat-info">
+              <div class="stat-value" id="statShortest">-</div>
+              <div class="stat-label">Shortest</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">📏</div>
+            <div class="stat-info">
+              <div class="stat-value" id="statLongest">-</div>
+              <div class="stat-label">Longest</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">📋</div>
+            <div class="stat-info">
+              <div class="stat-value" id="statContractEnd">-</div>
+              <div class="stat-label">Contract End</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. CONTRACT END PROGRESS -->
+        <div class="chart-card" style="margin-bottom:18px" id="contractProgressCard">
+          <div class="chart-card-title">📅 Contract Duration Progress</div>
+          <div class="progress-wrap">
+            <div class="progress-bar-outer">
+              <div class="progress-bar-inner" id="contractProgressBar"></div>
+            </div>
+            <div class="progress-info">
+              <span id="contractProgressPct">0%</span>
+              <span id="contractProgressDays">-</span>
+            </div>
+            <div class="progress-dates">
+              <span id="contractStartLabel">Start: -</span>
+              <span id="contractEndLabel">End: -</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2 & 3. EXPIRY TIMELINE + DISCIPLINE BREAKDOWN -->
+        <div class="dash-tables-row" style="margin-bottom:18px">
+          <div class="chart-card">
+            <div class="chart-card-title">📈 Warranty Expiry Timeline</div>
+            <div class="timeline-chart" id="expiryTimeline"></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-card-title">🏢 Breakdown by Discipline</div>
+            <div class="chart-body">
+              <canvas id="disciplineChart" width="180" height="180"></canvas>
+              <div class="chart-legend" id="disciplineLegend"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4 & 6. SUPPLIER + EXPIRY BY YEAR -->
+        <div class="dash-tables-row" style="margin-bottom:18px">
+          <div class="chart-card">
+            <div class="chart-card-title">🏭 Top Suppliers</div>
+            <div class="supplier-list" id="supplierList"></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-card-title">🔔 Expiry Alert by Year</div>
+            <table class="year-table" id="yearTable">
+              <thead>
+                <tr>
+                  <th>Year</th>
+                  <th>During</th>
+                  <th>Post</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- OVERDUE & UPCOMING TABLES -->
+        <div class="dash-tables-row">
+
+          <!-- OVERDUE TABLE -->
+          <div class="table-box table-box--red">
+            <div class="table-box-header">
+              <div class="title">🔴 Overdue <span class="table-badge badge-red" id="overdueTableCount">0</span></div>
+              <input type="text" class="table-search" id="searchOverdue" placeholder="Search overdue..."
+                oninput="renderOverdueTable()">
+            </div>
+            <table id="overdueTable">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Equipment Name / Asset Description</th>
+                  <th>End Date</th>
+                  <th>Days Overdue</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+            <div class="table-pagination" id="overduePageBox"></div>
+          </div>
+
+          <!-- UPCOMING TABLE -->
+          <div class="table-box table-box--amber">
+            <div class="table-box-header">
+              <div class="title">🟡 Upcoming <span class="table-badge badge-amber" id="upcomingTableCount">0</span>
+              </div>
+              <input type="text" class="table-search" id="searchUpcoming" placeholder="Search upcoming..."
+                oninput="renderUpcomingTable()">
+            </div>
+            <table id="upcomingTable">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Equipment Name / Asset Description</th>
+                  <th>End Date</th>
+                  <th>Days Left</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+            <div class="table-pagination" id="upcomingPageBox"></div>
+          </div>
+
+        </div>
+
+        <!-- FULL TABLE: FILTER + SEARCH -->
+        <div class="filter-bar">
+          <input type="text" id="searchInput" placeholder="Search asset..." oninput="applyFilter()">
+          <button onclick="setFilter('ALL')" id="f_all">All</button>
+          <button onclick="setFilter('OVERDUE')" id="f_overdue">Expired</button>
+          <button onclick="setFilter('NEAR')" id="f_near">Expiring Soon</button>
+          <button class="btn-theme" onclick="exportCSV()" title="Export Excel">📊</button>
+        </div>
+
+        <div class="table-box">
+          <div class="title">Duration Warranty</div>
+          <table id="durationTable">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Equipment</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Days Left</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+          <div id="pagination"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var t = new Date();
+      var el = document.getElementById('topbarDate');
+      if (el) el.textContent = t.toLocaleDateString('ms-MY', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    })();
+  </script>
+  <!-- MODAL: ASSET DETAIL -->
+  <div class="modal" id="globalDetailModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="detailTitle">Asset Detail</h3>
+        <span class="close-btn">&times;</span>
+      </div>
+      <div id="detailBody"></div>
+    </div>
+  </div>
+
+  <script src="js/firebase-config.local.js"></script>
+  <script src="js/firebase-init.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/location.js"></script>
+  <script src="js/asset.js"></script>
+  <script src="js/modal.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script src="js/electric-spark.js"></script>
+</body>
+
+</html>
