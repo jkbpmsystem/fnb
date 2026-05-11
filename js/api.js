@@ -1,6 +1,6 @@
 // =====================
 // FIREBASE API LAYER (legacy-compatible)
-// Keeps old function names so existing pages keep working
+// Keeps old function names so existing pages keep working 
 // =====================
 
 const API = {
