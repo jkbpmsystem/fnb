@@ -409,6 +409,7 @@
         <label>PPM Frequency</label>
         <select id="ppmFrequency">
         <option>PPM Frequency</option>
+        <option>N/A</option>
         <option>1</option>
         <option>2</option>
         <option>3</option>
